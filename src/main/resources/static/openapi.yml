@@ -1,0 +1,323 @@
+openapi: 3.0.3
+info:
+  title: Game Library Service
+  description: Game Library Service Backend API Specification
+  contact:
+    name: API Support
+    email: raeperd117@gmail.com
+  version: 0.0.1
+servers:
+  - url: 'http://localhost:8080'
+    description: localhost server
+security:
+  - BearerToken: []
+  - OpenID:
+      - openid
+      - email
+      - profile
+tags:
+  - name: user
+    description: User resource
+  - name: game
+    description: Game resource
+paths:
+  '/users/{user-id}':
+    parameters:
+      - $ref: "#/components/parameters/user-id"
+    get:
+      operationId: Get user by id
+      tags:
+        - user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserModel'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    delete:
+      operationId: Delete user by id
+      tags:
+        - user
+      responses:
+        '204':
+          description: NO CONTENT
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /users/{user-id}/games:
+    parameters:
+      - $ref: "#/components/parameters/user-id"
+    get:
+      operationId: Get games of user
+      tags:
+        - user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  games:
+                    required: true
+                    type: array
+                    description: list of games
+                    items:
+                      $ref: '#/components/schemas/GameModel'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    post:
+      operationId: Add game to user
+      tags:
+        - user
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+              required: true
+              writeOnly: true
+              properties:
+                slug:
+                  $ref: "#/components/schemas/game-slug"
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GameModel"
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /users/{user-id}/games/{game-id}:
+    parameters:
+      - $ref: "#/components/parameters/user-id"
+      - $ref: "#/components/parameters/game-id"
+    get:
+      operationId: Get game of user
+      tags:
+        - user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameModel'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    delete:
+      operationId: Delete game of user
+      tags:
+        - user
+      responses:
+        '204':
+          description: No Content
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /games:
+    get:
+      operationId: Get games
+      tags:
+        - game
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/size'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  games:
+                    required: true
+                    type: array
+                    description: list of games
+                    items:
+                      $ref: '#/components/schemas/GameModel'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+components:
+  securitySchemes:
+    BearerToken:
+      type: "http"
+      description: ID token from google openId Connect
+      scheme: bearer
+      bearerFormat: JWT
+    OpenID:
+      type: "openIdConnect"
+      openIdConnectUrl: "https://accounts.google.com/.well-known/openid-configuration"
+  parameters:
+    user-id:
+      name: user-id
+      required: true
+      in: path
+      description: ID of user field sub of [google ID token payload](https://developers.google.com/identity/protocols/oauth2/openid-connect#an-id-tokens-payload)
+      schema:
+        type: number
+        format: int64
+        writeOnly: true
+    game-id:
+      name: game-id
+      required: true
+      in: path
+      description: slug of game
+      schema:
+        "$ref": "#/components/schemas/game-slug"
+    page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 0
+        format: int32
+        description: Page number of pagination request
+    size:
+      name: size
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        format: int32
+        description: Size of one page of pagination request
+  schemas:
+    UserModel:
+      type: object
+      readOnly: true
+      properties:
+        email:
+          required: true
+          type: string
+          format: email
+          description: Email address
+          example: raeperd117@gmail.com
+        games:
+          required: true
+          type: array
+          description: Games of user
+          items:
+            $ref: "#/components/schemas/GameModel"
+    GameModel:
+      type: object
+      readOnly: true
+      properties:
+        slug:
+          $ref: "#/components/schemas/game-slug"
+        name:
+          required: true
+          type: string
+          description: Name of this game
+          example: League of Legend
+        release-date:
+          required: true
+          type: number
+          format: unix time stamp
+          description: Release date of game. Epoch timestamp
+          example: 1256605200
+        updated-date:
+          required: true
+          type: number
+          format: unix time stamp
+          description: The last date this entry was updated
+          example: 1626713554
+        image:
+          required: true
+          type: string
+          format: url
+          description: Image of game.
+          example: https://images.contentstack.io/v3/assets/blt731acb42bb3d1659/bltcfa4652c8d383f56/5e21837f63d1b6503160d39b/Home-page.jpg
+        url:
+          required: true
+          type: string
+          format: url
+          description: The website address (URL) of the item
+    ErrorModel:
+      type: object
+      readOnly: true
+      properties:
+        message:
+          required: true
+          type: string
+          description: Error message
+          example: Request Failed with Error
+    game-slug:
+      required: true
+      type: string
+      description: A url-safe, unique, lower-case version of the name
+      example: league-of-legend
+  responses:
+    '400':
+      description: Bad Request
+    '401':
+      description: Unauthorized
+    '403':
+      description: Forbidden
+    '404':
+      description: Not Found
+    '500':
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorModel'
