@@ -6,6 +6,8 @@ plugins {
     id ("org.sonarqube") version "3.3"
     kotlin("jvm") version "1.5.20"
     kotlin("plugin.spring") version "1.5.20"
+
+    jacoco
 }
 
 group = "gg.op"
@@ -35,6 +37,45 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+
+    finalizedBy("jacocoTestReport")
+}
+
+tasks.jacocoTestReport {
+    reports {
+        html.required.set(true)
+        xml.required.set(true)
+    }
+
+    finalizedBy("jacocoTestCoverageVerification")
+}
+
+tasks.jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = "PACKAGE"
+
+            limit {
+                counter = "CLASS"
+                value = "COVEREDRATIO"
+                minimum = "1.00".toBigDecimal()
+            }
+
+            excludes = listOf("gg.op.gameflex")
+        }
+
+        rule {
+            element = "CLASS"
+
+            limit {
+                counter = "METHOD"
+                value = "COVEREDRATIO"
+                minimum = "1.00".toBigDecimal()
+            }
+
+            excludes = listOf("gg.op.gameflex.GameflexApplicationKt")
+        }
+    }
 }
 
 sonarqube {
