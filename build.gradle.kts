@@ -1,12 +1,13 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "2.5.2"
-    id("io.spring.dependency-management") version "1.0.11.RELEASE"
-    id ("org.sonarqube") version "3.3"
     kotlin("jvm") version "1.5.20"
     kotlin("plugin.spring") version "1.5.20"
 
+    id("org.springframework.boot") version "2.5.2"
+    id("io.spring.dependency-management") version "1.0.11.RELEASE"
+    id ("org.sonarqube") version "3.3"
+    id("com.google.cloud.tools.jib") version "3.1.2"
     jacoco
 }
 
@@ -83,5 +84,19 @@ sonarqube {
         property("sonar.projectKey", "gameflex")
         property("sonar.organization", "gameflex")
         property("sonar.host.url", "https://sonarcloud.io")
+    }
+}
+
+jib {
+    from {
+        platforms {
+            platform {
+                architecture = "amd64"
+                os = "linux"
+            }
+        }
+    }
+    to {
+        image = "ghcr.io/opgg-hackthon/gameflex"
     }
 }
