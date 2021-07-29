@@ -124,10 +124,10 @@ paths:
           $ref: '#/components/responses/404'
         '500':
           $ref: '#/components/responses/500'
-  /users/{user-id}/games/{game-id}:
+  /users/{user-id}/games/{slug}:
     parameters:
       - $ref: "#/components/parameters/user-id"
-      - $ref: "#/components/parameters/game-id"
+      - $ref: "#/components/parameters/slug"
     get:
       operationId: Get game of user
       tags:
@@ -218,8 +218,8 @@ components:
         type: number
         format: int64
         writeOnly: true
-    game-id:
-      name: game-id
+    slug:
+      name: slug
       required: true
       in: path
       description: slug of game
@@ -261,6 +261,7 @@ components:
     GameModel:
       type: object
       readOnly: true
+      description: Game model following [Game – IGDB API docs](https://api-docs.igdb.com/#game)
       properties:
         slug:
           $ref: "#/components/schemas/game-slug"
@@ -269,29 +270,54 @@ components:
           type: string
           description: Name of this game
           example: League of Legend
-        release-date:
+        release_at:
           required: true
           type: number
           format: unix time stamp
           description: Release date of game. Epoch timestamp
           example: 1256605200
-        updated-date:
+        updated_at:
           required: true
           type: number
           format: unix time stamp
           description: The last date this entry was updated
           example: 1626713554
-        image:
+        cover:
           required: true
           type: string
           format: url
           description: Image of game.
-          example: https://images.contentstack.io/v3/assets/blt731acb42bb3d1659/bltcfa4652c8d383f56/5e21837f63d1b6503160d39b/Home-page.jpg
+          example: https://images.igdb.com/igdb/image/upload/t_cover_big/co254s.jpg
         url:
           required: true
           type: string
           format: url
           description: The website address (URL) of the item
+        genres:
+          required: true
+          type: array
+          items:
+            type: string
+            description: genre of game as slug
+            example: moba
+        rating_external:
+          required: true
+          type: number
+          description: Rating based on igdb scores
+          example: 80.35918701514501
+        rating_external_count:
+          required: true
+          type: integer
+          description: Number of igdb ratings
+          example: 501
+        platforms:
+          required: true
+          type: array
+          items:
+            type: string
+            description: platform of game
+            example: win
+          example: ["win", "mac"]
     ErrorModel:
       type: object
       readOnly: true
