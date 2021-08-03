@@ -1,1 +1,1 @@
-rootProject.name = "gameflex"
+rootProject.name = "gameflix"
