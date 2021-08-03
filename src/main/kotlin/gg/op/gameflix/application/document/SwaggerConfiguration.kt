@@ -1,4 +1,4 @@
-package gg.op.gameflex.application.document
+package gg.op.gameflix.application.document
 
 import org.springdoc.core.SpringDocConfigProperties
 import org.springdoc.core.SpringDocConfiguration

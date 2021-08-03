@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "gg.op"
-version = "0.0.1"
+version = "0.0.2"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
@@ -62,7 +62,7 @@ tasks.jacocoTestCoverageVerification {
                 minimum = "1.00".toBigDecimal()
             }
 
-            excludes = listOf("gg.op.gameflex")
+            excludes = listOf("gg.op.gameflix")
         }
 
         rule {
@@ -74,15 +74,15 @@ tasks.jacocoTestCoverageVerification {
                 minimum = "1.00".toBigDecimal()
             }
 
-            excludes = listOf("gg.op.gameflex.GameflexApplicationKt")
+            excludes = listOf("gg.op.gameflix.GameflixApplicationKt")
         }
     }
 }
 
 sonarqube {
     properties {
-        property("sonar.projectKey", "gameflex")
-        property("sonar.organization", "gameflex")
+        property("sonar.projectKey", rootProject.name)
+        property("sonar.organization", "opgg-web-d")
         property("sonar.host.url", "https://sonarcloud.io")
     }
 }
@@ -97,6 +97,6 @@ jib {
         }
     }
     to {
-        image = "ghcr.io/opgg-hackthon/gameflex"
+        image = "ghcr.io/opgg-hackthon/${rootProject.name}"
     }
 }
