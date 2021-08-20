@@ -73,8 +73,8 @@ tasks.jacocoTestCoverageVerification {
                 "gg.op.gameflix.domain.game",
                 "gg.op.gameflix.domain.user",
                 "gg.op.gameflix.infrastructure.igdb",
-                "gg.op.gameflix.infrastructure.blizzard",
                 "gg.op.gameflix.infrastructure.epicgames",
+                "gg.op.gameflix.application.document"
             )
         }
     }

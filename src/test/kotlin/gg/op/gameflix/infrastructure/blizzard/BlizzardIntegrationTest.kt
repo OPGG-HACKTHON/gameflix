@@ -36,13 +36,13 @@ internal class BlizzardIntegrationTest {
 
     @Test
     fun `when blizzardClient queryGetGames expect not empty`() {
-        assertThat(blizzardClient.queryGetGames(BlizzardAuthentication("KR96SkRt7qvKuNuy5LYRwRUfMwakM66uR3")))
+        assertThat(blizzardClient.queryGetGames(BlizzardAuthentication("KRsu18Jdvy0QRntK4QqvwGgFj1cg2cGmyi")))
             .contains(GameSlug("wow"))
     }
 
     @Test
     fun `when steamService getAllGameSlugsByAuthentication expect not empty`() {
-        assertThat(blizzardService.getAllGameSlugsByAuthentication(BlizzardAuthentication("KR96SkRt7qvKuNuy5LYRwRUfMwakM66uR3")))
+        assertThat(blizzardService.getAllGameSlugsByAuthentication(BlizzardAuthentication("KRsu18Jdvy0QRntK4QqvwGgFj1cg2cGmyi")))
             .containsOnlyOnce(GameSlug("wow"))
     }
 }
