@@ -11,6 +11,18 @@ sealed interface BlizzardClient {
 
 class BlizzardWebClient(properties: BlizzardConfigurationProperties): BlizzardClient {
 
+    override fun queryGetGames(authentication: BlizzardAuthentication): MutableList<GameSlug> {
+        val accessToken: String = authentication.accessToken
+        val result = mutableListOf<GameSlug>()
+        getD3Info(accessToken)
+            ?.let { result.add(GameSlug("Diablo III")) }
+        getSc2Info(accessToken)
+            .let { result.add(GameSlug("StarCraft-II-wings-of-liberty")) }
+        getWowInfo(accessToken)
+            ?.let { result.add(GameSlug("wow")) }
+        return result
+    }
+
     private val webClient = WebClient.builder()
         .baseUrl(properties.baseUrl)
         .codecs { it.defaultCodecs().maxInMemorySize(16 * 1024 * 1024) }
@@ -60,16 +72,4 @@ class BlizzardWebClient(properties: BlizzardConfigurationProperties): BlizzardCl
             })
             .bodyToMono(WowInfoResponseDTO::class.java)
             .block()
-
-    override fun queryGetGames(authentication: BlizzardAuthentication): MutableList<GameSlug> {
-        val accessToken: String = authentication.accessToken
-        val result = mutableListOf<GameSlug>()
-        getD3Info(accessToken)
-            ?.let { result.add(GameSlug("Diablo III")) }
-        getSc2Info(accessToken)
-            .let { result.add(GameSlug("StarCraft-II-wings-of-liberty")) }
-        getWowInfo(accessToken)
-            ?.let { result.add(GameSlug("wow")) }
-        return result
-    }
 }
