@@ -31,6 +31,7 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-ui:1.5.9")
     implementation("com.h2database:h2:1.4.200")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("com.squareup.okhttp3:mockwebserver:4.9.1")
 }
 
 tasks.withType<KotlinCompile> {

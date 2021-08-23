@@ -1,6 +1,11 @@
 package gg.op.gameflix.infrastructure.gog
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import gg.op.gameflix.domain.game.GameSlug
+import okhttp3.mockwebserver.MockResponse
+import okio.Okio.buffer
+import okio.Okio.source
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -13,7 +18,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(SpringExtension::class)
-@ContextConfiguration(classes = [GogConfiguration::class], initializers = [ConfigDataApplicationContextInitializer::class])
+@ContextConfiguration(
+    classes = [GogConfiguration::class],
+    initializers = [ConfigDataApplicationContextInitializer::class]
+)
 internal class GogServiceTest {
 
     @Autowired
@@ -24,12 +32,20 @@ internal class GogServiceTest {
 
     @BeforeAll
     fun initializeGogClient() {
-        gogService = GogService(GogWebClient(configurationProperties,GogAuthentication("Bearer "+token)))
+        gogService = GogService(GogWebClient(configurationProperties, GogAuthentication("Bearer " + token)))
     }
 
     @Test
     fun `when getAllGameSlugsByAuthentication expect not empty`() {
-        assertThat(gogService.getAllGameSlugsByAuthentication(GogAuthentication("Bearer "+token)))
-            .containsOnlyOnce(GameSlug("DISTRAINT 2"))
+        val response = MockResponse()
+            .addHeader("Content-Type", "application/json; charset=utf-8")
+            .setBody("{\"title\": \"DISTRAINT 2\"}")
+        val expected1 = buffer(source(response.getBody()!!.inputStream())).readUtf8()
+        val objectMapper = ObjectMapper()
+        val map: Map<String, String> = objectMapper.readValue(expected1)
+
+        assertThat(map.get("title")?.let { GameSlug(it) }).isEqualTo(GameSlug("DISTRAINT 2"))
+        // assertThat(gogService.getAllGameSlugsByAuthentication(GogAuthentication("Bearer "+token)))
+        //     .containsOnlyOnce(GameSlug("DISTRAINT 2"))
     }
 }

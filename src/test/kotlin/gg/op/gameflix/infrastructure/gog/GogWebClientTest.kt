@@ -1,6 +1,8 @@
 package gg.op.gameflix.infrastructure.gog
 
-import gg.op.gameflix.infrastructure.gog.*
+import okhttp3.mockwebserver.MockResponse
+import okio.Okio.buffer
+import okio.Okio.source
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -14,7 +16,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @TestInstance(PER_CLASS)
 @ExtendWith(SpringExtension::class)
-@ContextConfiguration(classes = [GogConfiguration::class], initializers = [ConfigDataApplicationContextInitializer::class])
+@ContextConfiguration(
+    classes = [GogConfiguration::class],
+    initializers = [ConfigDataApplicationContextInitializer::class]
+)
 internal class GogWebClientTest {
 
     @Autowired
@@ -25,11 +30,16 @@ internal class GogWebClientTest {
 
     @BeforeAll
     fun initializeGogClient() {
-        gogClient = GogWebClient(configurationProperties,GogAuthentication("Bearer "+token))
+        gogClient = GogWebClient(configurationProperties, GogAuthentication("Bearer " + token))
     }
 
     @Test
     fun `when queryGetGames expect not empty`() {
-        assertThat(gogClient.queryGetGames()).isNotEmpty
+        val response = MockResponse()
+            .addHeader("Content-Type", "application/json; charset=utf-8")
+            .setBody("{\"title\": \"DISTRAINT 2\"}")
+
+        assertThat(buffer(source(response.getBody()!!.inputStream())).readUtf8()).isNotEmpty()
+        //assertThat(gogClient.queryGetGames()).isNotEmpty
     }
 }
