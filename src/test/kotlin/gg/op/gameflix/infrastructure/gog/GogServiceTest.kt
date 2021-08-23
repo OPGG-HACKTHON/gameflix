@@ -18,17 +18,18 @@ internal class GogServiceTest {
 
     @Autowired
     private lateinit var configurationProperties: GogConfigurationProperties
-
     private lateinit var gogService: GogService
+
+    private val token = "aaRqpaC012yEVT5NdP-n2DvWK7Jvwwxh3nRypF1KdBLqbMbpePfDCaLU473oJJguGDgmJipSk4wtnzYW62r3CTH0qBoHpAtS_qBkigw-EVzMlIZNAJUrydjW2zJ5o-sAfr6aW61C2oN0cuT6SPRjVPg_hCTE6DriI1I9yt2xx1CXTOfz_nriT_RRmDQRRWZo"
 
     @BeforeAll
     fun initializeGogClient() {
-        gogService = GogService(GogWebClient(configurationProperties,"Bearer NoWcq3nV8US2g_fhsshqxor6IWg6aoKXPDMsKdsmRlvzZQN6mFeiYh79PgAWl_lVNBW__0faNY0CLhqyttY641tRv1zQqTIGWeywRtD3TsQHr5xbsNY2SidP7APA4vjnPV4BkiHBpdA-OlwAnKxO0PMtPvjE8LunBvwzJ1YwzXDY7ApQrKlkyhJAg2aV7WjQ"))
+        gogService = GogService(GogWebClient(configurationProperties,GogAuthentication("Bearer "+token)))
     }
 
     @Test
     fun `when getAllGameSlugsByAuthentication expect not empty`() {
-        assertThat(gogService.getAllGameSlugsByAuthentication(GogAuthentication()))
+        assertThat(gogService.getAllGameSlugsByAuthentication(GogAuthentication("Bearer "+token)))
             .containsOnlyOnce(GameSlug("DISTRAINT 2"))
     }
 }

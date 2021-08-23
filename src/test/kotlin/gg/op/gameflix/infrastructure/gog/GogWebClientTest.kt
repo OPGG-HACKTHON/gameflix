@@ -19,21 +19,17 @@ internal class GogWebClientTest {
 
     @Autowired
     private lateinit var configurationProperties: GogConfigurationProperties
-
     private lateinit var gogClient: GogClient
+
+    private val token = "aaRqpaC012yEVT5NdP-n2DvWK7Jvwwxh3nRypF1KdBLqbMbpePfDCaLU473oJJguGDgmJipSk4wtnzYW62r3CTH0qBoHpAtS_qBkigw-EVzMlIZNAJUrydjW2zJ5o-sAfr6aW61C2oN0cuT6SPRjVPg_hCTE6DriI1I9yt2xx1CXTOfz_nriT_RRmDQRRWZo"
 
     @BeforeAll
     fun initializeGogClient() {
-        gogClient = GogWebClient(configurationProperties,"Bearer NoWcq3nV8US2g_fhsshqxor6IWg6aoKXPDMsKdsmRlvzZQN6mFeiYh79PgAWl_lVNBW__0faNY0CLhqyttY641tRv1zQqTIGWeywRtD3TsQHr5xbsNY2SidP7APA4vjnPV4BkiHBpdA-OlwAnKxO0PMtPvjE8LunBvwzJ1YwzXDY7ApQrKlkyhJAg2aV7WjQ")
+        gogClient = GogWebClient(configurationProperties,GogAuthentication("Bearer "+token))
     }
 
     @Test
     fun `when queryGetGames expect not empty`() {
-        assertThat(gogClient.queryGetGames(GogAuthentication()).owned).isNotEmpty
-    }
-
-    @Test
-    fun `when queryGetGameDetails expect not empty`() {
-        assertThat(gogClient.queryGetGameDetails(GogAuthentication(),2078420771).title).isNotEmpty
+        assertThat(gogClient.queryGetGames()).isNotEmpty
     }
 }
