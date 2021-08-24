@@ -1,0 +1,10 @@
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    url: /openapi.yml
+infrastructure:
+  igdb:
+    baseUrl: https://api.igdb.com/v4
+    token: 2ukmci1s2036phlfog3e4119uvnopg
+    clientId: dkm9apjokbggtp29y6gp19ch27k1eu
