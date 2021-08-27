@@ -3,17 +3,21 @@ package gg.op.gameflix.infrastructure.blizzard
 import gg.op.gameflix.domain.game.GameSlug
 import org.junit.jupiter.api.Test
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.junit.jupiter.MockitoExtension
 import org.mockserver.integration.ClientAndServer
 import org.mockserver.integration.ClientAndServer.startClientAndServer
 import org.mockserver.model.HttpRequest
 import org.mockserver.model.HttpResponse
-import java.util.function.Consumer
+import org.mockserver.model.MediaType
+import org.springframework.test.context.junit.jupiter.SpringExtension
 
-@ExtendWith(MockitoExtension::class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ExtendWith(SpringExtension::class)
 class BlizzardClientTest {
 
     private lateinit var blizzardClient: BlizzardWebClient
@@ -21,13 +25,13 @@ class BlizzardClientTest {
 
     private val accessToken: String = "KRsu18Jdvy0QRntK4QqvwGgFj1cg2cGmyi"
 
-    @BeforeEach
+    @BeforeAll
     fun initializeInstance() {
-        mockServer = startClientAndServer(8080)
-        blizzardClient = BlizzardWebClient(BlizzardConfigurationProperties("http://localhost:8080"))
+        mockServer = startClientAndServer(8090)
+        blizzardClient = BlizzardWebClient(BlizzardConfigurationProperties("http://localhost:8090"))
     }
 
-    @AfterEach
+    @AfterAll
     fun stopServer() {
         mockServer.stop()
     }
@@ -37,32 +41,37 @@ class BlizzardClientTest {
         mockServer.`when`(
             HttpRequest.request()
                 .withMethod("GET")
-                .withPath("/d3/data/act?access_token=${accessToken}")
+                .withQueryStringParameter("access_token", accessToken)
+                .withPath("/d3/data/act")
         ).respond(
             HttpResponse.response()
+                .withContentType(MediaType.APPLICATION_JSON)
                 .withBody("{\"acts\":[1, 2, 3]}")
                 .withStatusCode(200)
         )
         mockServer.`when`(
             HttpRequest.request()
                 .withMethod("GET")
-                .withPath("/sc2/ladder/grandmaster/3?access_token=${accessToken}")
+                .withQueryStringParameter("access_token", accessToken)
+                .withPath("/sc2/ladder/grandmaster/3")
         ).respond(
             HttpResponse.response()
+                .withContentType(MediaType.APPLICATION_JSON)
                 .withBody("{\"ladderTeams\":[1, 2, 3]}")
                 .withStatusCode(200)
         )
         mockServer.`when`(
             HttpRequest.request()
                 .withMethod("GET")
-                .withPath("/profile/user/wow?namespace=profile-kr&access_token=${accessToken}")
+                .withQueryStringParameter("access_token", accessToken)
+                .withQueryStringParameter("namespace", "profile-kr")
+                .withPath("/profile/user/wow")
         ).respond(
             HttpResponse.response()
+                .withContentType(MediaType.APPLICATION_JSON)
                 .withBody("{\"wow_accounts\":[1, 2, 3]}")
                 .withStatusCode(200)
         )
-        println(blizzardClient.queryGetGames(BlizzardAuthentication(accessToken)))
-        println(BlizzardWebClient.WowInfoResponseDTO(wow_accounts = listOf("d3")).toString())
         assertThat(blizzardClient.queryGetGames(BlizzardAuthentication(accessToken))).contains(GameSlug("Diablo III"))
     }
 }
