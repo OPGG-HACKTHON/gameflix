@@ -8,12 +8,17 @@ import org.springframework.web.reactive.function.client.WebClient
 
 sealed interface IGDBClient {
     fun queryGetGames(pageable: Pageable): Page<IGDBGameSummary>
+    fun queryGetCoverImages(coverIds: Collection<Int>): Map<Int, IGDBCoverImage>
 }
 
 data class IGDBGameSummary(
     val id: Int,
     val name: String,
     val cover: Int
+)
+
+data class IGDBCoverImage(
+    private val imageId: String
 )
 
 class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
@@ -39,6 +44,14 @@ class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
             .block()
             ?.let { igdbGameSummaries -> getPage(igdbGameSummaries, pageable, this::queryGetGamesCount) } ?: Page.empty()
 
+    override fun queryGetCoverImages(coverIds: Collection<Int>) =
+        webClient.post().uri("/covers")
+            .bodyValue("fields id, image_id; where id = (${coverIds.joinToString { it.toString() }});")
+            .retrieve()
+            .bodyToMono(object: ParameterizedTypeReference<MutableList<IGDBCoverImageResponseDTO>>() {})
+            .block()
+            ?.associate { it.id to IGDBCoverImage(it.image_id)} ?: emptyMap()
+
     private fun Pageable.toIGDBQueryStatement() = "offset $pageNumber; limit $pageSize;"
 
     private fun queryGetGamesCount() =
@@ -50,4 +63,8 @@ class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
             ?.run { count } ?: 0
 
     private data class CountDTO(val count: Long)
+
+    @Suppress("kotlin:S117")
+    private data class IGDBCoverImageResponseDTO(val id: Int, val image_id: String)
+
 }
