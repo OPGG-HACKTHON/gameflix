@@ -7,10 +7,11 @@ import org.springframework.web.reactive.function.client.WebClient
 import java.util.*
 
 sealed interface GogClient {
-    fun queryGetGames() : ArrayList<GameSlug>
+    fun queryGetGamesCode() : GogGamesCodeResponseDTO
+    fun queryGetGames(getGames: GogGamesCodeResponseDTO) : ArrayList<GameSlug>
 }
 
-private data class GogGamesCodeResponseDTO(
+data class GogGamesCodeResponseDTO(
     val owned: List<Int>
 )
 
@@ -26,7 +27,7 @@ class GogWebClient(properties: GogConfigurationProperties,authentication: GogAut
         .defaultHeader(HttpHeaders.AUTHORIZATION, token)
         .build()
 
-    private fun queryGetGamesCode():GogGamesCodeResponseDTO =
+     override fun queryGetGamesCode():GogGamesCodeResponseDTO =
         webClient.get()
             .uri("/user/data/games")
             .accept(APPLICATION_JSON)
@@ -34,10 +35,9 @@ class GogWebClient(properties: GogConfigurationProperties,authentication: GogAut
             .bodyToMono(GogGamesCodeResponseDTO::class.java)
             .block() ?: throw RuntimeException()
 
-    override fun queryGetGames():ArrayList<GameSlug> {
-        val getGames: List<Int> = queryGetGamesCode().owned
+    override fun queryGetGames(getGames: GogGamesCodeResponseDTO):ArrayList<GameSlug> {
         val resultGames = ArrayList<GameSlug>()
-        for(gameKey in getGames){
+        for(gameKey in getGames.owned){
             val gameName:GogGamesResponseDTO =
                 webClient.get()
                     .uri("/account/gameDetails/${gameKey}.json")

@@ -32,6 +32,7 @@ dependencies {
     implementation("com.h2database:h2:1.4.200")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("com.squareup.okhttp3:mockwebserver:4.9.1")
+    testImplementation("com.squareup.okhttp3:okhttp:4.9.1")
 }
 
 tasks.withType<KotlinCompile> {
@@ -72,7 +73,6 @@ tasks.jacocoTestCoverageVerification {
                 "gg.op.gameflix.domain.user",
                 "gg.op.gameflix.infrastructure.igdb",
                 "gg.op.gameflix.infrastructure.blizzard",
-                "gg.op.gameflix.infrastructure.gog",
                 "gg.op.gameflix.infrastructure.epicgames",
             )
         }
