@@ -1,5 +1,6 @@
 package gg.op.gameflix.infrastructure.igdb
 
+import gg.op.gameflix.domain.game.GameRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -15,6 +16,9 @@ internal class IGDBIntegrationTest {
 
     @Autowired
     private lateinit var igdbClient: IGDBClient
+
+    @Autowired
+    private lateinit var gameRepository: GameRepository
 
     @Test
     fun `when igdbClient queryGetGames expect same size`() {
@@ -37,5 +41,12 @@ internal class IGDBIntegrationTest {
         val idToCoverImage = igdbClient.queryGetCoverImages(setOf(keyExpected))
 
         assertThat(idToCoverImage).containsEntry(keyExpected, coverImageExpected)
+    }
+
+    @Test
+    fun `when GameRepository getAllGames return expected count games`() {
+        val numExpected = 3
+
+        assertThat(gameRepository.getAllGames(PageRequest.of(0, numExpected))).hasSize(numExpected)
     }
 }

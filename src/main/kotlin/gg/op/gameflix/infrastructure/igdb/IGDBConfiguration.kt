@@ -11,6 +11,9 @@ import org.springframework.context.annotation.Configuration
 class IGDBConfiguration {
 
     @Bean
+    fun igdbGameRepository(igdbClient: IGDBClient) = IGDBGameRepository(igdbClient)
+
+    @Bean
     fun igdbClient(properties: IGDBConfigurationProperties) = IGDBWebClient(properties)
 }
 

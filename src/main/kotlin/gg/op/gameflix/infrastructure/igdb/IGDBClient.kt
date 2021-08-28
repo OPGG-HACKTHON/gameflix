@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.support.PageableExecutionUtils.getPage
 import org.springframework.web.reactive.function.client.WebClient
+import java.net.URI
 
 sealed interface IGDBClient {
     fun queryGetGames(pageable: Pageable): Page<IGDBGameSummary>
@@ -19,7 +20,14 @@ data class IGDBGameSummary(
 
 data class IGDBCoverImage(
     private val imageId: String
-)
+) {
+    companion object {
+        val NO_COVER_IMAGE = IGDBCoverImage("nocover_qhhlj6")
+    }
+
+    fun toURI(): URI = URI.create("https://images.igdb.com/igdb/image/upload/t_cover_big/$imageId.jpg")
+}
+
 
 class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
 
