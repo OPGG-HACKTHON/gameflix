@@ -1,5 +1,12 @@
 package gg.op.gameflix.domain.game
 
+import java.net.URI
+
+data class GameSummary(
+    val slug: GameSlug,
+    val cover: URI
+)
+
 data class Game(val slug: GameSlug,
     val detail: GameDetail,
     val genres: Collection<Genre>,
