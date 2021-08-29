@@ -56,6 +56,23 @@ jobs:
           key: openapi
           path: ./src/main/resources/static/openapi.yml
 
+  deploy-ecs-fargate:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+      - uses: actions/checkout@v2
+      - uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: .github/aws/task-definition.json
+          cluster: cluster-gameflix-swagger
+          service: service-gameflix-backend
+
   deploy-document:
     needs: build
     runs-on: ubuntu-latest
