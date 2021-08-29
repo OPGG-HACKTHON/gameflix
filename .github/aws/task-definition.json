@@ -1,0 +1,72 @@
+{
+    "taskDefinitionArn": "arn:aws:ecs:ap-northeast-2:746989869293:task-definition/task-definition-gameflix:1",
+    "containerDefinitions": [
+        {
+            "name": "container-gameflix",
+            "image": "ghcr.io/opgg-hackthon/gameflix:main",
+            "cpu": 0,
+            "memoryReservation": 2048,
+            "portMappings": [
+                {
+                    "containerPort": 8080,
+                    "hostPort": 8080,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "environment": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/task-definition-gameflix",
+                    "awslogs-region": "ap-northeast-2",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            }
+        }
+    ],
+    "family": "task-definition-gameflix",
+    "taskRoleArn": "arn:aws:iam::746989869293:role/ecsTaskExecutionRole",
+    "executionRoleArn": "arn:aws:iam::746989869293:role/ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "revision": 1,
+    "volumes": [],
+    "status": "ACTIVE",
+    "requiresAttributes": [
+        {
+            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+        },
+        {
+            "name": "ecs.capability.execution-role-awslogs"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.21"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.task-iam-role"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+        },
+        {
+            "name": "ecs.capability.task-eni"
+        }
+    ],
+    "placementConstraints": [],
+    "compatibilities": [
+        "EC2",
+        "FARGATE"
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "1024",
+    "memory": "2048",
+    "registeredAt": "2021-08-29T16:46:17.418000+09:00",
+    "registeredBy": "arn:aws:iam::746989869293:user/ward-master"
+}
