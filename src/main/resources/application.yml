@@ -3,6 +3,18 @@ springdoc:
     enabled: false
   swagger-ui:
     url: /openapi.yml
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: "info,health"
+  endpoint:
+    info:
+      enabled: true
+    health:
+      enabled: true
+
 infrastructure:
   igdb:
     baseUrl: https://api.igdb.com/v4

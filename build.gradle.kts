@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "gg.op"
-version = "0.0.2"
+version = "0.0.3"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
@@ -22,6 +22,7 @@ repositories {
 dependencies {
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -36,6 +37,10 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("com.squareup.okhttp3:mockwebserver:4.9.1")
     testImplementation("com.squareup.okhttp3:okhttp:4.9.1")
+}
+
+springBoot {
+    buildInfo()
 }
 
 tasks.withType<KotlinCompile> {
