@@ -13,6 +13,10 @@ class IGDBGameRepository(private val igdbClient: IGDBClient) : GameRepository {
     override fun getAllGames(pageable: Pageable) =
         igdbClient.queryGetGames(pageable).toGameSummaries()
 
+    override fun findGameBySlug(slug: GameSlug): Game? {
+        TODO("Not yet implemented")
+    }
+
     override fun getAllGamesByIds(ids: Collection<Long>): Collection<Game> {
         TODO("Not yet implemented")
     }

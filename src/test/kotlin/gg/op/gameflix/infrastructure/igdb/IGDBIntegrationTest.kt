@@ -1,6 +1,7 @@
 package gg.op.gameflix.infrastructure.igdb
 
 import gg.op.gameflix.domain.game.GameRepository
+import gg.op.gameflix.domain.game.GameSlug
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -41,6 +42,31 @@ internal class IGDBIntegrationTest {
         val idToCoverImage = igdbClient.queryGetCoverImages(setOf(keyExpected))
 
         assertThat(idToCoverImage).contains(coverImageExpected)
+    }
+
+    @Test
+    fun `when igdbClient queryGetGameBySlug with invalid slug expect null`() {
+        assertThat(igdbClient.queryGetGameBySlug(GameSlug("Invalid game name"))).isNull()
+    }
+
+    @Test
+    fun `when igdbClient queryGetGameBySlug with valid slug expect not null`() {
+        assertThat(igdbClient.queryGetGameBySlug(GameSlug("Portal 2"))).isNotNull
+    }
+
+    @Test
+    fun `when igdbClient queryGetGenres expect return valid IGDBGenre`() {
+        val idExpected = 36
+        val genreExpected = IGDBGenre(idExpected, "moba")
+
+        assertThat(igdbClient.queryGetGenres(setOf(idExpected))).containsOnly(genreExpected)
+    }
+
+    @Test
+    fun `when igdbClient queryGetPlatforms expect return valid IGDBPlatform`() {
+        val platformsExpected = listOf(IGDBPlatform(6, "win"), IGDBPlatform(14, "mac"))
+
+        assertThat(igdbClient.queryGetPlatforms(platformsExpected.map { it.id })).containsAll(platformsExpected)
     }
 
     @Test
