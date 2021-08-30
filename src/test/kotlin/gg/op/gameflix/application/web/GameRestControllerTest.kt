@@ -3,9 +3,7 @@ package gg.op.gameflix.application.web
 import gg.op.gameflix.domain.game.GameRepository
 import gg.op.gameflix.domain.game.GameSlug
 import gg.op.gameflix.domain.game.GameSummary
-import gg.op.gameflix.infrastructure.igdb.IGDBGameSummary
 import gg.op.gameflix.util.any
-import org.hamcrest.Matchers
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.startsWith
 import org.junit.jupiter.api.Test
