@@ -37,10 +37,10 @@ internal class IGDBIntegrationTest {
     @Test
     fun `when igdbClient queryGetCoverImages expect return valid IGDBCoverImage`() {
         val keyExpected = 99964
-        val coverImageExpected = IGDBCoverImage("co254s")
+        val coverImageExpected = IGDBCoverImage(keyExpected, "co254s")
         val idToCoverImage = igdbClient.queryGetCoverImages(setOf(keyExpected))
 
-        assertThat(idToCoverImage).containsEntry(keyExpected, coverImageExpected)
+        assertThat(idToCoverImage).contains(coverImageExpected)
     }
 
     @Test
