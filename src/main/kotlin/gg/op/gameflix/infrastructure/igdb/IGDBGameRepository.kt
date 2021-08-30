@@ -6,6 +6,7 @@ import gg.op.gameflix.domain.game.GameSlug
 import gg.op.gameflix.domain.game.GameSummary
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import java.net.URI
 
 class IGDBGameRepository(private val igdbClient: IGDBClient) : GameRepository {
 
@@ -20,15 +21,14 @@ class IGDBGameRepository(private val igdbClient: IGDBClient) : GameRepository {
         TODO("Not yet implemented")
     }
 
-    private fun Page<IGDBGameSummary>.toGameSummaries() =
-        let { igdbSummaries -> val idToCoverImage = igdbSummaries.content.map { it.cover }
+    private fun Page<IGDBGame>.toGameSummaries() =
+        let { igdbGames -> igdbGames.content.map { it.cover }
             .toCollection(HashSet())
             .let { coverIds -> igdbClient.queryGetCoverImages(coverIds) }
-
-            igdbSummaries.map { it.toGameSummary(idToCoverImage) }
+            .associate { igdbCoverImage -> igdbCoverImage.id to igdbCoverImage.toURI() }
+            .let { coverIdToURI -> igdbGames.map { it.toGameSummary(coverIdToURI) } }
         }
 
-    private fun IGDBGameSummary.toGameSummary(idsToCover: Map<Int, IGDBCoverImage>) =
-        GameSummary(GameSlug(name),
-            idsToCover.getOrDefault(cover, IGDBCoverImage.NO_COVER_IMAGE).toURI())
+    private fun IGDBGame.toGameSummary(coverIdToURI: Map<Int, URI>) =
+        GameSummary(GameSlug(name), coverIdToURI.getOrDefault(cover, IGDBCoverImage.NO_COVER_IMAGE.toURI()))
 }
