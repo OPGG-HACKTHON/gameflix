@@ -7,6 +7,8 @@ info:
     email: raeperd117@gmail.com
   version: 0.0.1
 servers:
+  - url: 'http://load-balancer-gameflix-backend-754529149.ap-northeast-2.elb.amazonaws.com'
+    description: AWS Load balancer for backend fargate service
   - url: 'http://localhost:8080'
     description: localhost server
 security:
@@ -80,9 +82,9 @@ paths:
                   games:
                     required: true
                     type: array
-                    description: list of games
+                    description: list of games summary model
                     items:
-                      $ref: '#/components/schemas/GameModel'
+                      $ref: '#/components/schemas/GameSummaryModel'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -187,7 +189,7 @@ paths:
                     type: array
                     description: list of games
                     items:
-                      $ref: '#/components/schemas/GameModel'
+                      $ref: '#/components/schemas/GameSummaryModel'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -258,6 +260,20 @@ components:
           description: Games of user
           items:
             $ref: "#/components/schemas/GameModel"
+    GameSummaryModel:
+      type: object
+      readOnly: true
+      description: GameSummary model
+      properties:
+        slug:
+          $ref: "#/components/schemas/game-slug"
+        name:
+          required: true
+          type: string
+          description: Name of this game
+          example: League of Legend
+        cover:
+          $ref : "#/components/schemas/cover"
     GameModel:
       type: object
       readOnly: true
@@ -283,11 +299,7 @@ components:
           description: The last date this entry was updated
           example: 1626713554
         cover:
-          required: true
-          type: string
-          format: url
-          description: Image of game.
-          example: https://images.igdb.com/igdb/image/upload/t_cover_big/co254s.jpg
+          $ref : "#/components/schemas/cover"
         url:
           required: true
           type: string
@@ -332,6 +344,12 @@ components:
       type: string
       description: A url-safe, unique, lower-case version of the name
       example: league-of-legend
+    cover:
+      required: true
+      type: string
+      format: url
+      description: Image URL for game
+      example: https://images.igdb.com/igdb/image/upload/t_cover_big/co254s.jpg
   responses:
     '400':
       description: Bad Request
