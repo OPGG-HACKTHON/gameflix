@@ -1,6 +1,8 @@
 package gg.op.gameflix.infrastructure.igdb
 
 import gg.op.gameflix.domain.game.GameSlug
+import gg.op.gameflix.domain.game.Genre
+import gg.op.gameflix.domain.game.Platform
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -52,14 +54,13 @@ interface IGDBResource {
    val slug: String
 }
 
-data class IGDBGenre(
-    override val id: Int,
-    override val slug: String) : IGDBResource
+data class IGDBGenre(override val id: Int, override val slug: String) : IGDBResource {
+    fun toGenre() = Genre(slug)
+}
 
-data class IGDBPlatform(
-    override val id: Int,
-    override val slug: String
-) : IGDBResource
+data class IGDBPlatform(override val id: Int, override val slug: String) : IGDBResource {
+    fun toPlatform() = Platform(slug)
+}
 
 class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
 
