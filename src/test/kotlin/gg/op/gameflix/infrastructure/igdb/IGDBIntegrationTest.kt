@@ -85,4 +85,9 @@ internal class IGDBIntegrationTest {
     fun `when GameRepository findGameBySlug expect not null`() {
         assertThat(gameRepository.findGameBySlug(GameSlug("League of Legends"))).isNotNull
     }
+
+    @Test
+    fun `when GameRepository findGameByName expect not empty`() {
+        assertThat(gameRepository.findGamesByName("league o", PageRequest.of(0, 10))).isEmpty()
+    }
 }

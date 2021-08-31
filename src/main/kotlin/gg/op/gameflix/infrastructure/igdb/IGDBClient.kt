@@ -99,8 +99,8 @@ class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
            .bodyValue("fields $FIELDS_TO_RECEIVE; where $CONDITION_DEFAULT; search \"$name\"; ${pageable.toIGDBQueryStatement()}")
            .retrieve()
            .bodyToMono(object : ParameterizedTypeReference<MutableList<IGDBGame>>() {})
-           .block()
-           ?.let { igdbGameSummaries -> getPage(igdbGameSummaries, pageable) { queryGetGamesByNameCount(name) } } ?: Page.empty()
+           .block().orEmpty()
+           .let { igdbGameSummaries -> getPage(igdbGameSummaries, pageable) { queryGetGamesByNameCount(name) } }
 
     override fun queryGetCoverImages(ids: Collection<Int>) =
         webClient.post().uri("/covers")

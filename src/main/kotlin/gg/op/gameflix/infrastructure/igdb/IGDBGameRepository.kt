@@ -28,13 +28,17 @@ class IGDBGameRepository(private val igdbClient: IGDBClient) : GameRepository {
         TODO("Not yet implemented")
     }
 
-    private fun Page<IGDBGame>.toGameSummaries() =
-        let { igdbGames -> igdbGames.content.map { it.cover }
+    private fun Page<IGDBGame>.toGameSummaries(): Page<GameSummary> {
+        if (isEmpty) {
+            return Page.empty()
+        }
+        return let { igdbGames -> igdbGames.content.map { it.cover }
             .toCollection(HashSet())
             .let { coverIds -> igdbClient.queryGetCoverImages(coverIds) }
             .associate { igdbCoverImage -> igdbCoverImage.id to igdbCoverImage.toURI() }
             .let { coverIdToURI -> igdbGames.map { it.toGameSummary(coverIdToURI) } }
         }
+    }
 
     private fun IGDBGame.toGameSummary(coverIdToURI: Map<Int, URI>) =
         GameSummary(GameSlug(name), coverIdToURI.getOrDefault(cover, IGDBCoverImage.NO_COVER_IMAGE.toURI()))
