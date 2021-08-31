@@ -14,6 +14,7 @@ import kotlin.reflect.full.declaredMemberProperties
 sealed interface IGDBClient {
     fun queryGetGames(pageable: Pageable): Page<IGDBGame>
     fun queryGetGameBySlug(gameSlug: GameSlug): IGDBGame?
+    fun queryGetGamesByName(name: String, pageable: Pageable): Page<IGDBGame>
 
     fun queryGetCoverImages(ids: Collection<Int>): Set<IGDBCoverImage>
     fun queryGetGenres(ids: Collection<Int>): Set<IGDBGenre>
@@ -77,16 +78,13 @@ class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
         .defaultHeader("Accept", "application/json")
         .build()
 
-    override fun queryGetGames(pageable: Pageable): Page<IGDBGame> {
-        fun Pageable.toIGDBQueryStatement() = "offset $pageNumber; limit $pageSize;"
-
-        return webClient.post().uri("/games")
+    override fun queryGetGames(pageable: Pageable): Page<IGDBGame> =
+        webClient.post().uri("/games")
             .bodyValue("fields $FIELDS_TO_RECEIVE; where $CONDITION_DEFAULT; sort $FIELD_TO_SORT; ${pageable.toIGDBQueryStatement()}")
             .retrieve()
             .bodyToMono(object : ParameterizedTypeReference<MutableList<IGDBGame>>() {})
             .block()
             ?.let { igdbGameSummaries -> getPage(igdbGameSummaries, pageable, this::queryGetGamesCount) } ?: Page.empty()
-    }
 
     override fun queryGetGameBySlug(gameSlug: GameSlug) =
         webClient.post().uri("/games")
@@ -95,6 +93,14 @@ class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
             .bodyToMono(object : ParameterizedTypeReference<MutableList<IGDBGame>>() {})
             .block()
             ?.getOrNull(0)
+
+    override fun queryGetGamesByName(name: String, pageable: Pageable) =
+       webClient.post().uri("/games")
+           .bodyValue("fields $FIELDS_TO_RECEIVE; where $CONDITION_DEFAULT; search \"$name\"; ${pageable.toIGDBQueryStatement()}")
+           .retrieve()
+           .bodyToMono(object : ParameterizedTypeReference<MutableList<IGDBGame>>() {})
+           .block()
+           ?.let { igdbGameSummaries -> getPage(igdbGameSummaries, pageable) { queryGetGamesByNameCount(name) } } ?: Page.empty()
 
     override fun queryGetCoverImages(ids: Collection<Int>) =
         webClient.post().uri("/covers")
@@ -114,6 +120,8 @@ class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
             .map { IGDBPlatform(it.id, it.slug) }
             .toHashSet()
 
+    private fun Pageable.toIGDBQueryStatement() = "offset $pageNumber; limit $pageSize;"
+
     private fun queryGetResources(uri: String, ids: Collection<Int>): List<IGDBResource> {
         data class IGDBResourceImpl(override val id: Int, override val slug: String) : IGDBResource
 
@@ -125,11 +133,17 @@ class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
             .block() ?: emptyList()
     }
 
-    private fun queryGetGamesCount(): Long {
+    private fun queryGetGamesCount() =
+        queryGetResultCounts("where $CONDITION_DEFAULT;")
+
+    private fun queryGetGamesByNameCount(name: String) =
+        queryGetResultCounts("where $CONDITION_DEFAULT; search \"$name\";")
+
+    private fun queryGetResultCounts(requestBody: String): Long {
         data class CountDTO(val count: Long)
 
         return webClient.post().uri("/games/count")
-            .bodyValue("where $CONDITION_DEFAULT;")
+            .bodyValue(requestBody)
             .retrieve()
             .bodyToMono(CountDTO::class.java)
             .block()

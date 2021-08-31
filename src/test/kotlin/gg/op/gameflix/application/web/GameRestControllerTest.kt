@@ -9,6 +9,7 @@ import gg.op.gameflix.domain.game.GameSummary
 import gg.op.gameflix.domain.game.Genre
 import gg.op.gameflix.domain.game.Platform
 import gg.op.gameflix.util.any
+import gg.op.gameflix.util.eq
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.startsWith
 import org.junit.jupiter.api.Test
@@ -21,7 +22,6 @@ import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
-import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -59,6 +59,15 @@ internal class GameRestControllerTest {
                     jsonPath("$.games[0].cover", startsWith("https://"))
                 }
             }
+    }
+
+    @Test
+    fun `when GET gamesByName expect status ok`() {
+        val nameToSearch = "Name to Search"
+        `when`(gameRepository.findGamesByName(eq(nameToSearch), any(Pageable::class.java))).thenReturn(Page.empty())
+
+        mockMvc.get("/games") { param("search", nameToSearch)}
+            .andExpect { status { isOk() } }
     }
 
     @Test

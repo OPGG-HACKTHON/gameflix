@@ -70,6 +70,11 @@ internal class IGDBIntegrationTest {
     }
 
     @Test
+    fun `when igdbClient queryGetGamesByName expect return not empty`() {
+        assertThat(igdbClient.queryGetGamesByName("League of", PageRequest.of(0, 10))).isNotEmpty
+    }
+
+    @Test
     fun `when GameRepository getAllGames return expected count games`() {
         val numExpected = 3
 

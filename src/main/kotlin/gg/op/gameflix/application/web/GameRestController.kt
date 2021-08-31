@@ -22,6 +22,13 @@ class GameRestController(private val gameRepository: GameRepository) {
             .map { GameSummaryModel(it) }
             .let { MultipleGameSummaryModel(it) }
 
+    @GetMapping(params = ["search"])
+    fun getGamesByName(search: String, pageable: Pageable): MultipleGameSummaryModel =
+        gameRepository.findGamesByName(search, pageable)
+            .content
+            .map { GameSummaryModel(it) }
+            .let { MultipleGameSummaryModel(it) }
+
     @GetMapping("/{slug}")
     fun getGameBySlug(@PathVariable slug: String): ResponseEntity<GameModel> =
         gameRepository.findGameBySlug(GameSlug(slug))

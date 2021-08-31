@@ -12,18 +12,19 @@ import java.net.URI
 
 class IGDBGameRepository(private val igdbClient: IGDBClient) : GameRepository {
 
-    override fun getAllGames(pageable: Pageable) =
-        igdbClient.queryGetGames(pageable).toGameSummaries()
+    override fun getAllGames(pageable: Pageable): Page<GameSummary> =
+        igdbClient.queryGetGames(pageable)
+            .toGameSummaries()
 
-    override fun findGameBySlug(slug: GameSlug) =
+    override fun findGameBySlug(slug: GameSlug): Game? =
         igdbClient.queryGetGameBySlug(slug)
             ?.toGame()
 
-    override fun getAllGamesByIds(ids: Collection<Long>): Collection<Game> {
-        TODO("Not yet implemented")
-    }
+    override fun findGamesByName(name: String, pageable: Pageable): Page<GameSummary> =
+        igdbClient.queryGetGamesByName(name, pageable)
+            .toGameSummaries()
 
-    override fun findAllGamesByName(name: String, pageable: Pageable) {
+    override fun getAllGamesByIds(ids: Collection<Long>): Collection<Game> {
         TODO("Not yet implemented")
     }
 
