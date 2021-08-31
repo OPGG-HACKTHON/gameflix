@@ -28,10 +28,6 @@ class IGDBGameRepository(private val igdbClient: IGDBClient) : GameRepository {
         TODO("Not yet implemented")
     }
 
-    override fun findAllGamesByName(name: String, pageable: Pageable) {
-        TODO("Not yet implemented")
-    }
-
     private fun Page<IGDBGame>.toGameSummaries() =
         let { igdbGames -> igdbGames.content.map { it.cover }
             .toCollection(HashSet())

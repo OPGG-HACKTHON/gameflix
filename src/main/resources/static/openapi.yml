@@ -267,6 +267,12 @@ components:
         minimum: 1
         format: int32
         description: Size of one page of pagination request
+    search:
+      name: search
+      in: query
+      schema:
+        type: string
+        description: Name of game to search
   schemas:
     UserModel:
       type: object
