@@ -10,7 +10,7 @@ class User(email: String) {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    var id: Long? = null
+    var id: String? = null
 
 }
 
