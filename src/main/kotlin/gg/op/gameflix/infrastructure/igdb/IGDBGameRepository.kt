@@ -1,6 +1,8 @@
 package gg.op.gameflix.infrastructure.igdb
 
 import gg.op.gameflix.domain.game.Game
+import gg.op.gameflix.domain.game.GameDetail
+import gg.op.gameflix.domain.game.GameRating
 import gg.op.gameflix.domain.game.GameRepository
 import gg.op.gameflix.domain.game.GameSlug
 import gg.op.gameflix.domain.game.GameSummary
@@ -12,6 +14,10 @@ class IGDBGameRepository(private val igdbClient: IGDBClient) : GameRepository {
 
     override fun getAllGames(pageable: Pageable) =
         igdbClient.queryGetGames(pageable).toGameSummaries()
+
+    override fun findGameBySlug(slug: GameSlug) =
+        igdbClient.queryGetGameBySlug(slug)
+            ?.toGame()
 
     override fun getAllGamesByIds(ids: Collection<Long>): Collection<Game> {
         TODO("Not yet implemented")
@@ -31,4 +37,18 @@ class IGDBGameRepository(private val igdbClient: IGDBClient) : GameRepository {
 
     private fun IGDBGame.toGameSummary(coverIdToURI: Map<Int, URI>) =
         GameSummary(GameSlug(name), coverIdToURI.getOrDefault(cover, IGDBCoverImage.NO_COVER_IMAGE.toURI()))
+
+    private fun IGDBGame.toGame() = Game(toGameSummary(), toGameDetail())
+
+    private fun IGDBGame.toGameSummary() =
+        GameSummary(GameSlug(name),
+            igdbClient.queryGetCoverImages(listOf(cover)).first().toURI())
+
+    private fun IGDBGame.toGameDetail() =
+        GameDetail(releaseAt = first_release_date, updatedAt = updated_at,
+            url = url,
+            description = summary,
+            genres = igdbClient.queryGetGenres(genres).map { it.toGenre() }.toHashSet(),
+            platforms = igdbClient.queryGetPlatforms(platforms).map { it.toPlatform() }.toHashSet(),
+            rating = GameRating(total_rating, total_rating_count))
 }

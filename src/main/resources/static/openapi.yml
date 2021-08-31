@@ -200,6 +200,30 @@ paths:
           $ref: '#/components/responses/404'
         '500':
           $ref: '#/components/responses/500'
+  /games/{slug}:
+    parameters:
+      - $ref: "#/components/parameters/slug"
+    get:
+      operationId: Get single game model
+      tags:
+        - game
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GameModel"
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
 components:
   securitySchemes:
     BearerToken:
@@ -343,7 +367,7 @@ components:
       required: true
       type: string
       description: A url-safe, unique, lower-case version of the name
-      example: league-of-legend
+      example: league-of-legends
     cover:
       required: true
       type: string

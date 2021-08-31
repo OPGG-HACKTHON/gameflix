@@ -17,7 +17,6 @@ data class GameDetail(
     val updatedAt: Int,
     val url: String,
     val description: String,
-    val companiesInvolved: Set<Company>,
     val genres: Set<Genre>,
     val platforms: Set<Platform>,
     val rating: GameRating
@@ -33,8 +32,6 @@ private fun String.toSlug() = lowercase()
     .split(" ")
     .joinToString("-")
     .replace("-+".toRegex(), "-")
-
-data class Company(val name: String)
 
 data class Genre(val name: String)
 

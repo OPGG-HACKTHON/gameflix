@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable
 
 interface GameRepository {
     fun getAllGames(pageable: Pageable): Page<GameSummary>
+    fun findGameBySlug(slug: GameSlug): Game?
     fun getAllGamesByIds(ids: Collection<Long>): Collection<Game>
     fun findAllGamesByName(name: String, pageable: Pageable)
 }
