@@ -51,37 +51,22 @@ jobs:
       - name: Push container to registry
         run: ./gradlew jib -Djib.to.tags=${{ env.BRANCH_NAME }}
 
-      - uses: actions/cache@v2
-        with:
-          key: openapi
-          path: ./src/main/resources/static/openapi.yml
-
-  deploy-ecs-fargate:
+  deploy:
     needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
+      - uses: actions/checkout@v2
       - uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
-      - uses: actions/checkout@v2
       - uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: .github/aws/task-definition.json
           cluster: cluster-gameflix-swagger
           service: service-gameflix-backend
-
-  deploy-document:
-    needs: build
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - uses: actions/cache@v2
-        with:
-          key: openapi
-          path: ./src/main/resources/static/openapi.yml
       - uses: Legion2/swagger-ui-action@v1
         with:
           output: dist
