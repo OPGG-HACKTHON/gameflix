@@ -6,7 +6,7 @@ import javax.persistence.GenerationType.IDENTITY
 import javax.persistence.Id
 
 @Entity
-class User(email: String) {
+class User(id: String) {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
