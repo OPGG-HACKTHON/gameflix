@@ -17,6 +17,7 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
     mavenCentral()
+    google()
 }
 
 dependencies {
@@ -26,6 +27,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security:2.5.4")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("com.google.api-client:google-api-client:1.32.1")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.mock-server:mockserver-netty:5.11.1")
