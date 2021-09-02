@@ -10,7 +10,7 @@ import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 
-class BearerAuthenticationProvider(
+open class BearerAuthenticationProvider(
     private val googleIdTokenVerifier: GoogleIdTokenVerifier,
     private val userRepository: UserRepository
 ): AuthenticationProvider {
@@ -33,6 +33,10 @@ class BearerAuthenticationProvider(
 class UserAuthenticationToken(
     private val user: User
 ): AbstractAuthenticationToken(mutableListOf(SimpleGrantedAuthority("USER"))) {
+
+    init {
+        isAuthenticated = true
+    }
 
     override fun getPrincipal() = user
 

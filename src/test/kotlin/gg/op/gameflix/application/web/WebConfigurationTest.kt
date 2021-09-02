@@ -1,5 +1,6 @@
 package gg.op.gameflix.application.web
 
+import gg.op.gameflix.application.web.security.SecurityTestConfiguration
 import gg.op.gameflix.domain.game.GameRepository
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -11,7 +12,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.options
 
 @WebMvcTest(GameRestController::class)
-@Import(WebConfiguration::class)
+@Import(WebConfiguration::class, SecurityTestConfiguration::class)
 internal class WebConfigurationTest {
 
     @Autowired

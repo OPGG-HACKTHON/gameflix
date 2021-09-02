@@ -15,6 +15,9 @@ management:
     health:
       enabled: true
 
+security:
+  clientId: 584215251701-mt74unj21rtoieqdu217usohe2dhkaao.apps.googleusercontent.com
+
 infrastructure:
   gog:
     baseUrl: https://www.gog.com
@@ -27,3 +30,6 @@ infrastructure:
     baseUrl: https://api.igdb.com/v4
     token: 2ukmci1s2036phlfog3e4119uvnopg
     clientId: dkm9apjokbggtp29y6gp19ch27k1eu
+spring:
+  jpa:
+    open-in-view: false

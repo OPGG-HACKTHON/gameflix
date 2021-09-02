@@ -23,6 +23,28 @@ tags:
   - name: game
     description: Game resource
 paths:
+  /users:
+    post:
+      operationId: Post new user
+      tags:
+        - user
+      responses:
+        '201':
+          description: CREATED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserModel"
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
   '/users/{user-id}':
     parameters:
       - $ref: "#/components/parameters/user-id"
@@ -240,11 +262,8 @@ components:
       name: user-id
       required: true
       in: path
-      description: ID of user field sub of [google ID token payload](https://developers.google.com/identity/protocols/oauth2/openid-connect#an-id-tokens-payload)
       schema:
-        type: number
-        format: int64
-        writeOnly: true
+        $ref: "#/components/schemas/user-id"
     slug:
       name: slug
       required: true
@@ -279,6 +298,8 @@ components:
       type: object
       readOnly: true
       properties:
+        id:
+          $ref: "#/components/schemas/user-id"
         email:
           required: true
           type: string
@@ -381,6 +402,11 @@ components:
       format: url
       description: Image URL for game
       example: https://images.igdb.com/igdb/image/upload/t_cover_big/co254s.jpg
+    user-id:
+      required: true
+      type: string
+      description: ID of user. Field `sub` of [google ID token payload](https://developers.google.com/identity/protocols/oauth2/openid-connect#an-id-tokens-payload)
+      example: 10769150350006150715113082367
   responses:
     '400':
       description: Bad Request

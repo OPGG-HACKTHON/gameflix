@@ -1,5 +1,6 @@
 package gg.op.gameflix.application.web
 
+import gg.op.gameflix.application.web.security.SecurityTestConfiguration
 import gg.op.gameflix.domain.game.Game
 import gg.op.gameflix.domain.game.GameDetail
 import gg.op.gameflix.domain.game.GameRating
@@ -19,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.context.annotation.Import
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
@@ -28,6 +30,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import java.net.URI
 
 @ExtendWith(MockitoExtension::class)
+@Import(SecurityTestConfiguration::class)
 @WebMvcTest
 internal class GameRestControllerTest {
 
