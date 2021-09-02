@@ -15,6 +15,9 @@ management:
     health:
       enabled: true
 
+security:
+  clientId: 584215251701-mt74unj21rtoieqdu217usohe2dhkaao.apps.googleusercontent.com
+
 infrastructure:
   gog:
     baseUrl: https://www.gog.com
