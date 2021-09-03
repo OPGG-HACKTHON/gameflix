@@ -47,7 +47,7 @@ data class IGDBCoverImage(
         val NO_COVER_IMAGE = IGDBCoverImage(ID_INVALID, "nocover_qhhlj6")
     }
 
-    fun toURI(): URI = URI.create("https://images.igdb.com/igdb/image/upload/t_cover_big/$image_id.jpg")
+    fun toURI() ="https://images.igdb.com/igdb/image/upload/t_cover_big/$image_id.jpg"
 }
 
 interface IGDBResource {

@@ -1,16 +1,29 @@
 package gg.op.gameflix.domain.game
 
-import java.net.URI
+import javax.persistence.Embeddable
+import javax.persistence.Embedded
+import javax.persistence.Entity
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType.IDENTITY
+import javax.persistence.Id
 
 data class Game(
     val summary: GameSummary,
     val detail: GameDetail
 )
 
-data class GameSummary(
-    val slug: GameSlug,
-    val cover: URI
-)
+@Entity
+class GameSummary(
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
+    var id: Long?,
+
+    @Embedded
+    var slug: GameSlug,
+    var cover: String,
+) {
+    constructor(slug: GameSlug, cover: String): this(null, slug, cover)
+}
 
 data class GameDetail(
     val releaseAt: Int,
@@ -22,7 +35,11 @@ data class GameDetail(
     val rating: GameRating
 )
 
-data class GameSlug(val name: String, val slug: String) {
+@Embeddable
+class GameSlug(
+    var name: String,
+    var slug: String
+) {
     constructor(name: String) : this(name, name.toSlug())
 }
 

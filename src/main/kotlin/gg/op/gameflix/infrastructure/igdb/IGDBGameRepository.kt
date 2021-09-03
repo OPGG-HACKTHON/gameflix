@@ -8,7 +8,6 @@ import gg.op.gameflix.domain.game.GameSlug
 import gg.op.gameflix.domain.game.GameSummary
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import java.net.URI
 
 class IGDBGameRepository(private val igdbClient: IGDBClient) : GameRepository {
 
@@ -40,7 +39,7 @@ class IGDBGameRepository(private val igdbClient: IGDBClient) : GameRepository {
         }
     }
 
-    private fun IGDBGame.toGameSummary(coverIdToURI: Map<Int, URI>) =
+    private fun IGDBGame.toGameSummary(coverIdToURI: Map<Int, String>) =
         GameSummary(GameSlug(name), coverIdToURI.getOrDefault(cover, IGDBCoverImage.NO_COVER_IMAGE.toURI()))
 
     private fun IGDBGame.toGame() = Game(toGameSummary(), toGameDetail())
