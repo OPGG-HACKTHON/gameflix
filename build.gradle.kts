@@ -17,14 +17,17 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
     mavenCentral()
+    google()
 }
 
 dependencies {
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-security:2.5.4")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("com.google.api-client:google-api-client:1.32.1")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.mock-server:mockserver-netty:5.11.1")
@@ -35,6 +38,7 @@ dependencies {
     implementation("com.h2database:h2:1.4.200")
     implementation("org.junit.jupiter:junit-jupiter:5.7.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.security:spring-security-test")
     testImplementation("com.squareup.okhttp3:mockwebserver:4.9.1")
     testImplementation("com.squareup.okhttp3:okhttp:4.9.1")
 }
@@ -79,7 +83,7 @@ tasks.jacocoTestCoverageVerification {
             excludes = listOf("gg.op.gameflix",
                 "gg.op.gameflix.domain.game",
                 "gg.op.gameflix.domain.user",
-                "gg.op.gameflix.infrastructure.igdb",
+                "gg.op.gameflix.application.web.security",
                 "gg.op.gameflix.infrastructure.epicgames",
                 "gg.op.gameflix.application.document"
             )
