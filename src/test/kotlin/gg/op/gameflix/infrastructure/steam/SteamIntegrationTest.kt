@@ -3,6 +3,7 @@ package gg.op.gameflix.infrastructure.steam
 import gg.op.gameflix.domain.game.GameSlug
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
@@ -12,6 +13,7 @@ import org.springframework.boot.test.context.ConfigDataApplicationContextInitial
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
+@Disabled
 @TestInstance(PER_CLASS)
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(classes = [SteamConfiguration::class], initializers = [ConfigDataApplicationContextInitializer::class])

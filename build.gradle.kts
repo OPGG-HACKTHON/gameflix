@@ -89,6 +89,7 @@ tasks.jacocoTestCoverageVerification {
                 "gg.op.gameflix.domain.user",
                 "gg.op.gameflix.application.web.security",
                 "gg.op.gameflix.infrastructure.epicgames",
+                "gg.op.gameflix.infrastructure.steam",
                 "gg.op.gameflix.application.document"
             )
         }
