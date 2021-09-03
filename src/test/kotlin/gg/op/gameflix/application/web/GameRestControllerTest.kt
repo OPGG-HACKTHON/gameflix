@@ -1,5 +1,6 @@
 package gg.op.gameflix.application.web
 
+import com.ninjasquad.springmockk.MockkBean
 import gg.op.gameflix.application.web.security.SecurityTestConfiguration
 import gg.op.gameflix.domain.game.Game
 import gg.op.gameflix.domain.game.GameDetail
@@ -9,27 +10,23 @@ import gg.op.gameflix.domain.game.GameSlug
 import gg.op.gameflix.domain.game.GameSummary
 import gg.op.gameflix.domain.game.Genre
 import gg.op.gameflix.domain.game.Platform
-import gg.op.gameflix.util.any
-import gg.op.gameflix.util.eq
+import io.mockk.every
+import io.mockk.junit5.MockKExtension
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.startsWith
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.Mockito.`when`
-import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.context.annotation.Import
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
-import org.springframework.data.domain.Pageable
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import java.net.URI
 
-@ExtendWith(MockitoExtension::class)
+@ExtendWith(MockKExtension::class)
 @Import(SecurityTestConfiguration::class)
 @WebMvcTest
 internal class GameRestControllerTest {
@@ -37,12 +34,12 @@ internal class GameRestControllerTest {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
-    @MockBean
+    @MockkBean
     private lateinit var gameRepository: GameRepository
 
     @Test
     fun `when GET games expect status ok`() {
-        `when`(gameRepository.getAllGames(any(Pageable::class.java))).thenReturn(Page.empty())
+        every { gameRepository.getAllGames(any()) } returns Page.empty()
 
         mockMvc.get("/games")
             .andExpect { status { isOk() } }
@@ -50,8 +47,7 @@ internal class GameRestControllerTest {
 
     @Test
     fun `when GET games expect valid GameSummaryModel`() {
-        `when`(gameRepository.getAllGames(any(Pageable::class.java)))
-            .thenReturn(PageImpl(listOf(GameSummary(GameSlug("Wow"), URI.create("https://google.com")))))
+        every { gameRepository.getAllGames(any()) } returns PageImpl(listOf(GameSummary(GameSlug("Wow"), URI.create("https://google.com"))))
 
         mockMvc.get("/games")
             .andExpect {
@@ -67,7 +63,7 @@ internal class GameRestControllerTest {
     @Test
     fun `when GET gamesByName expect status ok`() {
         val nameToSearch = "Name to Search"
-        `when`(gameRepository.findGamesByName(eq(nameToSearch), any(Pageable::class.java))).thenReturn(Page.empty())
+        every { gameRepository.findGamesByName(nameToSearch, any()) } returns Page.empty()
 
         mockMvc.get("/games") { param("search", nameToSearch)}
             .andExpect { status { isOk() } }
@@ -75,8 +71,8 @@ internal class GameRestControllerTest {
 
     @Test
     fun `when GET gamesBySlug with not exists slug expect return NotFound status`() {
-        val slugNotExists = GameSlug("Not exists game slug")
-        `when`(gameRepository.findGameBySlug(slugNotExists)).thenReturn(null)
+        val slugNotExists = GameSlug("not-exists-slug")
+        every { gameRepository.findGameBySlug(slugNotExists) } returns null
 
         mockMvc.get("/games/${slugNotExists.slug}")
             .andExpect { status { isNotFound() } }
@@ -84,7 +80,7 @@ internal class GameRestControllerTest {
 
     @Test
     fun `when GET gamesBySlug with exists slug expect return ok status`() {
-        `when`(gameRepository.findGameBySlug(gameSlugValid)).thenReturn(gameValid)
+        every { gameRepository.findGameBySlug(gameSlugValid) } returns gameValid
 
         mockMvc.get("/games/${gameSlugValid.slug}")
             .andExpect { status { isOk() } }

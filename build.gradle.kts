@@ -37,10 +37,14 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-ui:1.5.9")
     implementation("com.h2database:h2:1.4.200")
     implementation("org.junit.jupiter:junit-jupiter:5.7.0")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude(module = "mockito-core")
+    }
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("com.squareup.okhttp3:mockwebserver:4.9.1")
     testImplementation("com.squareup.okhttp3:okhttp:4.9.1")
+    testImplementation("io.mockk:mockk:1.12.0")
+    testImplementation("com.ninja-squad:springmockk:3.0.1")
 }
 
 springBoot {

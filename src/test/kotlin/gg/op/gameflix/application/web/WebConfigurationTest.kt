@@ -1,11 +1,11 @@
 package gg.op.gameflix.application.web
 
+import com.ninjasquad.springmockk.MockkBean
 import gg.op.gameflix.application.web.security.SecurityTestConfiguration
 import gg.op.gameflix.domain.game.GameRepository
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.context.annotation.Import
 import org.springframework.http.HttpMethod
 import org.springframework.test.web.servlet.MockMvc
@@ -18,7 +18,7 @@ internal class WebConfigurationTest {
     @Autowired
     private lateinit var mockMvc: MockMvc
 
-    @MockBean
+    @MockkBean
     private lateinit var gameRepository: GameRepository
 
     @Test

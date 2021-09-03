@@ -1,28 +1,23 @@
 package gg.op.gameflix.infrastructure.blizzard
 
 import gg.op.gameflix.domain.game.GameSlug
-import org.junit.jupiter.api.BeforeAll
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.Mock
-import org.mockito.Mockito.`when`
-import org.mockito.MockitoAnnotations
-import org.mockito.junit.jupiter.MockitoExtension
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer
-import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.junit.jupiter.SpringExtension
 
-@ExtendWith(MockitoExtension::class)
+@TestInstance(PER_CLASS)
+@ExtendWith(MockKExtension::class)
 internal class BlizzardServiceTest {;
 
     private var configurationProperties: BlizzardConfigurationProperties = BlizzardConfigurationProperties("http://localhost:8080")
 
-    @Mock
+    @MockK
     private lateinit var blizzardClient: BlizzardClient
     private lateinit var blizzardService: BlizzardService
 
@@ -30,8 +25,6 @@ internal class BlizzardServiceTest {;
 
     @BeforeEach
     fun initializeInstance() {
-        MockitoAnnotations.initMocks(this)
-        //blizzardClient = BlizzardWebClient(configurationProperties)
         blizzardService = BlizzardService(blizzardClient)
     }
 
@@ -43,27 +36,8 @@ internal class BlizzardServiceTest {;
     @Test
     fun `when blizzardClient getAllGameSlugsByAuthentication expect not empty`() {
         val authentication = BlizzardAuthentication(accessToken)
-        `when`(blizzardClient.queryGetGames(authentication)).thenReturn(
-            mutableListOf(
-                GameSlug("wow")
-            )
-        )
-        assertThat(
-            blizzardClient.queryGetGames(authentication)
-        ).contains(GameSlug("wow"))
-    }
+        every { blizzardClient.queryGetGames(authentication) } returns listOf(GameSlug("wow"))
 
-    @Test
-    fun `when blizzardService getAllGameSlugsByAuthentication expect not empty`() {
-        val authentication = BlizzardAuthentication(accessToken)
-        `when`(blizzardClient.queryGetGames(authentication)).thenReturn(
-            mutableListOf(
-                GameSlug("wow")
-            )
-        )
-        println(blizzardClient.queryGetGames(authentication))
-        assertThat(
-            blizzardService.getAllGameSlugsByAuthentication(authentication)
-        ).contains(GameSlug("wow"))
+        assertThat(blizzardClient.queryGetGames(authentication)).contains(GameSlug("wow"))
     }
 }

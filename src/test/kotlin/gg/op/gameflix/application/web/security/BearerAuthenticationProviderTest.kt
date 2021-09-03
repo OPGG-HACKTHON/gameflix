@@ -2,25 +2,25 @@ package gg.op.gameflix.application.web.security
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
 import gg.op.gameflix.domain.user.UserRepository
+import io.mockk.every
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.BDDMockito.`when`
-import org.mockito.Mock
-import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.Authentication
 
-@ExtendWith(MockitoExtension::class)
+@ExtendWith(MockKExtension::class)
 internal class BearerAuthenticationProviderTest {
 
     private lateinit var bearerAuthenticationProvider: BearerAuthenticationProvider
 
-    @Mock
+    @MockK
     private lateinit var googleIdTokenVerifier: GoogleIdTokenVerifier
-    @Mock
+    @MockK
     private lateinit var userRepository: UserRepository
 
     @BeforeEach
@@ -34,7 +34,7 @@ internal class BearerAuthenticationProviderTest {
     }
 
     @Test
-    fun `when authentication invalid expect BadCredentialException`(@Mock authentication: Authentication) {
+    fun `when authentication invalid expect BadCredentialException`(@MockK authentication: Authentication) {
         whenAuthenticationTokenInvalid(authentication)
 
         assertThatThrownBy { bearerAuthenticationProvider.authenticate(authentication) }
@@ -43,7 +43,7 @@ internal class BearerAuthenticationProviderTest {
     }
 
     private fun whenAuthenticationTokenInvalid(authentication: Authentication) {
-        `when`(authentication.principal).thenReturn("INVALID_TOKEN")
-        `when`(googleIdTokenVerifier.verify("INVALID_TOKEN")).thenReturn(null)
+        every { authentication.principal } answers {"INVALID_TOKEN"}
+        every { googleIdTokenVerifier.verify("INVALID_TOKEN") } returns null
     }
 }
