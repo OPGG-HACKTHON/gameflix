@@ -23,6 +23,24 @@ class GameSummary(
     var cover: String,
 ) {
     constructor(slug: GameSlug, cover: String): this(null, slug, cover)
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as GameSummary
+
+        if (slug != other.slug) return false
+        if (cover != other.cover) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = slug.hashCode()
+        result = 31 * result + cover.hashCode()
+        return result
+    }
 }
 
 data class GameDetail(
@@ -41,6 +59,21 @@ class GameSlug(
     var slug: String
 ) {
     constructor(name: String) : this(name, name.toSlug())
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as GameSlug
+
+        if (slug != other.slug) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return slug.hashCode()
+    }
 }
 
 private fun String.toSlug() = lowercase()
