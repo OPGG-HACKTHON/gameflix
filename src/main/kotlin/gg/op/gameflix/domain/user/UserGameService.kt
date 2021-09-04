@@ -11,7 +11,8 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class UserGameService(
     private val summaryService: GameSummaryService,
-    private val gameRepository: GameRepository
+    private val gameRepository: GameRepository,
+    private val userRepository: UserRepository
 ) {
 
     @Transactional
@@ -21,7 +22,8 @@ class UserGameService(
             return gameSummaryFound
         }
         return summaryService.findGameSummaryBySlug(slug)
-            ?.also { user.addGame(it) }
+            ?.also { user.addGame(it)
+                userRepository.save(user) }
             ?: throw NoSuchElementException("Given game ${slug.name} not found")
     }
 
@@ -29,4 +31,12 @@ class UserGameService(
     fun findGameInUser(user: User, slug: GameSlug): Game? =
         user.games.find { gameSummary -> gameSummary.slug == slug }
             ?.let { gameSummary -> gameRepository.findGameBySlug(gameSummary.slug) }
+
+    @Transactional
+    fun deleteGameInUser(user: User, slug: GameSlug) {
+        if (user.games.removeIf { gameSummary -> gameSummary.slug == slug}) {
+            userRepository.save(user)
+        }
+        throw NoSuchElementException("Given game ${slug.name} not found")
+    }
 }
