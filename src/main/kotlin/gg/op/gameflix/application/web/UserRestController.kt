@@ -6,6 +6,7 @@ import gg.op.gameflix.domain.user.UserGameService
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -18,18 +19,35 @@ import org.springframework.web.bind.annotation.RestController
 class UserRestController(
     private val userGameService: UserGameService
 ) {
+    companion object {
+        private const val ID_EQUALS_TO_USER_ID = "#id == #user.id"
+    }
+
     @ResponseStatus(CREATED)
     @PostMapping
     fun postUsers(@AuthenticationPrincipal user: User): UserModel =
         UserModel(user)
 
-    @PreAuthorize("#id == #user.id")
+    @PreAuthorize(ID_EQUALS_TO_USER_ID)
     @ResponseStatus(CREATED)
     @PostMapping("/{id}/games")
     fun postUserGames(@PathVariable id: String, @AuthenticationPrincipal user: User,
         @RequestBody requestDTO: GamePostRequestDTO): GameSummaryModel =
         userGameService.addGameToUser(user, GameSlug(requestDTO.slug))
             .let { GameSummaryModel(it) }
+
+    @PreAuthorize(ID_EQUALS_TO_USER_ID)
+    @GetMapping("/{id}/games")
+    fun getUserGames(@PathVariable id: String, @AuthenticationPrincipal user: User): MultipleGameSummaryModel =
+        user.games.map { gameSummary -> GameSummaryModel(gameSummary) }
+            .let { MultipleGameSummaryModel(it) }
+
+    @PreAuthorize(ID_EQUALS_TO_USER_ID)
+    @GetMapping("/{id}/games/{slug}")
+    fun getUserGamesBySlug(@PathVariable id: String, @AuthenticationPrincipal user: User, @PathVariable slug: String): GameModel =
+        userGameService.findGameInUser(user, GameSlug(slug))
+            ?.let { GameModel(it) }
+            ?: throw NoSuchElementException("No such game($slug) exists in User")
 }
 
 data class UserModel(

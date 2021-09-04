@@ -2,6 +2,8 @@ package gg.op.gameflix.application.web.security
 
 import gg.op.gameflix.application.web.security.WithMockGoogleUserSecurityContextFactory.Companion.MOCK_USER_EMAIL_DEFAULT
 import gg.op.gameflix.application.web.security.WithMockGoogleUserSecurityContextFactory.Companion.MOCK_USER_ID_DEFAULT
+import gg.op.gameflix.domain.game.GameSlug
+import gg.op.gameflix.domain.game.GameSummary
 import gg.op.gameflix.domain.user.User
 import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextHolder
@@ -14,7 +16,7 @@ import kotlin.annotation.AnnotationRetention.RUNTIME
 annotation class WithMockGoogleUser(
 
     val sub: String = MOCK_USER_ID_DEFAULT,
-    val email: String = MOCK_USER_EMAIL_DEFAULT
+    val email: String = MOCK_USER_EMAIL_DEFAULT,
 )
 
 class WithMockGoogleUserSecurityContextFactory: WithSecurityContextFactory<WithMockGoogleUser> {
@@ -22,10 +24,11 @@ class WithMockGoogleUserSecurityContextFactory: WithSecurityContextFactory<WithM
     companion object {
         const val MOCK_USER_ID_DEFAULT = "user-id-default"
         const val MOCK_USER_EMAIL_DEFAULT = "user@email.com"
-        val MOCK_USER_DEFAULT = User(MOCK_USER_ID_DEFAULT, MOCK_USER_EMAIL_DEFAULT)
+        val MOCK_USER_GAMES_DEFAULT = mutableSetOf(GameSummary(GameSlug("League of Legends"), "cover"))
+        val MOCK_USER_DEFAULT = User(MOCK_USER_ID_DEFAULT, MOCK_USER_EMAIL_DEFAULT, MOCK_USER_GAMES_DEFAULT)
     }
 
     override fun createSecurityContext(annotation: WithMockGoogleUser): SecurityContext
         = SecurityContextHolder.createEmptyContext()
-            .apply { authentication = UserAuthenticationToken(User(annotation.sub, annotation.email)) }
+            .apply { authentication = UserAuthenticationToken(MOCK_USER_DEFAULT) }
 }

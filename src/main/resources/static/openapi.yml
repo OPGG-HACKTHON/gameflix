@@ -5,7 +5,7 @@ info:
   contact:
     name: API Support
     email: raeperd117@gmail.com
-  version: 0.0.5
+  version: 0.0.6
 servers:
   - url: 'http://load-balancer-gameflix-backend-754529149.ap-northeast-2.elb.amazonaws.com'
     description: AWS Load balancer for backend fargate service
@@ -311,7 +311,7 @@ components:
           type: array
           description: Games of user
           items:
-            $ref: "#/components/schemas/GameModel"
+            $ref: "#/components/schemas/GameSummaryModel"
     GameSummaryModel:
       type: object
       readOnly: true
@@ -338,6 +338,11 @@ components:
           type: string
           description: Name of this game
           example: League of Legend
+        description:
+          required: true
+          type: string
+          description: Description of game
+          example: League of Legends is a fast-paced, competitive online game that blends the speed and intensity of an RTS with RPG elements. Two teams of powerful champions, each with a unique design and playstyle, battle head-to-head across multiple battlefields and game modes. With an ever-expanding roster of champions, frequent updates and a thriving tournament scene, League of Legends offers endless replayability for players of every skill level.
         release_at:
           required: true
           type: number
