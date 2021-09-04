@@ -34,9 +34,10 @@ class UserGameService(
 
     @Transactional
     fun deleteGameInUser(user: User, slug: GameSlug) {
-        if (user.games.removeIf { gameSummary -> gameSummary.slug == slug}) {
-            userRepository.save(user)
+        val isGameRemoved = user.games.removeIf { gameSummary -> gameSummary.slug == slug}
+        if (!isGameRemoved) {
+            throw NoSuchElementException("Given game ${slug.name} not found")
         }
-        throw NoSuchElementException("Given game ${slug.name} not found")
+        userRepository.save(user)
     }
 }

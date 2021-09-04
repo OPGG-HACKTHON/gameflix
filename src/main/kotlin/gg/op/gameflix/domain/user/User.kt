@@ -2,6 +2,7 @@ package gg.op.gameflix.domain.user
 
 import gg.op.gameflix.domain.game.GameSlug
 import gg.op.gameflix.domain.game.GameSummary
+import javax.persistence.CascadeType.MERGE
 import javax.persistence.CascadeType.PERSIST
 import javax.persistence.Entity
 import javax.persistence.FetchType.EAGER
@@ -16,7 +17,7 @@ class User(
     var email: String,
 
     @JoinTable
-    @ManyToMany(fetch = EAGER, cascade = [PERSIST])
+    @ManyToMany(fetch = EAGER, cascade = [PERSIST, MERGE])
     var games: MutableSet<GameSummary> = HashSet()
 ) {
     fun addGame(gameSummary: GameSummary) = games.add(gameSummary)
