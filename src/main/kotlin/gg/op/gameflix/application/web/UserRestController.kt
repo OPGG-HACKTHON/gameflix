@@ -31,6 +31,11 @@ class UserRestController(
         UserModel(user)
 
     @PreAuthorize(ID_EQUALS_TO_USER_ID)
+    @GetMapping("/{id}")
+    fun getUsersById(@PathVariable id: String, @AuthenticationPrincipal user: User): UserModel =
+        UserModel(user)
+
+    @PreAuthorize(ID_EQUALS_TO_USER_ID)
     @ResponseStatus(CREATED)
     @PostMapping("/{id}/games")
     fun postUserGames(@PathVariable id: String, @AuthenticationPrincipal user: User,

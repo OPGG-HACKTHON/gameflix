@@ -1,10 +1,10 @@
 package gg.op.gameflix.application.web.security
 
-import gg.op.gameflix.application.web.security.WithMockGoogleUserSecurityContextFactory.Companion.MOCK_USER_EMAIL_DEFAULT
-import gg.op.gameflix.application.web.security.WithMockGoogleUserSecurityContextFactory.Companion.MOCK_USER_ID_DEFAULT
-import gg.op.gameflix.domain.game.GameSlug
-import gg.op.gameflix.domain.game.GameSummary
+import gg.op.gameflix.application.web.security.SecurityTestConfiguration.Companion.MOCK_USER_EMAIL
+import gg.op.gameflix.application.web.security.SecurityTestConfiguration.Companion.MOCK_USER_ID
 import gg.op.gameflix.domain.user.User
+import gg.op.gameflix.domain.user.UserRepository
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.test.context.support.WithSecurityContext
@@ -14,21 +14,18 @@ import kotlin.annotation.AnnotationRetention.RUNTIME
 @Retention(RUNTIME)
 @WithSecurityContext(factory = WithMockGoogleUserSecurityContextFactory::class)
 annotation class WithMockGoogleUser(
-
-    val sub: String = MOCK_USER_ID_DEFAULT,
-    val email: String = MOCK_USER_EMAIL_DEFAULT,
+    val sub: String = MOCK_USER_ID,
+    val email: String = MOCK_USER_EMAIL,
 )
 
-class WithMockGoogleUserSecurityContextFactory: WithSecurityContextFactory<WithMockGoogleUser> {
-
-    companion object {
-        const val MOCK_USER_ID_DEFAULT = "user-id-default"
-        const val MOCK_USER_EMAIL_DEFAULT = "user@email.com"
-        val MOCK_USER_GAMES_DEFAULT = mutableSetOf(GameSummary(GameSlug("League of Legends"), "cover"))
-        val MOCK_USER_DEFAULT = User(MOCK_USER_ID_DEFAULT, MOCK_USER_EMAIL_DEFAULT, MOCK_USER_GAMES_DEFAULT)
-    }
+class WithMockGoogleUserSecurityContextFactory(
+    private val userRepository: UserRepository) : WithSecurityContextFactory<WithMockGoogleUser> {
 
     override fun createSecurityContext(annotation: WithMockGoogleUser): SecurityContext
         = SecurityContextHolder.createEmptyContext()
-            .apply { authentication = UserAuthenticationToken(MOCK_USER_DEFAULT) }
+            .apply {
+                userRepository.findByIdOrNull(annotation.sub)
+                    ?.let { authentication = UserAuthenticationToken(it) }
+                    ?: let { authentication = UserAuthenticationToken(User(annotation.sub, annotation.email)) }
+            }
 }

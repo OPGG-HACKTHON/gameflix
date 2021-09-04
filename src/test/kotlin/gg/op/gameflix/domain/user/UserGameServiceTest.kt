@@ -129,7 +129,7 @@ internal class UserGameServiceTest {
     @Test
     fun `when deleteGameInUser with not exists expect NoSuchElementException`(
         @MockK user: User, @RelaxedMockK slugToFind: GameSlug) {
-        every { user.games } answers { mutableSetOf(GameSummary(slugToFind, "")) }
+        every { user.games } answers { mutableSetOf() }
         every { userRepository.save(user) } returns user
 
         assertThatThrownBy { userGameService.deleteGameInUser(user, slugToFind) }
