@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id"
+          content="584215251701-mt74unj21rtoieqdu217usohe2dhkaao.apps.googleusercontent.com">
+
+    <title>Google Open ID Connect test</title>
+</head>
+<body>
+    <script>
+        function onSignIn(googleUser) {
+            const profile = googleUser.getBasicProfile();
+            console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+            console.log('Name: ' + profile.getName());
+            console.log('Image URL: ' + profile.getImageUrl());
+            console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+            const id_token = googleUser.getAuthResponse().id_token;
+            console.log('ID token: ' + id_token)
+        }
+    </script>
+    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+
+    <h1> Reference </h1>
+    <ul>
+        <li><a href="https://developers.google.com/identity/sign-in/web/sign-in">Integrating Google Sign-In into your web app </a></li>
+        <li><a href="https://developers.google.com/identity/sign-in/web/people">Getting profile information </a></li>
+        <li><a href="https://developers.google.com/identity/sign-in/web/backend-auth">Authenticate with a backend server</a></li>
+    </ul>
+</body>
+</html>

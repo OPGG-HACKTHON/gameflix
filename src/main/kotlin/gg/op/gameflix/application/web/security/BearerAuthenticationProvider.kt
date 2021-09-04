@@ -1,5 +1,6 @@
 package gg.op.gameflix.application.web.security
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier
 import gg.op.gameflix.domain.user.User
 import gg.op.gameflix.domain.user.UserRepository
@@ -17,7 +18,7 @@ open class BearerAuthenticationProvider(
 
     override fun authenticate(authentication: Authentication): Authentication =
         googleIdTokenVerifier.verifyAuthentication(authentication)
-            .run { userRepository.findByIdOrException(payload.subject) }
+            .run { userRepository.findByIdOrSave(payload) }
             .let { user -> UserAuthenticationToken(user) }
 
     override fun supports(authentication: Class<*>) =
@@ -26,8 +27,8 @@ open class BearerAuthenticationProvider(
     private fun GoogleIdTokenVerifier.verifyAuthentication(authentication: Authentication) =
         verify(authentication.principal.toString())?: throw BadCredentialsException("Invalid Google ID Token")
 
-    private fun UserRepository.findByIdOrException(id: String) =
-        findByIdOrNull(id) ?: throw BadCredentialsException("User not exists")
+    private fun UserRepository.findByIdOrSave(payload: GoogleIdToken.Payload) =
+        findByIdOrNull(payload.subject) ?: save(User(payload.subject, payload.email))
 }
 
 class UserAuthenticationToken(
