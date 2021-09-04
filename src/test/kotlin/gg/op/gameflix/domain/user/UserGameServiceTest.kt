@@ -5,13 +5,16 @@ import gg.op.gameflix.domain.game.GameRepository
 import gg.op.gameflix.domain.game.GameSlug
 import gg.op.gameflix.domain.game.GameSummary
 import gg.op.gameflix.domain.game.GameSummaryService
+import io.mockk.Called
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.verify
+import io.mockk.verifyOrder
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 
@@ -27,6 +30,9 @@ internal class UserGameServiceTest {
     @RelaxedMockK
     private lateinit var gameRepository: GameRepository
 
+    @RelaxedMockK
+    private lateinit var userRepository: UserRepository
+
     @Test
     fun `when gameSummary found in user expect return found summary`(
         @MockK user: User, @MockK slug: GameSlug, @MockK summary: GameSummary) {
@@ -37,23 +43,38 @@ internal class UserGameServiceTest {
 
     @Test
     fun `when gameSummary not found in user expect gameSummaryService to find GameSummary`(
-        @RelaxedMockK user: User, @MockK slug: GameSlug) {
+        @RelaxedMockK user: User, @RelaxedMockK slug: GameSlug) {
         every { user.findGameBySlug(slug) } returns null
+        every { summaryService.findGameSummaryBySlug(slug) } returns null
 
-        userGameService.addGameToUser(user, slug)
+        runCatching { userGameService.addGameToUser(user, slug) }
 
         verify { summaryService.findGameSummaryBySlug(slug) }
     }
 
     @Test
-    fun `when gameSummary found in gameSummaryService expect user to addGame`(
+    fun `when gameSummary not found in user expect NoSuchElementException`(
+        @RelaxedMockK user: User, @RelaxedMockK slug: GameSlug) {
+        every { user.findGameBySlug(slug) } returns null
+        every { summaryService.findGameSummaryBySlug(slug) } returns null
+
+        assertThatThrownBy { userGameService.addGameToUser(user, slug) }
+            .isInstanceOf(NoSuchElementException::class.java)
+    }
+
+    @Test
+    fun `when gameSummary found in gameSummaryService expect user to addGame and saved`(
         @RelaxedMockK user: User, @MockK slug: GameSlug, @MockK summary: GameSummary) {
         every { user.findGameBySlug(slug) } returns null
         every { summaryService.findGameSummaryBySlug(slug) } returns summary
+        every { userRepository.save(user) } returns user
 
         userGameService.addGameToUser(user, slug)
 
-        verify { user.addGame(summary) }
+        verifyOrder {
+            user.addGame(summary)
+            userRepository.save(user)
+        }
     }
 
     @Test
@@ -61,6 +82,7 @@ internal class UserGameServiceTest {
         @RelaxedMockK user: User, @MockK slug: GameSlug, @MockK summary: GameSummary) {
         every { user.findGameBySlug(slug) } returns null
         every { summaryService.findGameSummaryBySlug(slug) } returns summary
+        every { userRepository.save(user) } returns user
 
         assertThat(userGameService.addGameToUser(user, slug)).isEqualTo(summary)
     }
@@ -92,5 +114,36 @@ internal class UserGameServiceTest {
         every { gameRepository.findGameBySlug(slugToFind) } returns gameFound
 
         assertThat(userGameService.findGameInUser(user, slugToFind)).isEqualTo(gameFound)
+    }
+
+    @Test
+    fun `when deleteGameInUser with not exists expect userRepository not save user`(
+        @MockK user: User, @MockK slugToFind: GameSlug) {
+        every { user.games } answers { mutableSetOf() }
+
+        runCatching { userGameService.deleteGameInUser(user, slugToFind) }
+
+        verify { userRepository.save(user) wasNot Called }
+    }
+
+    @Test
+    fun `when deleteGameInUser with not exists expect NoSuchElementException`(
+        @MockK user: User, @RelaxedMockK slugToFind: GameSlug) {
+        every { user.games } answers { mutableSetOf(GameSummary(slugToFind, "")) }
+        every { userRepository.save(user) } returns user
+
+        assertThatThrownBy { userGameService.deleteGameInUser(user, slugToFind) }
+            .isInstanceOf(NoSuchElementException::class.java)
+    }
+
+    @Test
+    fun `when deleteGameInUser with exists slug expect userRepository save user`(
+        @MockK user: User, @RelaxedMockK slugToFind: GameSlug) {
+        every { user.games } answers { mutableSetOf(GameSummary(slugToFind, "cover")) }
+        every { userRepository.save(user) } returns user
+
+        runCatching { userGameService.deleteGameInUser(user, slugToFind) }
+
+        verify { userRepository.save(user) }
     }
 }

@@ -4,8 +4,10 @@ import gg.op.gameflix.domain.game.GameSlug
 import gg.op.gameflix.domain.user.User
 import gg.op.gameflix.domain.user.UserGameService
 import org.springframework.http.HttpStatus.CREATED
+import org.springframework.http.HttpStatus.NO_CONTENT
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -48,7 +50,14 @@ class UserRestController(
         userGameService.findGameInUser(user, GameSlug(slug))
             ?.let { GameModel(it) }
             ?: throw NoSuchElementException("No such game($slug) exists in User")
+
+    @PreAuthorize(ID_EQUALS_TO_USER_ID)
+    @ResponseStatus(NO_CONTENT)
+    @DeleteMapping("/{id}/games/{slug}")
+    fun deleteUserGamesBySlug(@PathVariable id: String, @AuthenticationPrincipal user: User, @PathVariable slug: String): Unit =
+        userGameService.deleteGameInUser(user, GameSlug(slug))
 }
+
 
 data class UserModel(
     val id: String,

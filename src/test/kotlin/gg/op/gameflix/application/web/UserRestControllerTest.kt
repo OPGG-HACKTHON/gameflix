@@ -9,12 +9,13 @@ import gg.op.gameflix.application.web.security.WithMockGoogleUserSecurityContext
 import gg.op.gameflix.domain.game.Game
 import gg.op.gameflix.domain.game.GameDetail
 import gg.op.gameflix.domain.game.GameRating
-import gg.op.gameflix.domain.game.GameRepository
 import gg.op.gameflix.domain.game.GameSlug
 import gg.op.gameflix.domain.game.GameSummary
 import gg.op.gameflix.domain.user.UserGameService
+import io.mockk.Runs
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
+import io.mockk.just
 import io.mockk.verify
 import org.hamcrest.Matchers.closeTo
 import org.hamcrest.Matchers.equalTo
@@ -28,6 +29,7 @@ import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.ResultMatcher
 import org.springframework.test.web.servlet.ResultMatcher.matchAll
+import org.springframework.test.web.servlet.delete
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
@@ -149,6 +151,24 @@ internal class UserRestControllerTest {
             .andExpect {
                 status { isOk() }
                 match(gameModelWith(mockUserGame())) }
+    }
+
+    @WithMockGoogleUser
+    @Test
+    fun `when DELETE users-{id}-games-{slug} with not exists slug expect status notFound`() {
+        every { userGameService.deleteGameInUser(MOCK_USER_DEFAULT, MOCK_USER_GAMES_DEFAULT.first().slug) } throws NoSuchElementException()
+
+        mockMvc.delete("/users/$MOCK_USER_ID_DEFAULT/games/${MOCK_USER_GAMES_DEFAULT.first().slug.slug}")
+            .andExpect { status { isNotFound() } }
+    }
+
+    @WithMockGoogleUser
+    @Test
+    fun `when DELETE users-{id}-games-{slug} with exists slug expect status noContent`() {
+        every { userGameService.deleteGameInUser(MOCK_USER_DEFAULT, MOCK_USER_GAMES_DEFAULT.first().slug) } just Runs
+
+        mockMvc.delete("/users/$MOCK_USER_ID_DEFAULT/games/${MOCK_USER_GAMES_DEFAULT.first().slug.slug}")
+            .andExpect { status { isNoContent() } }
     }
 
     private fun multipleGameSummaryModelWith(summaries: Set<GameSummary>): ResultMatcher =
