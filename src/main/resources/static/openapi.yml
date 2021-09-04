@@ -5,7 +5,7 @@ info:
   contact:
     name: API Support
     email: raeperd117@gmail.com
-  version: 0.0.1
+  version: 0.0.5
 servers:
   - url: 'http://load-balancer-gameflix-backend-754529149.ap-northeast-2.elb.amazonaws.com'
     description: AWS Load balancer for backend fargate service
@@ -137,7 +137,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GameModel"
+                $ref: "#/components/schemas/GameSummaryModel"
         '400':
           $ref: '#/components/responses/400'
         '401':
