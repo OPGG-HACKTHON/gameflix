@@ -6,6 +6,7 @@ import gg.op.gameflix.domain.user.UserGameService
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -30,6 +31,12 @@ class UserRestController(
         @RequestBody requestDTO: GamePostRequestDTO): GameSummaryModel =
         userGameService.addGameToUser(user, GameSlug(requestDTO.slug))
             .let { GameSummaryModel(it) }
+
+    @PreAuthorize("#id == #user.id")
+    @GetMapping("/{id}/games")
+    fun getUserGames(@PathVariable id: String, @AuthenticationPrincipal user: User): MultipleGameSummaryModel =
+        user.games.map { gameSummary -> GameSummaryModel(gameSummary) }
+            .let { MultipleGameSummaryModel(it) }
 }
 
 data class UserModel(

@@ -311,7 +311,7 @@ components:
           type: array
           description: Games of user
           items:
-            $ref: "#/components/schemas/GameModel"
+            $ref: "#/components/schemas/GameSummaryModel"
     GameSummaryModel:
       type: object
       readOnly: true
