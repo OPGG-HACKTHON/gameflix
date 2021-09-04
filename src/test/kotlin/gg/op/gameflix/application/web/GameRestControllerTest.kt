@@ -24,7 +24,6 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
-import java.net.URI
 
 @ExtendWith(MockKExtension::class)
 @Import(SecurityTestConfiguration::class)
@@ -47,7 +46,7 @@ internal class GameRestControllerTest {
 
     @Test
     fun `when GET games expect valid GameSummaryModel`() {
-        every { gameRepository.getAllGames(any()) } returns PageImpl(listOf(GameSummary(GameSlug("Wow"), URI.create("https://google.com"))))
+        every { gameRepository.getAllGames(any()) } returns PageImpl(listOf(GameSummary(GameSlug("Wow"), "https://google.com")))
 
         mockMvc.get("/games")
             .andExpect {
@@ -89,7 +88,7 @@ internal class GameRestControllerTest {
     private val gameSlugValid = GameSlug("game-slug-valid")
 
     private val gameValid = Game(
-        GameSummary(gameSlugValid, URI.create("https://google.com")),
+        GameSummary(gameSlugValid, "https://google.com"),
         GameDetail(releaseAt = 1010, updatedAt = 1020, url = "https://google.com", description = "game description",
             genres = setOf(Genre("mba")),
             platforms = setOf(Platform("win"), Platform("mac")),
