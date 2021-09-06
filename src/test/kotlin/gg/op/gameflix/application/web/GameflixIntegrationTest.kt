@@ -47,6 +47,15 @@ internal class GameflixIntegrationTest {
     }
 
     @Test
+    fun `when GET actuator health expect status ok`() {
+        mockMvc.get("/actuator/health")
+            .andExpect {
+                status { isOk() }
+                content { json("{\"status\":\"UP\"}") }
+            }
+    }
+
+    @Test
     fun `when POST users without authentication expect status unauthorized`() {
         mockMvc.post("/users")
             .andExpect { status { isUnauthorized() } }
