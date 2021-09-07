@@ -3,6 +3,7 @@ package gg.op.gameflix.application.web
 import gg.op.gameflix.domain.game.GameSlug
 import gg.op.gameflix.domain.user.User
 import gg.op.gameflix.domain.user.UserGameService
+import gg.op.gameflix.domain.user.UserRepository
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.HttpStatus.NO_CONTENT
 import org.springframework.security.access.prepost.PreAuthorize
@@ -19,7 +20,9 @@ import org.springframework.web.bind.annotation.RestController
 @Suppress("kotlin:S1192")
 @RequestMapping("/users")
 @RestController
-class UserRestController {
+class UserRestController(
+    private val userRepository: UserRepository
+) {
     @ResponseStatus(CREATED)
     @PostMapping
     fun postUsers(@AuthenticationPrincipal user: User): UserModel =
@@ -29,6 +32,12 @@ class UserRestController {
     @GetMapping("/{id}")
     fun getUsersById(@PathVariable id: String, @AuthenticationPrincipal user: User): UserModel =
         UserModel(user)
+
+    @PreAuthorize("#id == #user.id")
+    @ResponseStatus(NO_CONTENT)
+    @DeleteMapping("/{id}")
+    fun deleteUsersById(@PathVariable id: String, @AuthenticationPrincipal user: User) =
+        userRepository.delete(user)
 }
 
 @RequestMapping("/users")
