@@ -15,7 +15,7 @@ class GameSummaryService(
         if (gameSummary != null) {
             return gameSummary
         }
-        return gameRepository.findGameBySlug(slug)
+        return gameRepository.findFirstGameBySlug(slug)
             ?.summary
             ?.let { gameSummaryRepository.save(it) }
     }

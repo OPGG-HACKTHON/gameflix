@@ -30,7 +30,7 @@ class UserGameService(
     @Transactional(readOnly = true)
     fun findGameInUser(user: User, slug: GameSlug): Game? =
         user.games.find { gameSummary -> gameSummary.slug == slug }
-            ?.let { gameSummary -> gameRepository.findGameBySlug(gameSummary.slug) }
+            ?.let { gameSummary -> gameRepository.findFirstGameBySlug(gameSummary.slug) }
 
     @Transactional
     fun deleteGameInUser(user: User, slug: GameSlug) {
