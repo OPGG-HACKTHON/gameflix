@@ -8,6 +8,7 @@ import gg.op.gameflix.domain.game.GameSummary
 import gg.op.gameflix.domain.user.User
 import gg.op.gameflix.domain.user.UserGameService
 import gg.op.gameflix.domain.user.UserRepository
+import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -119,6 +120,16 @@ internal class GameflixIntegrationTest {
 
         expectUserGamesHasSize(userSaved.games.size - 1)
     }
+
+    @Test
+    fun `when GET games-slug expect status ok with game model`() {
+        mockMvc.get("/games/league-of-legends")
+            .andExpect {
+                status{ isOk() }
+                content { jsonPath("developer", `is`("riot-games")) }
+            }
+    }
+
 
     private fun postUsersGames(userId: String, slug: String) =
         mockMvc.post("/users/$userId/games") {

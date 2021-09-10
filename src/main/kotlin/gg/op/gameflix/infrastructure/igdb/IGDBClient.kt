@@ -34,7 +34,8 @@ data class IGDBGame(
     val total_rating: Float,
     val total_rating_count: Int,
     val genres: List<Int>,
-    val platforms: List<Int>
+    val platforms: List<Int>,
+    val involved_companies: List<Int>
 )
 
 @Suppress("kotlin:S117")
