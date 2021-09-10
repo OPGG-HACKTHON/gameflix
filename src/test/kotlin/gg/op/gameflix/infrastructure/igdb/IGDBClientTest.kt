@@ -9,7 +9,7 @@ internal class IGDBClientTest {
     @Test
     fun `when IGDBGame declaredMemberProperties expect all properties exists`() {
         val propertiesExpected = mutableSetOf("id", "name", "slug", "cover", "first_release_date", "updated_at",
-            "url", "summary", "genres", "platforms", "total_rating", "total_rating_count", "involved_companies")
+            "url", "summary", "genres", "platforms", "total_rating", "total_rating_count", "involved_companies", "screenshots")
 
         assertThat(IGDBGame::class.declaredMemberProperties.map { it.name }.toSet()).isEqualTo(propertiesExpected)
     }

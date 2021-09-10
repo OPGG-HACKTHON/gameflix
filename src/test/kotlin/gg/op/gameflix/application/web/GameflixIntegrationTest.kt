@@ -10,6 +10,7 @@ import gg.op.gameflix.domain.user.UserGameService
 import gg.op.gameflix.domain.user.UserRepository
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.hasSize
+import org.hamcrest.Matchers.startsWith
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -126,10 +127,12 @@ internal class GameflixIntegrationTest {
         mockMvc.get("/games/league-of-legends")
             .andExpect {
                 status{ isOk() }
-                content { jsonPath("developer", `is`("riot-games")) }
+                content {
+                    jsonPath("developer", `is`("riot-games"))
+                    jsonPath("background", startsWith("https"))
+                }
             }
     }
-
 
     private fun postUsersGames(userId: String, slug: String) =
         mockMvc.post("/users/$userId/games") {

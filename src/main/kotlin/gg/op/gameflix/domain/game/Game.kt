@@ -54,7 +54,8 @@ data class GameDetail(
     val genres: Set<Genre>,
     val platforms: Set<Platform>,
     val rating: GameRating,
-    val developer: String
+    val developer: String,
+    val background: String
 ) {
     constructor(releaseAt: Int,
         updatedAt: Int,
@@ -62,7 +63,8 @@ data class GameDetail(
         description: String,
         genres: Set<Genre>,
         platforms: Set<Platform>,
-        rating: GameRating) : this(releaseAt, updatedAt, url, description, genres, platforms, rating, "")
+        rating: GameRating,
+        developer: String) : this(releaseAt, updatedAt, url, description, genres, platforms, rating, developer, "")
 }
 
 @Embeddable

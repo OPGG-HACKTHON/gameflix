@@ -51,7 +51,8 @@ data class GameModel(
     val platforms: List<String>,
     val rating_external: Float,
     val rating_external_count: Int,
-    val developer: String
+    val developer: String,
+    val background: String
     ) {
     constructor(game: Game): this(
         name = game.summary.slug.name,
@@ -65,7 +66,8 @@ data class GameModel(
         platforms = game.detail.platforms.map { it.name },
         rating_external = game.detail.rating.rating,
         rating_external_count = game.detail.rating.count,
-        developer = game.detail.developer
+        developer = game.detail.developer,
+        background = game.detail.background
     )
 }
 
