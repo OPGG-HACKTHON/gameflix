@@ -22,6 +22,8 @@ class User(
 ) {
     fun addGame(gameSummary: GameSummary) = games.add(gameSummary)
 
+    fun addAllGames(gameSummaries: Collection<GameSummary>) = games.addAll(gameSummaries)
+
     fun findGameBySlug(gameSlug: GameSlug) = games.find { it.slug == gameSlug }
 
     override fun equals(other: Any?): Boolean {

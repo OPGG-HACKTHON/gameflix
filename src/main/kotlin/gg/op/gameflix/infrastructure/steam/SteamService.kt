@@ -3,8 +3,14 @@ package gg.op.gameflix.infrastructure.steam
 import gg.op.gameflix.domain.game.GameSlug
 import gg.op.gameflix.domain.game.GameStoreAuthentication
 import gg.op.gameflix.domain.game.GameStoreService
+import gg.op.gameflix.domain.game.Store
+import gg.op.gameflix.domain.game.Store.STEAM
 
-class SteamService(private val client: SteamClient) : GameStoreService {
+class SteamService(
+    private val client: SteamClient
+) : GameStoreService {
+
+    override val store: Store = STEAM
 
     override fun getAllGameSlugsByAuthentication(authentication: GameStoreAuthentication)
         = client.queryGetGames(authentication as SteamAuthentication)

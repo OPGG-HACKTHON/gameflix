@@ -34,6 +34,6 @@ internal class GameSummaryRepositoryTest {
         val summarySaved = GameSummary(slugToSearch, "https://google.com")
         gameSummaryRepository.save(summarySaved)
 
-        assertThat(gameSummaryRepository.findFirstBySlug(slugToSearch)).isEqualTo(summarySaved)
+        assertThat(gameSummaryRepository.findFirstBySlugAndStore(slugToSearch, null)).isEqualTo(summarySaved)
     }
 }

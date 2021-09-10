@@ -5,7 +5,9 @@ import gg.op.gameflix.domain.game.GameRepository
 import gg.op.gameflix.domain.game.GameSlug
 import gg.op.gameflix.domain.game.GameSummary
 import gg.op.gameflix.domain.game.GameSummaryService
+import gg.op.gameflix.domain.game.Store
 import io.mockk.Called
+import io.mockk.called
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -85,6 +87,19 @@ internal class UserGameServiceTest {
         every { userRepository.save(user) } returns user
 
         assertThat(userGameService.addGameToUser(user, slug)).isEqualTo(summary)
+    }
+
+    @Test
+    fun `when summaryService findGameSummariesBySlugAndStore return empty expect not to save user`(
+        @MockK user: User, @MockK slugToFind: GameSlug) {
+        every { summaryService.findGameSummariesBySlugsAndStore(match { it.contains(slugToFind) }, Store.STEAM) } returns emptyList()
+
+        userGameService.addAllGamesToUserStore(user, listOf(slugToFind), Store.STEAM)
+
+        verify {
+            user wasNot called
+            userRepository wasNot called
+        }
     }
 
     @Test

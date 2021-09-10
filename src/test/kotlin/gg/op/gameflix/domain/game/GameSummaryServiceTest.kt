@@ -1,5 +1,6 @@
 package gg.op.gameflix.domain.game
 
+import io.mockk.called
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -22,9 +23,40 @@ internal class GameSummaryServiceTest {
     private lateinit var summaryRepository: GameSummaryRepository
 
     @Test
+    fun `when findGameSummariesBySlugAndStore found summary expect not to find in gameRepository`(
+        @MockK slugToFind: GameSlug, @MockK summaryFound: GameSummary) {
+        every { summaryRepository.findFirstBySlugAndStore(slugToFind, Store.STEAM) } returns summaryFound
+
+        service.findGameSummariesBySlugsAndStore(listOf(slugToFind), Store.STEAM)
+
+        verify { gameRepository wasNot called }
+    }
+
+    @Test
+    fun `when findGameSummariesBySlugAndStore not found summary expect to find in gameRepository`(
+        @MockK slugNotExists: GameSlug) {
+        every { summaryRepository.findFirstBySlugAndStore(slugNotExists, Store.STEAM) } returns null
+
+        runCatching { service.findGameSummariesBySlugsAndStore(listOf(slugNotExists), Store.STEAM) }
+
+        verify { gameRepository.findAllGameSummariesBySlugs(match { it.contains(slugNotExists) }) }
+    }
+
+    @Test
+    fun `when findGameSummariesBySlugAndStore expect to find only not found summary in gameRepository`(
+        @MockK slugNotExists: GameSlug, @MockK slugExists: GameSlug,@MockK summaryFound: GameSummary) {
+        every { summaryRepository.findFirstBySlugAndStore(slugNotExists, Store.STEAM) } returns null
+        every { summaryRepository.findFirstBySlugAndStore(slugExists, Store.STEAM) } returns summaryFound
+
+        runCatching { service.findGameSummariesBySlugsAndStore(listOf(slugNotExists, slugExists), Store.STEAM) }
+
+        verify { gameRepository.findAllGameSummariesBySlugs(match { it.contains(slugNotExists) and !it.contains(slugExists)}) }
+    }
+
+    @Test
     fun `when summary found in repository expect return found value`(
         @MockK gameSlug: GameSlug, @MockK gameSummary: GameSummary) {
-        every { summaryRepository.findFirstBySlug(gameSlug) } returns gameSummary
+        every { summaryRepository.findFirstBySlugAndStore(gameSlug, null) } returns gameSummary
 
         assertThat(service.findGameSummaryBySlug(gameSlug)).isEqualTo(gameSummary)
     }
@@ -68,12 +100,12 @@ internal class GameSummaryServiceTest {
     }
 
     private fun whenGameSlugNotFoundInNowhere(gameSlug: GameSlug) {
-        every { summaryRepository.findFirstBySlug(gameSlug) } returns null
+        every { summaryRepository.findFirstBySlugAndStore(gameSlug, null) } returns null
         every { gameRepository.findFirstGameBySlug(gameSlug) } returns null
     }
 
     private fun whenGameSlugFoundInGameRepository(gameSlug: GameSlug, gameFound: Game): Game {
-        every { summaryRepository.findFirstBySlug(gameSlug) } returns null
+        every { summaryRepository.findFirstBySlugAndStore(gameSlug, null) } returns null
         every { gameRepository.findFirstGameBySlug(gameSlug) } returns gameFound
         return gameFound
     }

@@ -5,6 +5,7 @@ import gg.op.gameflix.domain.game.GameRepository
 import gg.op.gameflix.domain.game.GameSlug
 import gg.op.gameflix.domain.game.GameSummary
 import gg.op.gameflix.domain.game.GameSummaryService
+import gg.op.gameflix.domain.game.Store
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -25,6 +26,17 @@ class UserGameService(
             ?.also { user.addGame(it)
                 userRepository.save(user) }
             ?: throw NoSuchElementException("Given game ${slug.name} not found")
+    }
+
+    @Transactional
+    fun addAllGamesToUserStore(user: User, slugs: Collection<GameSlug>, store: Store): User {
+        return summaryService.findGameSummariesBySlugsAndStore(slugs, store)
+            .let {
+                if (it.isEmpty()) {
+                    return user
+                }
+                user.addAllGames(it)
+                userRepository.save(user) }
     }
 
     @Transactional(readOnly = true)

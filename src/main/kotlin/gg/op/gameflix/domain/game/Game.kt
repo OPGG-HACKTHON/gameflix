@@ -21,8 +21,9 @@ class GameSummary(
     @Embedded
     var slug: GameSlug,
     var cover: String,
+    var store: Store?
 ) {
-    constructor(slug: GameSlug, cover: String): this(null, slug, cover)
+    constructor(slug: GameSlug, cover: String): this(null, slug, cover, null)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -32,6 +33,7 @@ class GameSummary(
 
         if (slug != other.slug) return false
         if (cover != other.cover) return false
+        if (store != other.store) return false
 
         return true
     }
@@ -39,6 +41,7 @@ class GameSummary(
     override fun hashCode(): Int {
         var result = slug.hashCode()
         result = 31 * result + cover.hashCode()
+        result = 31 * result + (store?.hashCode() ?: 0)
         return result
     }
 }
@@ -74,6 +77,12 @@ class GameSlug(
     override fun hashCode(): Int {
         return slug.hashCode()
     }
+}
+
+enum class Store {
+    STEAM,
+    GOG,
+    BLIZZARD
 }
 
 private fun String.toSlug() = lowercase()
