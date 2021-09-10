@@ -54,5 +54,7 @@ class IGDBGameRepository(private val igdbClient: IGDBClient) : GameRepository {
             description = summary,
             genres = igdbClient.queryGetGenres(genres).map { it.toGenre() }.toHashSet(),
             platforms = igdbClient.queryGetPlatforms(platforms).map { it.toPlatform() }.toHashSet(),
-            rating = GameRating(total_rating, total_rating_count))
+            rating = GameRating(total_rating, total_rating_count),
+            developer = igdbClient.queryGetDeveloperByInvolvedCompanies(involved_companies)?.slug ?: "NOT FOUND"
+            )
 }
