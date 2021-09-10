@@ -12,8 +12,8 @@ class GogService(
     override val store: Store = GOG
 
     override fun getAllGameSlugsByAuthentication(authentication: GameStoreAuthentication) =
-        gogClient.queryGetGamesCode()
-            .let { codes -> gogClient.queryGetGames(codes) }
+        gogClient.queryGetGamesCode(authentication as GogAuthentication)
+            .let { codes -> gogClient.queryGetGames(codes, authentication) }
 
     override fun supports(authentication: GameStoreAuthentication)
         = authentication is GogAuthentication

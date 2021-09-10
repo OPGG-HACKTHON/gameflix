@@ -20,7 +20,7 @@ internal class GogServiceTest {
     fun setUpMockWebServer() {
         mockWebServer.start()
         gogService = GogConfigurationProperties("http://localhost:${mockWebServer.port}")
-            .let { configuration -> GogWebClient(configuration, GogAuthentication("Bearer token")) }
+            .let { configuration -> GogWebClient(configuration) }
             .let { gogClient -> GogService(gogClient) }
     }
 
