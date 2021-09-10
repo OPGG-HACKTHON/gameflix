@@ -1,69 +1,52 @@
 package gg.op.gameflix.infrastructure.gog
 
 import gg.op.gameflix.domain.game.GameSlug
+import gg.op.gameflix.domain.game.Store.GOG
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.*
-import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer
-import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.junit.jupiter.SpringExtension
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ExtendWith(SpringExtension::class)
-@ContextConfiguration(
-    classes = [GogConfiguration::class],
-    initializers = [ConfigDataApplicationContextInitializer::class]
-)
 internal class GogServiceTest {
 
-    private lateinit var gogClientGameList: GogClient
-    private lateinit var gogClientGames: GogClient
-    private lateinit var mockBackEndGameList: MockWebServer
-    private lateinit var mockBackEndGames: MockWebServer
+    private lateinit var gogService: GogService
+    private val mockWebServer = MockWebServer()
 
     @BeforeAll
-    fun startMockwebserver() {
-        mockBackEndGameList = MockWebServer()
-        mockBackEndGameList.start()
-        mockBackEndGames = MockWebServer()
-        mockBackEndGames.start()
-
-    }
-
-    @BeforeEach
-    fun initializeGogClient() {
-        val baseUrlGameList: String = "http://localhost:"+mockBackEndGameList.port
-        val baseUrlGames: String = "http://localhost:"+mockBackEndGames.port
-        var configurationPropertiesGameList: GogConfigurationProperties = GogConfigurationProperties(baseUrlGameList)
-        var configurationPropertiesGames: GogConfigurationProperties = GogConfigurationProperties(baseUrlGames)
-        var token = ""
-
-        gogClientGameList = GogWebClient(configurationPropertiesGameList, GogAuthentication("Bearer " + token))
-        gogClientGames = GogWebClient(configurationPropertiesGames, GogAuthentication("Bearer " + token))
-        mockBackEndGameList.enqueue(
-            MockResponse()
-                .addHeader("Content-Type", "application/json; charset=utf-8")
-                .setBody("{\"owned\": [ 2078420771 ] }")
-        )
-        mockBackEndGames.enqueue(
-            MockResponse()
-                .addHeader("Content-Type", "application/json; charset=utf-8")
-                .setBody("{\"title\": \"DISTRAINT 2\"}")
-        )
+    fun setUpMockWebServer() {
+        mockWebServer.start()
+        gogService = GogConfigurationProperties("http://localhost:${mockWebServer.port}")
+            .let { configuration -> GogWebClient(configuration, GogAuthentication("Bearer token")) }
+            .let { gogClient -> GogService(gogClient) }
     }
 
     @AfterAll
-    fun shutdownMockwebserver(){
-        mockBackEndGameList.shutdown()
-        mockBackEndGames.shutdown()
+    fun tearDownMockWebServer(){
+        mockWebServer.shutdown()
+    }
+
+    @Test
+    fun `when get store expect return gog`() {
+        assertThat(gogService.store).isEqualTo(GOG)
     }
 
     @Test
     fun `when getAllGameSlugsByAuthentication expect not empty`() {
-        var token = ""
-         assertThat(GogService(gogClientGames,gogClientGameList).getAllGameSlugsByAuthentication(GogAuthentication("Bearer "+token)))
+        mockWebServer.enqueue(
+            MockResponse()
+                .addHeader("Content-Type", "application/json; charset=utf-8")
+                .setBody("{\"owned\": [ 2078420771 ] }")
+        )
+        mockWebServer.enqueue(
+            MockResponse()
+                .addHeader("Content-Type", "application/json; charset=utf-8")
+                .setBody("{\"title\": \"DISTRAINT 2\"}")
+        )
+        assertThat(gogService.getAllGameSlugsByAuthentication(GogAuthentication("Bearer token")))
              .containsOnlyOnce(GameSlug("DISTRAINT 2"))
     }
 }

@@ -1,6 +1,7 @@
 package gg.op.gameflix.infrastructure.steam
 
 import gg.op.gameflix.domain.game.GameSlug
+import gg.op.gameflix.domain.game.Store.STEAM
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Disabled
@@ -29,6 +30,11 @@ internal class SteamIntegrationTest {
     fun initializeInstance() {
         steamClient = SteamWebClient(configurationProperties)
         steamService = SteamService(steamClient)
+    }
+
+    @Test
+    fun `when get store expect return steam`() {
+        assertThat(steamService.store).isEqualTo(STEAM)
     }
 
     @Test
