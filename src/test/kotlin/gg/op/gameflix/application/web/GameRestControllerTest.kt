@@ -92,7 +92,9 @@ internal class GameRestControllerTest {
         GameDetail(releaseAt = 1010, updatedAt = 1020, url = "https://google.com", description = "game description",
             genres = setOf(Genre("mba")),
             platforms = setOf(Platform("win"), Platform("mac")),
-            rating = GameRating(10.44f, 10)
+            rating = GameRating(10.44f, 10),
+            developer = "developer",
+            background = "background"
         )
     )
 }

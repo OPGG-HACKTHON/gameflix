@@ -5,7 +5,7 @@ info:
   contact:
     name: API Support
     email: raeperd117@gmail.com
-  version: 0.0.8
+  version: 0.0.9
 servers:
   - url: 'http://load-balancer-gameflix-backend-754529149.ap-northeast-2.elb.amazonaws.com'
     description: AWS Load balancer for backend fargate service
@@ -348,6 +348,12 @@ components:
           type: string
           description: Developer of game
           example: riot-games
+        background:
+          required: true
+          type: string
+          format: url
+          description: Background Image URL for game
+          example: https://images.igdb.com/igdb/image/upload/t_screenshot_huge/gedd5lz7856ynljzsgbi.jpg
         release_at:
           required: true
           type: number

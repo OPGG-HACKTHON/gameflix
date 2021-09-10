@@ -34,19 +34,19 @@ class IGDBGameRepository(private val igdbClient: IGDBClient) : GameRepository {
         return let { igdbGames -> igdbGames.content.map { it.cover }
             .toCollection(HashSet())
             .let { coverIds -> igdbClient.queryGetCoverImages(coverIds) }
-            .associate { igdbCoverImage -> igdbCoverImage.id to igdbCoverImage.toURI() }
+            .associate { igdbCoverImage -> igdbCoverImage.id to igdbCoverImage.toCoverURI() }
             .let { coverIdToURI -> igdbGames.map { it.toGameSummary(coverIdToURI) } }
         }
     }
 
     private fun IGDBGame.toGameSummary(coverIdToURI: Map<Int, String>) =
-        GameSummary(GameSlug(name), coverIdToURI.getOrDefault(cover, IGDBCoverImage.NO_COVER_IMAGE.toURI()))
+        GameSummary(GameSlug(name), coverIdToURI.getOrDefault(cover, IGDBImage.NO_COVER_IMAGE.toCoverURI()))
 
     private fun IGDBGame.toGame() = Game(toGameSummary(), toGameDetail())
 
     private fun IGDBGame.toGameSummary() =
         GameSummary(GameSlug(name),
-            igdbClient.queryGetCoverImages(listOf(cover)).first().toURI())
+            igdbClient.queryGetCoverImages(listOf(cover)).first().toCoverURI())
 
     private fun IGDBGame.toGameDetail() =
         GameDetail(releaseAt = first_release_date, updatedAt = updated_at,
@@ -55,6 +55,7 @@ class IGDBGameRepository(private val igdbClient: IGDBClient) : GameRepository {
             genres = igdbClient.queryGetGenres(genres).map { it.toGenre() }.toHashSet(),
             platforms = igdbClient.queryGetPlatforms(platforms).map { it.toPlatform() }.toHashSet(),
             rating = GameRating(total_rating, total_rating_count),
-            developer = igdbClient.queryGetDeveloperByInvolvedCompanies(involved_companies)?.slug ?: "NOT FOUND"
+            developer = igdbClient.queryGetDeveloperByInvolvedCompanies(involved_companies)?.slug ?: "NOT FOUND",
+            background = igdbClient.queryGetScreenShots(screenshots).firstOrNull()?.toBackgroundURI() ?: IGDBImage.NO_COVER_IMAGE.toBackgroundURI()
             )
 }

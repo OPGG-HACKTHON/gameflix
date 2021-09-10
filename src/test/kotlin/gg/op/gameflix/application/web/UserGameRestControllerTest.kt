@@ -155,7 +155,8 @@ internal class UserGameRestControllerTest {
             GameDetail(0, 0,
                 "url", "description",
                 emptySet(), emptySet(),
-                GameRating(90.11f, 10)
+                GameRating(90.11f, 10),
+                "developer", "background"
             )
         )
 }

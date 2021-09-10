@@ -15,10 +15,11 @@ sealed interface IGDBClient {
     fun queryGetGameBySlug(gameSlug: GameSlug): IGDBGame?
     fun queryGetGamesByName(name: String, pageable: Pageable): Page<IGDBGame>
 
-    fun queryGetCoverImages(ids: Collection<Int>): Set<IGDBCoverImage>
+    fun queryGetCoverImages(ids: Collection<Int>): Set<IGDBImage>
     fun queryGetGenres(ids: Collection<Int>): Set<IGDBGenre>
     fun queryGetPlatforms(ids: Collection<Int>): Set<IGDBPlatform>
     fun queryGetDeveloperByInvolvedCompanies(ids: Collection<Int>): IGDBCompany?
+    fun queryGetScreenShots(ids: Collection<Int>): Set<IGDBImage>
 }
 
 @Suppress("kotlin:S117")
@@ -35,20 +36,22 @@ data class IGDBGame(
     val total_rating_count: Int,
     val genres: List<Int>,
     val platforms: List<Int>,
-    val involved_companies: List<Int>
+    val involved_companies: List<Int>,
+    val screenshots: List<Int>
 )
 
 @Suppress("kotlin:S117")
-data class IGDBCoverImage(
+data class IGDBImage(
     val id: Int,
     val image_id: String
 ) {
     companion object {
         private const val ID_INVALID = -1
-        val NO_COVER_IMAGE = IGDBCoverImage(ID_INVALID, "nocover_qhhlj6")
+        val NO_COVER_IMAGE = IGDBImage(ID_INVALID, "nocover_qhhlj6")
     }
 
-    fun toURI() ="https://images.igdb.com/igdb/image/upload/t_cover_big/$image_id.jpg"
+    fun toCoverURI() ="https://images.igdb.com/igdb/image/upload/t_cover_big/$image_id.jpg"
+    fun toBackgroundURI() = "https://images.igdb.com/igdb/image/upload/t_screenshot_huge/$image_id.jpg"
 }
 
 interface IGDBResource {
@@ -110,7 +113,7 @@ class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
         webClient.post().uri("/covers")
             .bodyValue("fields id, image_id; where id = (${ids.joinToString { it.toString() }});")
             .retrieve()
-            .bodyToMono(object: ParameterizedTypeReference<MutableList<IGDBCoverImage>>() {})
+            .bodyToMono(object: ParameterizedTypeReference<MutableList<IGDBImage>>() {})
             .block()
             ?.toCollection(HashSet()) ?: emptySet()
 
@@ -139,6 +142,14 @@ class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
                 .map { resource -> IGDBCompany(resource.id, resource.slug) } }
             ?.firstOrNull()
     }
+
+    override fun queryGetScreenShots(ids: Collection<Int>): Set<IGDBImage> =
+        webClient.post().uri("/screenshots")
+            .bodyValue("fields id, image_id; where id = (${ids.joinToString { it.toString() }});")
+            .retrieve()
+            .bodyToMono(object: ParameterizedTypeReference<MutableList<IGDBImage>>() {})
+            .block()
+            ?.toCollection(HashSet()) ?: emptySet()
 
     private fun Pageable.toIGDBQueryStatement() = "offset $pageNumber; limit $pageSize;"
 
