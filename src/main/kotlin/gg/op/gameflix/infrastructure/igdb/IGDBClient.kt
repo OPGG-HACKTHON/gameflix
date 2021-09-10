@@ -8,7 +8,6 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.support.PageableExecutionUtils.getPage
 import org.springframework.web.reactive.function.client.WebClient
-import java.net.URI
 import kotlin.reflect.full.declaredMemberProperties
 
 sealed interface IGDBClient {
@@ -19,6 +18,7 @@ sealed interface IGDBClient {
     fun queryGetCoverImages(ids: Collection<Int>): Set<IGDBCoverImage>
     fun queryGetGenres(ids: Collection<Int>): Set<IGDBGenre>
     fun queryGetPlatforms(ids: Collection<Int>): Set<IGDBPlatform>
+    fun queryGetDeveloperByInvolvedCompanies(ids: Collection<Int>): IGDBCompany?
 }
 
 @Suppress("kotlin:S117")
@@ -62,6 +62,9 @@ data class IGDBGenre(override val id: Int, override val slug: String) : IGDBReso
 data class IGDBPlatform(override val id: Int, override val slug: String) : IGDBResource {
     fun toPlatform() = Platform(slug)
 }
+
+
+data class IGDBCompany(override val id: Int, override val slug: String): IGDBResource
 
 class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
 
@@ -119,6 +122,22 @@ class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
         queryGetResources("/platforms", ids)
             .map { IGDBPlatform(it.id, it.slug) }
             .toHashSet()
+
+    override fun queryGetDeveloperByInvolvedCompanies(ids: Collection<Int>): IGDBCompany? {
+        data class IGDBInvolvedCompany(val id: Int, val company: Int, val developer: Boolean)
+        val involvedCompanies = webClient.post().uri("/involved_companies")
+            .bodyValue("fields ${IGDBInvolvedCompany::class.declaredMemberProperties.joinToString { it.name }};" +
+                "where id = (${ids.joinToString { it.toString() }});"
+            )
+            .retrieve()
+            .bodyToMono(object : ParameterizedTypeReference<MutableList<IGDBInvolvedCompany>>() {})
+            .block() ?: emptyList()
+
+        return involvedCompanies.find { it.developer }
+            ?.let { queryGetResources("/companies", listOf(it.company))
+                .map { resource -> IGDBCompany(resource.id, resource.slug) } }
+            ?.firstOrNull()
+    }
 
     private fun Pageable.toIGDBQueryStatement() = "offset $pageNumber; limit $pageSize;"
 

@@ -75,6 +75,13 @@ internal class IGDBIntegrationTest {
     }
 
     @Test
+    fun `when igdbClient queryGetDeveloperByInvolvedCompanies expect valid IGDBCompany`() {
+        val companyExpected = IGDBCompany(41, "riot-games")
+
+        assertThat(igdbClient.queryGetDeveloperByInvolvedCompanies(listOf(8068, 8087, 8088))).isEqualTo(companyExpected)
+    }
+
+    @Test
     fun `when GameRepository getAllGames return expected count games`() {
         val numExpected = 3
 
