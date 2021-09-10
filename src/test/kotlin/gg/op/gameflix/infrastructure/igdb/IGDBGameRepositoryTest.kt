@@ -28,14 +28,14 @@ internal class IGDBGameRepositoryTest(@MockK val igdbClient: IGDBClient) {
     fun `when igdbClient queryGetAllGames return empty expect return empty`() {
         every { igdbClient.queryGetGames(any()) } returns Page.empty()
 
-        assertThat(igdbGameRepository.getAllGames(PageRequest.of(0,1))).isEmpty()
+        assertThat(igdbGameRepository.findAllGameSummaries(PageRequest.of(0,1))).isEmpty()
     }
 
     @Test
     fun `when igdbClient queryGet`() {
-        val nameNotExists = "Name not exists";
+        val nameNotExists = "Name not exists"
         every { igdbClient.queryGetGamesByName(eq(nameNotExists), any()) } returns PageImpl(emptyList())
 
-        assertThat(igdbGameRepository.findGamesByName(nameNotExists, PageRequest.of(0, 10))).isEmpty()
+        assertThat(igdbGameRepository.findAllGameSummariesByName(nameNotExists, PageRequest.of(0, 10))).isEmpty()
     }
 }

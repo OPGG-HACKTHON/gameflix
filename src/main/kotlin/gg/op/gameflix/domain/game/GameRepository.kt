@@ -5,10 +5,10 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface GameRepository {
-    fun getAllGames(pageable: Pageable): Page<GameSummary>
-    fun findGameBySlug(slug: GameSlug): Game?
-    fun findGamesByName(name: String, pageable: Pageable): Page<GameSummary>
-    fun getAllGamesByIds(ids: Collection<Long>): Collection<Game>
+    fun findAllGameSummaries(pageable: Pageable): Page<GameSummary>
+    fun findAllGameSummariesByName(name: String, pageable: Pageable): Page<GameSummary>
+    fun findAllGameSummariesBySlugs(slugs: Collection<GameSlug>): Collection<GameSummary>
+    fun findFirstGameBySlug(slug: GameSlug): Game?
 }
 
 interface GameSummaryRepository: JpaRepository<GameSummary, Long> {

@@ -17,21 +17,21 @@ class GameRestController(private val gameRepository: GameRepository) {
 
     @GetMapping
     fun getGames(pageable: Pageable): MultipleGameSummaryModel =
-        gameRepository.getAllGames(pageable)
+        gameRepository.findAllGameSummaries(pageable)
             .content
             .map { GameSummaryModel(it) }
             .let { MultipleGameSummaryModel(it) }
 
     @GetMapping(params = ["search"])
     fun getGamesByName(search: String, pageable: Pageable): MultipleGameSummaryModel =
-        gameRepository.findGamesByName(search, pageable)
+        gameRepository.findAllGameSummariesByName(search, pageable)
             .content
             .map { GameSummaryModel(it) }
             .let { MultipleGameSummaryModel(it) }
 
     @GetMapping("/{slug}")
     fun getGameBySlug(@PathVariable slug: String): ResponseEntity<GameModel> =
-        gameRepository.findGameBySlug(GameSlug(slug))
+        gameRepository.findFirstGameBySlug(GameSlug(slug))
             ?.let { GameModel(it) }
             ?.let { gameModel -> ResponseEntity.ok(gameModel) } ?: ResponseEntity.notFound().build()
 }
@@ -55,7 +55,7 @@ data class GameModel(
     constructor(game: Game): this(
         name = game.summary.slug.name,
         slug = game.summary.slug.slug,
-        cover = game.summary.cover.toString(),
+        cover = game.summary.cover,
         description = game.detail.description,
         release_at = game.detail.releaseAt,
         updated_at = game.detail.updatedAt,
@@ -75,6 +75,6 @@ data class GameSummaryModel(
     constructor(gameSummary: GameSummary): this(
         gameSummary.slug.name,
         gameSummary.slug.slug,
-        gameSummary.cover.toString()
+        gameSummary.cover
     )
 }

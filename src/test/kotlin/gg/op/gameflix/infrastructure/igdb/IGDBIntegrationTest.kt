@@ -78,16 +78,16 @@ internal class IGDBIntegrationTest {
     fun `when GameRepository getAllGames return expected count games`() {
         val numExpected = 3
 
-        assertThat(gameRepository.getAllGames(PageRequest.of(0, numExpected))).hasSize(numExpected)
+        assertThat(gameRepository.findAllGameSummaries(PageRequest.of(0, numExpected))).hasSize(numExpected)
     }
 
     @Test
     fun `when GameRepository findGameBySlug expect not null`() {
-        assertThat(gameRepository.findGameBySlug(GameSlug("League of Legends"))).isNotNull
+        assertThat(gameRepository.findFirstGameBySlug(GameSlug("League of Legends"))).isNotNull
     }
 
     @Test
     fun `when GameRepository findGameByName expect not empty`() {
-        assertThat(gameRepository.findGamesByName("league o", PageRequest.of(0, 10))).isEmpty()
+        assertThat(gameRepository.findAllGameSummariesByName("league o", PageRequest.of(0, 10))).isEmpty()
     }
 }

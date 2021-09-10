@@ -103,7 +103,7 @@ internal class UserGameServiceTest {
 
         userGameService.findGameInUser(user, slugToFind)
 
-        verify { gameRepository.findGameBySlug(slugToFind) }
+        verify { gameRepository.findFirstGameBySlug(slugToFind) }
     }
 
     @Test
@@ -111,7 +111,7 @@ internal class UserGameServiceTest {
         @MockK user: User, @MockK slugToFind: GameSlug, @MockK gameFound: Game) {
         val summaryToFind = GameSummary(slugToFind, "cover-found")
         every { user.games } answers { mutableSetOf(summaryToFind) }
-        every { gameRepository.findGameBySlug(slugToFind) } returns gameFound
+        every { gameRepository.findFirstGameBySlug(slugToFind) } returns gameFound
 
         assertThat(userGameService.findGameInUser(user, slugToFind)).isEqualTo(gameFound)
     }

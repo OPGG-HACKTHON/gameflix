@@ -11,19 +11,19 @@ import org.springframework.data.domain.Pageable
 
 class IGDBGameRepository(private val igdbClient: IGDBClient) : GameRepository {
 
-    override fun getAllGames(pageable: Pageable): Page<GameSummary> =
+    override fun findAllGameSummaries(pageable: Pageable): Page<GameSummary> =
         igdbClient.queryGetGames(pageable)
             .toGameSummaries()
 
-    override fun findGameBySlug(slug: GameSlug): Game? =
+    override fun findFirstGameBySlug(slug: GameSlug): Game? =
         igdbClient.queryGetGameBySlug(slug)
             ?.toGame()
 
-    override fun findGamesByName(name: String, pageable: Pageable): Page<GameSummary> =
+    override fun findAllGameSummariesByName(name: String, pageable: Pageable): Page<GameSummary> =
         igdbClient.queryGetGamesByName(name, pageable)
             .toGameSummaries()
 
-    override fun getAllGamesByIds(ids: Collection<Long>): Collection<Game> {
+    override fun findAllGameSummariesBySlugs(slugs: Collection<GameSlug>): Collection<GameSummary> {
         TODO("Not yet implemented")
     }
 

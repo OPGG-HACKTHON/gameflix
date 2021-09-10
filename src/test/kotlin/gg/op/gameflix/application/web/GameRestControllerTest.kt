@@ -38,7 +38,7 @@ internal class GameRestControllerTest {
 
     @Test
     fun `when GET games expect status ok`() {
-        every { gameRepository.getAllGames(any()) } returns Page.empty()
+        every { gameRepository.findAllGameSummaries(any()) } returns Page.empty()
 
         mockMvc.get("/games")
             .andExpect { status { isOk() } }
@@ -46,7 +46,7 @@ internal class GameRestControllerTest {
 
     @Test
     fun `when GET games expect valid GameSummaryModel`() {
-        every { gameRepository.getAllGames(any()) } returns PageImpl(listOf(GameSummary(GameSlug("Wow"), "https://google.com")))
+        every { gameRepository.findAllGameSummaries(any()) } returns PageImpl(listOf(GameSummary(GameSlug("Wow"), "https://google.com")))
 
         mockMvc.get("/games")
             .andExpect {
@@ -62,7 +62,7 @@ internal class GameRestControllerTest {
     @Test
     fun `when GET gamesByName expect status ok`() {
         val nameToSearch = "Name to Search"
-        every { gameRepository.findGamesByName(nameToSearch, any()) } returns Page.empty()
+        every { gameRepository.findAllGameSummariesByName(nameToSearch, any()) } returns Page.empty()
 
         mockMvc.get("/games") { param("search", nameToSearch)}
             .andExpect { status { isOk() } }
@@ -71,7 +71,7 @@ internal class GameRestControllerTest {
     @Test
     fun `when GET gamesBySlug with not exists slug expect return NotFound status`() {
         val slugNotExists = GameSlug("not-exists-slug")
-        every { gameRepository.findGameBySlug(slugNotExists) } returns null
+        every { gameRepository.findFirstGameBySlug(slugNotExists) } returns null
 
         mockMvc.get("/games/${slugNotExists.slug}")
             .andExpect { status { isNotFound() } }
@@ -79,7 +79,7 @@ internal class GameRestControllerTest {
 
     @Test
     fun `when GET gamesBySlug with exists slug expect return ok status`() {
-        every { gameRepository.findGameBySlug(gameSlugValid) } returns gameValid
+        every { gameRepository.findFirstGameBySlug(gameSlugValid) } returns gameValid
 
         mockMvc.get("/games/${gameSlugValid.slug}")
             .andExpect { status { isOk() } }

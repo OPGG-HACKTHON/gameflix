@@ -35,7 +35,7 @@ internal class GameSummaryServiceTest {
 
         service.findGameSummaryBySlug(gameSlug)
 
-        verify { gameRepository.findGameBySlug(gameSlug) }
+        verify { gameRepository.findFirstGameBySlug(gameSlug) }
     }
 
     @Test
@@ -69,12 +69,12 @@ internal class GameSummaryServiceTest {
 
     private fun whenGameSlugNotFoundInNowhere(gameSlug: GameSlug) {
         every { summaryRepository.findFirstBySlug(gameSlug) } returns null
-        every { gameRepository.findGameBySlug(gameSlug) } returns null
+        every { gameRepository.findFirstGameBySlug(gameSlug) } returns null
     }
 
     private fun whenGameSlugFoundInGameRepository(gameSlug: GameSlug, gameFound: Game): Game {
         every { summaryRepository.findFirstBySlug(gameSlug) } returns null
-        every { gameRepository.findGameBySlug(gameSlug) } returns gameFound
+        every { gameRepository.findFirstGameBySlug(gameSlug) } returns gameFound
         return gameFound
     }
 }
