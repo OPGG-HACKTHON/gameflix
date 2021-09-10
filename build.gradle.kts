@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "gg.op"
-version = "0.0.9"
+version = "0.0.10"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
@@ -33,8 +33,6 @@ dependencies {
     implementation("org.mock-server:mockserver-netty:5.11.1")
     implementation("org.mock-server:mockserver-client-java:5.11.1")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.springdoc:springdoc-openapi-kotlin:1.5.9")
-    implementation("org.springdoc:springdoc-openapi-ui:1.5.9")
     implementation("com.h2database:h2:1.4.200")
     implementation("org.junit.jupiter:junit-jupiter:5.7.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test") {

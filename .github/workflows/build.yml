@@ -70,7 +70,7 @@ jobs:
       - uses: Legion2/swagger-ui-action@v1
         with:
           output: dist
-          spec-file: ./src/main/resources/static/openapi.yml
+          spec-file: ./src/main/resources/static/swagger-ui/openapi.yml
       - uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

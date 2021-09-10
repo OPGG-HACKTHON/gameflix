@@ -5,7 +5,7 @@ info:
   contact:
     name: API Support
     email: raeperd117@gmail.com
-  version: 0.0.9
+  version: 0.0.10
 servers:
   - url: 'http://load-balancer-gameflix-backend-754529149.ap-northeast-2.elb.amazonaws.com'
     description: AWS Load balancer for backend fargate service
@@ -102,7 +102,6 @@ paths:
                 type: object
                 properties:
                   games:
-                    required: true
                     type: array
                     description: list of games summary model
                     items:
@@ -126,7 +125,6 @@ paths:
           "application/json":
             schema:
               type: object
-              required: true
               writeOnly: true
               properties:
                 slug:
@@ -208,7 +206,6 @@ paths:
                 type: object
                 properties:
                   games:
-                    required: true
                     type: array
                     description: list of games
                     items:
@@ -301,13 +298,11 @@ components:
         id:
           $ref: "#/components/schemas/user-id"
         email:
-          required: true
           type: string
           format: email
           description: Email address
           example: raeperd117@gmail.com
         games:
-          required: true
           type: array
           description: Games of user
           items:
@@ -320,7 +315,6 @@ components:
         slug:
           $ref: "#/components/schemas/game-slug"
         name:
-          required: true
           type: string
           description: Name of this game
           example: League of Legend
@@ -334,34 +328,28 @@ components:
         slug:
           $ref: "#/components/schemas/game-slug"
         name:
-          required: true
           type: string
           description: Name of this game
           example: League of Legend
         description:
-          required: true
           type: string
           description: Description of game
           example: League of Legends is a fast-paced, competitive online game that blends the speed and intensity of an RTS with RPG elements. Two teams of powerful champions, each with a unique design and playstyle, battle head-to-head across multiple battlefields and game modes. With an ever-expanding roster of champions, frequent updates and a thriving tournament scene, League of Legends offers endless replayability for players of every skill level.
         developer:
-          required: true
           type: string
           description: Developer of game
           example: riot-games
         background:
-          required: true
           type: string
           format: url
           description: Background Image URL for game
           example: https://images.igdb.com/igdb/image/upload/t_screenshot_huge/gedd5lz7856ynljzsgbi.jpg
         release_at:
-          required: true
           type: number
           format: unix time stamp
           description: Release date of game. Epoch timestamp
           example: 1256605200
         updated_at:
-          required: true
           type: number
           format: unix time stamp
           description: The last date this entry was updated
@@ -369,29 +357,24 @@ components:
         cover:
           $ref : "#/components/schemas/cover"
         url:
-          required: true
           type: string
           format: url
           description: The website address (URL) of the item
         genres:
-          required: true
           type: array
           items:
             type: string
             description: genre of game as slug
             example: moba
         rating_external:
-          required: true
           type: number
           description: Rating based on igdb scores
           example: 80.35918701514501
         rating_external_count:
-          required: true
           type: integer
           description: Number of igdb ratings
           example: 501
         platforms:
-          required: true
           type: array
           items:
             type: string
@@ -403,23 +386,19 @@ components:
       readOnly: true
       properties:
         message:
-          required: true
           type: string
           description: Error message
           example: Request Failed with Error
     game-slug:
-      required: true
       type: string
       description: A url-safe, unique, lower-case version of the name
       example: league-of-legends
     cover:
-      required: true
       type: string
       format: url
       description: Image URL for game
       example: https://images.igdb.com/igdb/image/upload/t_cover_big/co254s.jpg
     user-id:
-      required: true
       type: string
       description: ID of user. Field `sub` of [google ID token payload](https://developers.google.com/identity/protocols/oauth2/openid-connect#an-id-tokens-payload)
       example: 10769150350006150715113082367
