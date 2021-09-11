@@ -11,7 +11,7 @@ management:
       enabled: true
 
 security:
-  clientId: 584215251701-mt74unj21rtoieqdu217usohe2dhkaao.apps.googleusercontent.com
+  clientId: 790559581357-unedu44hsccmr8atn35m3hmktio2tqqp.apps.googleusercontent.com
 
 infrastructure:
   gog:
