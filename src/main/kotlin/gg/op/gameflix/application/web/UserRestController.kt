@@ -1,6 +1,8 @@
 package gg.op.gameflix.application.web
 
 import gg.op.gameflix.domain.game.GameSlug
+import gg.op.gameflix.domain.game.Store
+import gg.op.gameflix.domain.game.UserStoreService
 import gg.op.gameflix.domain.user.User
 import gg.op.gameflix.domain.user.UserGameService
 import gg.op.gameflix.domain.user.UserRepository
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import java.util.Locale
 
 @Suppress("kotlin:S1192")
 @RequestMapping("/users")
@@ -73,6 +76,18 @@ class UserGameRestController(
         userGameService.deleteGameInUser(user, GameSlug(slug))
 }
 
+@RequestMapping("/users")
+@RestController
+class UserStoreRestController(
+    private val userStoreService: UserStoreService
+) {
+    @PreAuthorize("#id == #user.id")
+    @ResponseStatus(CREATED)
+    @PostMapping("/{id}/stores")
+    fun postUserStores(@PathVariable id: String, @AuthenticationPrincipal user: User, @RequestBody dto: StorePostRequestDTO): UserModel =
+        userStoreService.connectUserWithStore(user, dto.store, dto.authentication)
+            .let { UserModel(it) }
+}
 
 data class UserModel(
     val id: String,
@@ -89,3 +104,12 @@ data class UserModel(
 data class GamePostRequestDTO(
     val slug: String
 )
+
+data class StorePostRequestDTO(
+    val slug: String,
+    val authentication: String
+) {
+    val store: Store = slug.replace("-", "_")
+        .uppercase(Locale.getDefault())
+        .let { Store.valueOf(it) }
+}

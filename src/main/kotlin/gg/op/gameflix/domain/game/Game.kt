@@ -56,16 +56,7 @@ data class GameDetail(
     val rating: GameRating,
     val developer: String,
     val background: String
-) {
-    constructor(releaseAt: Int,
-        updatedAt: Int,
-        url: String,
-        description: String,
-        genres: Set<Genre>,
-        platforms: Set<Platform>,
-        rating: GameRating,
-        developer: String) : this(releaseAt, updatedAt, url, description, genres, platforms, rating, developer, "")
-}
+)
 
 @Embeddable
 class GameSlug(
@@ -96,7 +87,7 @@ enum class Store {
     BLIZZARD
 }
 
-private fun String.toSlug() = lowercase()
+fun String.toSlug() = lowercase()
     .replace("\n", " ")
     .replace("[^a-z\\d\\s]".toRegex(), " ")
     .split(" ")

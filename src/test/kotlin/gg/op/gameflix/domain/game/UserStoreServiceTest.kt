@@ -2,6 +2,7 @@ package gg.op.gameflix.domain.game
 
 import gg.op.gameflix.domain.user.User
 import gg.op.gameflix.domain.user.UserGameService
+import gg.op.gameflix.infrastructure.GameStoreAuthenticationFactoryImpl
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import io.mockk.impl.annotations.RelaxedMockK
@@ -29,7 +30,9 @@ internal class UserStoreServiceTest {
 
     @BeforeAll
     fun initializeUserStoreService() {
-        userStoreService = UserStoreService(listOf(mockStoreService1, mockStoreService2), userGameService)
+        userStoreService = UserStoreService(GameStoreAuthenticationFactoryImpl(),
+            listOf(mockStoreService1, mockStoreService2),
+            userGameService)
     }
 
     @Test

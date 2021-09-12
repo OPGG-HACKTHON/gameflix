@@ -1,5 +1,6 @@
 package gg.op.gameflix.infrastructure
 
+import gg.op.gameflix.domain.game.GameStoreAuthenticationFactory
 import gg.op.gameflix.domain.game.UserStoreService
 import gg.op.gameflix.domain.user.UserGameService
 import gg.op.gameflix.infrastructure.blizzard.BlizzardService
@@ -13,11 +14,14 @@ class UserStoreConfiguration(
     private val blizzardService: BlizzardService,
     private val gogService: GogService,
     private val steamService: SteamService,
-    private val userGameService: UserGameService
+    private val userGameService: UserGameService,
+    private val storeAuthenticationFactory: GameStoreAuthenticationFactory
 ) {
 
     @Bean
     fun userStoreService() : UserStoreService = listOf(blizzardService, gogService, steamService)
-            .let { storeServices -> UserStoreService(storeServices, userGameService) }
+            .let { storeServices -> UserStoreService(storeAuthenticationFactory,
+                storeServices,
+                userGameService) }
 
 }

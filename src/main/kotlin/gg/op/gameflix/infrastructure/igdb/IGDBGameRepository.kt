@@ -23,8 +23,19 @@ class IGDBGameRepository(private val igdbClient: IGDBClient) : GameRepository {
         igdbClient.queryGetGamesByName(name, pageable)
             .toGameSummaries()
 
-    override fun findAllGameSummariesBySlugs(slugs: Collection<GameSlug>): Collection<GameSummary> {
-        TODO("Not yet implemented")
+    override fun findAllGameSummariesBySlugs(slugs: Collection<GameSlug>): Collection<GameSummary> =
+        igdbClient.queryGetGamesBySlug(slugs)
+            .toGameSummaries()
+
+    private fun Collection<IGDBGame>.toGameSummaries(): List<GameSummary> {
+        if (isEmpty())
+            return emptyList()
+        return let { igdbGames -> igdbGames.map { it.cover }
+            .toCollection(HashSet())
+            .let { coverIds -> igdbClient.queryGetCoverImages(coverIds) }
+            .associate { igdbCoverImage -> igdbCoverImage.id to igdbCoverImage.toCoverURI() }
+            .let { coverIdToURI -> igdbGames.map { it.toGameSummary(coverIdToURI) } }
+        }
     }
 
     private fun Page<IGDBGame>.toGameSummaries(): Page<GameSummary> {

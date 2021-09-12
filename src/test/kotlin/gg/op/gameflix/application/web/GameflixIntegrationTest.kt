@@ -8,7 +8,9 @@ import gg.op.gameflix.domain.game.GameSummary
 import gg.op.gameflix.domain.user.User
 import gg.op.gameflix.domain.user.UserGameService
 import gg.op.gameflix.domain.user.UserRepository
+import org.hamcrest.Matchers
 import org.hamcrest.Matchers.`is`
+import org.hamcrest.Matchers.greaterThan
 import org.hamcrest.Matchers.hasSize
 import org.hamcrest.Matchers.startsWith
 import org.junit.jupiter.api.BeforeAll
@@ -134,6 +136,23 @@ internal class GameflixIntegrationTest {
             }
     }
 
+    @Transactional
+    @WithMockGoogleUser
+    @Test
+    fun `when POST user-{user-id}-stores expect status created and added game`() {
+        expectUserGamesHasSize(userSaved.games.size)
+
+        mockMvc.post("/users/${userSaved.id}/stores") {
+            contentType = APPLICATION_JSON
+            content = "{\"slug\": \"steam\", \"authentication\": \"76561199114515095\"}"
+        }
+            .andExpect {
+                status { isCreated() }
+                content { jsonPath("games", hasSize<String>(greaterThan(userSaved.games.size))) }
+            }
+            .andDo { print() }
+    }
+
     private fun postUsersGames(userId: String, slug: String) =
         mockMvc.post("/users/$userId/games") {
             contentType = APPLICATION_JSON
@@ -145,5 +164,12 @@ internal class GameflixIntegrationTest {
             .andExpect {
                 status { isOk() }
                 match(MockMvcResultMatchers.jsonPath("$.games", hasSize<String>(sizeExpected)))
+            }
+
+    private fun expectUserGamesHasGreaterSizeThan(sizeExpected: Int) =
+        mockMvc.get("/users/${userSaved.id}/games")
+            .andExpect {
+                status { isOk() }
+                match(MockMvcResultMatchers.jsonPath("$.games", hasSize<String>(Matchers.greaterThan(sizeExpected))))
             }
 }

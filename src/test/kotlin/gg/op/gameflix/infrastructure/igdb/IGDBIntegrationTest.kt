@@ -89,6 +89,13 @@ internal class IGDBIntegrationTest {
     }
 
     @Test
+    fun `when igdbClient queryGetGamesBySlugs with valid slug expect not null`() {
+        val gamesExpected = listOf(GameSlug("Portal 2"), GameSlug("League of legends"))
+
+        assertThat(igdbClient.queryGetGamesBySlug(gamesExpected)).hasSize(2)
+    }
+
+    @Test
     fun `when GameRepository getAllGames return expected count games`() {
         val numExpected = 3
 

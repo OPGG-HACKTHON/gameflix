@@ -27,7 +27,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 
 @ExtendWith(MockKExtension::class)
 @Import(SecurityTestConfiguration::class)
-@WebMvcTest
+@WebMvcTest(GameRestController::class)
 internal class GameRestControllerTest {
 
     @Autowired

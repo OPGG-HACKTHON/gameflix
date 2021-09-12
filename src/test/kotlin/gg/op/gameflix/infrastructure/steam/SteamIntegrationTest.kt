@@ -4,7 +4,6 @@ import gg.op.gameflix.domain.game.GameSlug
 import gg.op.gameflix.domain.game.Store.STEAM
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
@@ -14,7 +13,6 @@ import org.springframework.boot.test.context.ConfigDataApplicationContextInitial
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
-@Disabled
 @TestInstance(PER_CLASS)
 @ExtendWith(SpringExtension::class)
 @ContextConfiguration(classes = [SteamConfiguration::class], initializers = [ConfigDataApplicationContextInitializer::class])
@@ -50,7 +48,7 @@ internal class SteamIntegrationTest {
 
     @Test
     fun `when steamService getAllGameSlugsByAuthentication expect not empty`() {
-        assertThat(steamService.getAllGameSlugsByAuthentication(SteamAuthentication("76561197960434622")))
-            .containsOnlyOnce(GameSlug("Counter-Strike"))
+        assertThat(steamService.getAllGameSlugsByAuthentication(SteamAuthentication("76561199114515095")))
+            .containsOnlyOnce(GameSlug("Portal"))
     }
 }

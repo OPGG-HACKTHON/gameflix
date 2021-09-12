@@ -5,7 +5,7 @@ info:
   contact:
     name: API Support
     email: raeperd117@gmail.com
-  version: 0.0.11
+  version: 0.0.12
 servers:
   - url: 'http://load-balancer-gameflix-backend-754529149.ap-northeast-2.elb.amazonaws.com'
     description: AWS Load balancer for backend fargate service
@@ -22,6 +22,8 @@ tags:
     description: User resource
   - name: game
     description: Game resource
+  - name: store
+    description: Store resource
 paths:
   /users:
     post:
@@ -146,6 +148,35 @@ paths:
           $ref: '#/components/responses/404'
         '500':
           $ref: '#/components/responses/500'
+  /users/{user-id}/stores:
+    parameters:
+      - $ref: "#/components/parameters/user-id"
+    post:
+      operationId: Add store to user
+      tags:
+        - user
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/UserModel"
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserModel"
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
   /users/{user-id}/games/{slug}:
     parameters:
       - $ref: "#/components/parameters/user-id"
@@ -244,6 +275,34 @@ paths:
           $ref: '#/components/responses/404'
         '500':
           $ref: '#/components/responses/500'
+  /stores:
+    get:
+      operationId: Get stores
+      tags:
+        - store
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  stores:
+                    type: array
+                    description: list of stores
+                    items:
+                      $ref: '#/components/schemas/StoreModel'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
 components:
   securitySchemes:
     BearerToken:
@@ -320,6 +379,10 @@ components:
           example: League of Legend
         cover:
           $ref : "#/components/schemas/cover"
+        store:
+          type: string
+          description: Slug of store. empty if not added from store
+          example: "steam"
     GameModel:
       type: object
       readOnly: true
@@ -381,6 +444,17 @@ components:
             description: platform of game
             example: win
           example: ["win", "mac"]
+    StoreModel:
+      type: object
+      readOnly: true
+      description: Store model for description
+      properties:
+        slug:
+          $ref: "#/components/schemas/store-slug"
+        authentication:
+          type: string
+          description: Description for authentication
+          example: steam id of user
     ErrorModel:
       type: object
       readOnly: true
@@ -389,6 +463,10 @@ components:
           type: string
           description: Error message
           example: Request Failed with Error
+    store-slug:
+      type: string
+      description: A url-safe unique, lower-case version of the name
+      example: steam
     game-slug:
       type: string
       description: A url-safe, unique, lower-case version of the name
