@@ -13,6 +13,7 @@ import kotlin.reflect.full.declaredMemberProperties
 sealed interface IGDBClient {
     fun queryGetGames(pageable: Pageable): Page<IGDBGame>
     fun queryGetGameBySlug(gameSlug: GameSlug): IGDBGame?
+    fun queryGetGamesBySlug(gameSlugs: Collection<GameSlug>): Collection<IGDBGame>
     fun queryGetGamesByName(name: String, pageable: Pageable): Page<IGDBGame>
 
     fun queryGetCoverImages(ids: Collection<Int>): Set<IGDBImage>
@@ -100,6 +101,13 @@ class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
             .bodyToMono(object : ParameterizedTypeReference<MutableList<IGDBGame>>() {})
             .block()
             ?.getOrNull(0)
+
+    override fun queryGetGamesBySlug(gameSlugs: Collection<GameSlug>): Collection<IGDBGame> =
+        webClient.post().uri("/games")
+            .bodyValue("fields $FIELDS_TO_RECEIVE; where $CONDITION_DEFAULT & slug = (${gameSlugs.joinToString { "\"${it.slug}\"" }});")
+            .retrieve()
+            .bodyToMono(object : ParameterizedTypeReference<MutableList<IGDBGame>>() {})
+            .block() ?: emptyList()
 
     override fun queryGetGamesByName(name: String, pageable: Pageable) =
        webClient.post().uri("/games")

@@ -7,3 +7,7 @@ interface GameStoreService {
 }
 
 interface GameStoreAuthentication
+
+interface GameStoreAuthenticationFactory {
+    fun createGameStoreAuthentication(store: Store, authentication: String): GameStoreAuthentication
+}

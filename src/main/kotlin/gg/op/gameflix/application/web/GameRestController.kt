@@ -4,6 +4,7 @@ import gg.op.gameflix.domain.game.Game
 import gg.op.gameflix.domain.game.GameRepository
 import gg.op.gameflix.domain.game.GameSlug
 import gg.op.gameflix.domain.game.GameSummary
+import gg.op.gameflix.domain.game.toSlug
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -74,11 +75,13 @@ data class GameModel(
 data class GameSummaryModel(
     val name: String,
     val slug: String,
-    val cover: String
+    val cover: String,
+    val store: String
 ) {
     constructor(gameSummary: GameSummary): this(
         gameSummary.slug.name,
         gameSummary.slug.slug,
-        gameSummary.cover
+        gameSummary.cover,
+        gameSummary.store?.name?.toSlug() ?: ""
     )
 }

@@ -23,7 +23,7 @@ infrastructure:
     baseUrl: https://kr.api.blizzard.com
   steam:
     baseUrl: http://api.steampowered.com
-    apiKey: 11BF521429D930FA056F734AE22A27ED
+    apiKey: 5A056E8523B769BF45CFF8FA144F4451
   igdb:
     baseUrl: https://api.igdb.com/v4
     token: 2ukmci1s2036phlfog3e4119uvnopg
