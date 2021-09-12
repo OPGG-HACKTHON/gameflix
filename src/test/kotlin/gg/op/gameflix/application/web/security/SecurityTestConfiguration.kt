@@ -7,10 +7,12 @@ import gg.op.gameflix.domain.user.UserGameService
 import gg.op.gameflix.domain.user.UserRepository
 import io.mockk.every
 import io.mockk.mockkClass
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.data.repository.findByIdOrNull
 
+@EnableConfigurationProperties(SecurityConfigurationProperties::class)
 @TestConfiguration
 class SecurityTestConfiguration {
 

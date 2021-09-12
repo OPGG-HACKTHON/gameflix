@@ -12,6 +12,9 @@ management:
 
 security:
   clientId: 790559581357-unedu44hsccmr8atn35m3hmktio2tqqp.apps.googleusercontent.com
+  allowed-origins:
+    - "http://localhost:3000"
+    - "http://load-balancer-gameflix-backend-754529149.ap-northeast-2.elb.amazonaws.com"
 
 infrastructure:
   gog:

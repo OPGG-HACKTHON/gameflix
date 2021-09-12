@@ -18,10 +18,13 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy.STATELESS
 import org.springframework.security.web.authentication.HttpStatusEntryPoint
 import org.springframework.security.web.authentication.logout.LogoutFilter
+import org.springframework.web.servlet.config.annotation.CorsRegistry
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
 class SecurityConfiguration(
+    private val securityConfigurationProperties: SecurityConfigurationProperties
 ): WebSecurityConfigurerAdapter() {
 
     @Autowired
@@ -34,6 +37,7 @@ class SecurityConfiguration(
             .addFilterBefore(bearerAuthenticationTokenFilter(), LogoutFilter::class.java)
             .authenticationProvider(bearerAuthenticationProvider)
             .exceptionHandling().authenticationEntryPoint(HttpStatusEntryPoint(UNAUTHORIZED)).and()
+            .cors().and()
             .csrf().disable()
             .formLogin().disable()
             .logout().disable()
@@ -41,6 +45,16 @@ class SecurityConfiguration(
     }
 
     fun bearerAuthenticationTokenFilter() = BearerAuthenticationTokenFilter()
+
+    @Bean
+    fun corsConfigurer() = object : WebMvcConfigurer {
+        override fun addCorsMappings(registry: CorsRegistry) {
+            registry.addMapping("/**")
+                .allowedOrigins(*securityConfigurationProperties.allowedOrigins)
+                .allowCredentials(true)
+        }
+    }
+
 }
 
 @EnableConfigurationProperties(SecurityConfigurationProperties::class)
@@ -61,6 +75,7 @@ class BearerTokenAuthenticationConfiguration(
 @ConstructorBinding
 @ConfigurationProperties("security")
 class SecurityConfigurationProperties(
-    val clientId: String
+    val clientId: String,
+    val allowedOrigins: Array<String>
 )
 
