@@ -5,7 +5,7 @@ info:
   contact:
     name: API Support
     email: raeperd117@gmail.com
-  version: 0.0.12
+  version: 0.0.13
 servers:
   - url: 'http://load-balancer-gameflix-backend-754529149.ap-northeast-2.elb.amazonaws.com'
     description: AWS Load balancer for backend fargate service
@@ -295,8 +295,28 @@ paths:
                       $ref: '#/components/schemas/StoreModel'
         '400':
           $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /stores/{store-slug}:
+    parameters:
+      - $ref: "#/components/parameters/store-slug"
+    get:
+      operationId: Get store by id
+      tags:
+        - store
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StoreModel'
+        '400':
+          $ref: '#/components/responses/400'
         '403':
           $ref: '#/components/responses/403'
         '404':
@@ -320,6 +340,12 @@ components:
       in: path
       schema:
         $ref: "#/components/schemas/user-id"
+    store-slug:
+      name: store-slug
+      required: true
+      in: path
+      schema:
+        $ref: "#/components/schemas/store-slug"
     slug:
       name: slug
       required: true
@@ -454,7 +480,7 @@ components:
         authentication:
           type: string
           description: Description for authentication
-          example: steam id of user
+          example: Pass steam id of user in this field when POST "/users/{user-id}/stores"
     ErrorModel:
       type: object
       readOnly: true

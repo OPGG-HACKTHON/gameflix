@@ -32,7 +32,7 @@ class SecurityConfiguration(
 
     override fun configure(http: HttpSecurity) {
         http.authorizeRequests {
-                auth -> auth.antMatchers("/swagger-ui/**", "/games/**", "/actuator/**").permitAll()
+                auth -> auth.antMatchers("/swagger-ui/**", "/games/**", "/stores/**","/actuator/**").permitAll()
                             .anyRequest().authenticated() }
             .addFilterBefore(bearerAuthenticationTokenFilter(), LogoutFilter::class.java)
             .authenticationProvider(bearerAuthenticationProvider)
