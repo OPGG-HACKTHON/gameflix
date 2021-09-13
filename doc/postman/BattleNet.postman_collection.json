@@ -1,0 +1,517 @@
+{
+	"info": {
+		"_postman_id": "fbebc7f9-eb5e-41fd-9e39-964158699371",
+		"name": "BattleNet Copy",
+		"description": "# Reference\n\n* https://develop.battle.net/documentation",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "oauth/token?grant_type=client_credentials",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "{{CLIENT_SECRET}}",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "{{CLIENT_ID}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://APAC.battle.net/oauth/token?grant_type=client_credentials",
+					"protocol": "https",
+					"host": [
+						"APAC",
+						"battle",
+						"net"
+					],
+					"path": [
+						"oauth",
+						"token"
+					],
+					"query": [
+						{
+							"key": "grant_type",
+							"value": "client_credentials"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "oauth/token?grant_type=client_credentials",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "https://APAC.battle.net/oauth/token?grant_type=client_credentials",
+							"protocol": "https",
+							"host": [
+								"APAC",
+								"battle",
+								"net"
+							],
+							"path": [
+								"oauth",
+								"token"
+							],
+							"query": [
+								{
+									"key": "grant_type",
+									"value": "client_credentials"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Mon, 13 Sep 2021 01:59:03 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Apache"
+						},
+						{
+							"key": "Retry-After",
+							"value": "600"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "JSESSIONID=81608ADA43E63470E9412D1603F48D08.blade06_kr_b_oauth_provider; Path=/oauth/; Secure; HttpOnly"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-store"
+						},
+						{
+							"key": "Pragma",
+							"value": "no-cache"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "gzip"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5, max=4000"
+						},
+						{
+							"key": "Connection",
+							"value": "Keep-Alive"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json;charset=UTF-8"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"access_token\": \"KRMkJgEGlv8OBbkEtT267vCNmKZbfdj0mN\",\n    \"token_type\": \"bearer\",\n    \"expires_in\": 86399,\n    \"sub\": \"916b6064383441388fa56d2b3af3779a\"\n}"
+				}
+			]
+		},
+		{
+			"name": "oauth/authorize?client_id",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://kr.battle.net/oauth/authorize?client_id=916b6064383441388fa56d2b3af3779a&scope=wow.profile sc2.profile d3.profile&redirect_uri=http://localhost&response_type=code",
+					"protocol": "https",
+					"host": [
+						"kr",
+						"battle",
+						"net"
+					],
+					"path": [
+						"oauth",
+						"authorize"
+					],
+					"query": [
+						{
+							"key": "client_id",
+							"value": "916b6064383441388fa56d2b3af3779a"
+						},
+						{
+							"key": "scope",
+							"value": "wow.profile sc2.profile d3.profile"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "http://localhost"
+						},
+						{
+							"key": "response_type",
+							"value": "code"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "oauth/token?client_id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const jsonData = JSON.parse(responseBody); ",
+							"",
+							"if (jsonData[\"access_token\"]) { ",
+							"    pm.collectionVariables.set(\"BattleNetToken\", jsonData[\"access_token\"]); ",
+							"    pm.collectionVariables.set(\"playerId\", jsonData[\"sub\"]);",
+							"}",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://kr.battle.net/oauth/token?client_id={{CLIENT_ID}}&client_secret={{CLIENT_SECRET}}&grant_type=authorization_code&code=KREJCWBFUW5EF5VXRU25XW3FN7HO5J4ZGV&redirect_uri={{REDIRECT_URI}}",
+					"protocol": "https",
+					"host": [
+						"kr",
+						"battle",
+						"net"
+					],
+					"path": [
+						"oauth",
+						"token"
+					],
+					"query": [
+						{
+							"key": "client_id",
+							"value": "{{CLIENT_ID}}"
+						},
+						{
+							"key": "client_secret",
+							"value": "{{CLIENT_SECRET}}"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code"
+						},
+						{
+							"key": "code",
+							"value": "KREJCWBFUW5EF5VXRU25XW3FN7HO5J4ZGV"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "{{REDIRECT_URI}}"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "BattleNet 엑세스 토큰 가져오기 Copy",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "https://kr.battle.net/oauth/token?client_id={{CLIENT_ID}}&client_secret={{CLIENT_SECRET}}&grant_type=authorization_code&code=KRQL2887HK4CESEZ4IWUPBPLCMEUDZ8MFT&redirect_uri={{REDIRECT_URI}}",
+							"protocol": "https",
+							"host": [
+								"kr",
+								"battle",
+								"net"
+							],
+							"path": [
+								"oauth",
+								"token"
+							],
+							"query": [
+								{
+									"key": "client_id",
+									"value": "{{CLIENT_ID}}"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{CLIENT_SECRET}}"
+								},
+								{
+									"key": "grant_type",
+									"value": "authorization_code"
+								},
+								{
+									"key": "code",
+									"value": "KRQL2887HK4CESEZ4IWUPBPLCMEUDZ8MFT"
+								},
+								{
+									"key": "redirect_uri",
+									"value": "{{REDIRECT_URI}}"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Mon, 13 Sep 2021 02:30:13 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Apache"
+						},
+						{
+							"key": "Retry-After",
+							"value": "600"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "JSESSIONID=6687DF76B665729645C488F56031341D.blade07_kr_a_oauth_provider; Path=/oauth/; Secure; HttpOnly"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-store"
+						},
+						{
+							"key": "Pragma",
+							"value": "no-cache"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "gzip"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5, max=4000"
+						},
+						{
+							"key": "Connection",
+							"value": "Keep-Alive"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json;charset=UTF-8"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"access_token\": \"KRKNGxEDzH2rfvcYyJh9iZf8qzfVMkl4GM\",\n    \"token_type\": \"bearer\",\n    \"expires_in\": 86399,\n    \"scope\": \"wow.profile sc2.profile d3.profile\",\n    \"sub\": \"14632379\"\n}"
+				}
+			]
+		},
+		{
+			"name": "oauth/userinfo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{BattleNetToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://kr.battle.net/oauth/userinfo",
+					"protocol": "https",
+					"host": [
+						"kr",
+						"battle",
+						"net"
+					],
+					"path": [
+						"oauth",
+						"userinfo"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "BattleNet 기본 정보 Copy",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://kr.battle.net/oauth/userinfo",
+							"protocol": "https",
+							"host": [
+								"kr",
+								"battle",
+								"net"
+							],
+							"path": [
+								"oauth",
+								"userinfo"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Mon, 13 Sep 2021 02:32:12 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Apache"
+						},
+						{
+							"key": "Retry-After",
+							"value": "600"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "JSESSIONID=E5D58D71D23F3B090997C97B554A30B2.blade07_kr_a_oauth_provider; Path=/oauth/; Secure; HttpOnly"
+						},
+						{
+							"key": "X-Content-Type-Options",
+							"value": "nosniff"
+						},
+						{
+							"key": "X-XSS-Protection",
+							"value": "1; mode=block"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-cache, no-store, max-age=0, must-revalidate"
+						},
+						{
+							"key": "Pragma",
+							"value": "no-cache"
+						},
+						{
+							"key": "Expires",
+							"value": "0"
+						},
+						{
+							"key": "X-Frame-Options",
+							"value": "DENY"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "gzip"
+						},
+						{
+							"key": "Strict-Transport-Security",
+							"value": "max-age=0"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=5, max=4000"
+						},
+						{
+							"key": "Connection",
+							"value": "Keep-Alive"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json;charset=UTF-8"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"sub\": \"14632379\",\n    \"id\": 14632379,\n    \"battletag\": \"Tempel#3674\"\n}"
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "CLIENT_ID",
+			"value": "916b6064383441388fa56d2b3af3779a"
+		},
+		{
+			"key": "CLIENT_SECRET",
+			"value": "RrKJsOMXTn7AVxhFyscX8ABQiF9Ja9nw"
+		},
+		{
+			"key": "REDIRECT_URI",
+			"value": "http://localhost"
+		},
+		{
+			"key": "BattleNetToken",
+			"value": "KRKNGxEDzH2rfvcYyJh9iZf8qzfVMkl4GM"
+		},
+		{
+			"key": "playerId",
+			"value": "14632379"
+		}
+	]
+}
