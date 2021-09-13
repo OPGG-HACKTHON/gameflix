@@ -87,6 +87,28 @@ class UserStoreRestController(
     fun postUserStores(@PathVariable id: String, @AuthenticationPrincipal user: User, @RequestBody dto: StorePostRequestDTO): UserModel =
         userStoreService.connectUserWithStore(user, dto.store, dto.authentication)
             .let { UserModel(it) }
+
+    @PreAuthorize("#id == #user.id")
+    @GetMapping("/{id}/stores")
+    fun getUserStores(@PathVariable id: String, @AuthenticationPrincipal user: User): MultipleStoreModel =
+        user.games.mapNotNull { it.store }
+            .toCollection(HashSet())
+            .map { createStoreModel(it) }
+            .let { storeModels -> MultipleStoreModel(storeModels) }
+
+    @PreAuthorize("#id == #user.id")
+    @GetMapping("/{id}/stores/{storeSlug}")
+    fun getUserStoresBySlug(@PathVariable id: String, @PathVariable storeSlug: String, @AuthenticationPrincipal user: User): StoreModel =
+        user.games.mapNotNull { it.store }
+            .find { store -> store == Store.fromSlug(storeSlug) }
+            ?.let { store -> createStoreModel(store) } ?: throw NoSuchElementException("No such store in user")
+
+    @PreAuthorize("#id == #user.id")
+    @GetMapping("/{id}/stores/{storeSlug}/games")
+    fun getUserStoreGames(@PathVariable id: String, @PathVariable storeSlug: String, @AuthenticationPrincipal user: User): MultipleGameSummaryModel =
+        user.games.filter { it.store != null && it.store == Store.fromSlug(storeSlug) }
+            .map { GameSummaryModel(it) }
+            .let { gameSummaryModels -> MultipleGameSummaryModel(gameSummaryModels) }
 }
 
 data class UserModel(

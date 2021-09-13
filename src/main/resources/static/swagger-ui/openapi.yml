@@ -5,7 +5,7 @@ info:
   contact:
     name: API Support
     email: raeperd117@gmail.com
-  version: 0.0.12
+  version: 0.0.14
 servers:
   - url: 'http://load-balancer-gameflix-backend-754529149.ap-northeast-2.elb.amazonaws.com'
     description: AWS Load balancer for backend fargate service
@@ -104,10 +104,7 @@ paths:
                 type: object
                 properties:
                   games:
-                    type: array
-                    description: list of games summary model
-                    items:
-                      $ref: '#/components/schemas/GameSummaryModel'
+                    $ref: '#/components/schemas/MultipleGameSummaryModel'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -171,6 +168,63 @@ paths:
           $ref: '#/components/responses/400'
         '401':
           $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    get:
+      operationId: Get stores from user
+      tags:
+        - user
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MultipleStoreModel"
+  /users/{user-id}/stores/{store-slug}:
+    parameters:
+      - $ref: "#/components/schemas/user-id"
+      - $ref: "#/components/parameters/store-slug"
+    get:
+      operationId: Get store by id from user
+      tags:
+        - user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StoreModel"
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /users/{user-id}/stores/{store-slug}/games:
+    parameters:
+      - $ref: "#/components/schemas/user-id"
+      - $ref: "#/components/parameters/store-slug"
+    get:
+      operationId: Get games by store and user
+      tags:
+        - user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MultipleGameSummaryModel"
+        '400':
+          $ref: '#/components/responses/400'
         '403':
           $ref: '#/components/responses/403'
         '404':
@@ -295,8 +349,28 @@ paths:
                       $ref: '#/components/schemas/StoreModel'
         '400':
           $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /stores/{store-slug}:
+    parameters:
+      - $ref: "#/components/parameters/store-slug"
+    get:
+      operationId: Get store by id
+      tags:
+        - store
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MultipleStoreModel"
+        '400':
+          $ref: '#/components/responses/400'
         '403':
           $ref: '#/components/responses/403'
         '404':
@@ -320,6 +394,12 @@ components:
       in: path
       schema:
         $ref: "#/components/schemas/user-id"
+    store-slug:
+      name: store-slug
+      required: true
+      in: path
+      schema:
+        $ref: "#/components/schemas/store-slug"
     slug:
       name: slug
       required: true
@@ -362,10 +442,7 @@ components:
           description: Email address
           example: raeperd117@gmail.com
         games:
-          type: array
-          description: Games of user
-          items:
-            $ref: "#/components/schemas/GameSummaryModel"
+          $ref: "#/components/schemas/MultipleStoreModel"
     GameSummaryModel:
       type: object
       readOnly: true
@@ -383,6 +460,16 @@ components:
           type: string
           description: Slug of store. empty if not added from store
           example: "steam"
+    MultipleGameSummaryModel:
+      type: object
+      readOnly: true
+      description: MultipleGameSummaryModel
+      properties:
+        games:
+          type: array
+          description: Array of GameSummaryModel
+          items:
+            $ref: "#/components/schemas/GameSummaryModel"
     GameModel:
       type: object
       readOnly: true
@@ -454,7 +541,17 @@ components:
         authentication:
           type: string
           description: Description for authentication
-          example: steam id of user
+          example: Pass steam id of user in this field when POST "/users/{user-id}/stores"
+    MultipleStoreModel:
+      type: object
+      readOnly: true
+      description: Multiple store model
+      properties:
+        stores:
+          type: array
+          description: store models
+          items:
+            $ref: "#/components/schemas/StoreModel"
     ErrorModel:
       type: object
       readOnly: true
@@ -479,7 +576,7 @@ components:
     user-id:
       type: string
       description: ID of user. Field `sub` of [google ID token payload](https://developers.google.com/identity/protocols/oauth2/openid-connect#an-id-tokens-payload)
-      example: 10769150350006150715113082367
+      example: "10769150350006150715113082367"
   responses:
     '400':
       description: Bad Request

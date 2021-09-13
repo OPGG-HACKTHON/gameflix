@@ -84,7 +84,12 @@ class GameSlug(
 enum class Store {
     STEAM,
     GOG,
-    BLIZZARD
+    BLIZZARD;
+
+    companion object {
+        fun fromSlug(slug: String): Store? =
+            values().find { it.toString() == slug.uppercase() }
+    }
 }
 
 fun String.toSlug() = lowercase()
