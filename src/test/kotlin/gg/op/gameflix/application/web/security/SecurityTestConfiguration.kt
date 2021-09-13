@@ -2,6 +2,7 @@ package gg.op.gameflix.application.web.security
 
 import gg.op.gameflix.domain.game.GameSlug
 import gg.op.gameflix.domain.game.GameSummary
+import gg.op.gameflix.domain.game.Store
 import gg.op.gameflix.domain.user.User
 import gg.op.gameflix.domain.user.UserGameService
 import gg.op.gameflix.domain.user.UserRepository
@@ -20,7 +21,7 @@ class SecurityTestConfiguration {
         const val MOCK_USER_ID = "mock-user-id"
         const val MOCK_USER_EMAIL = "mock-user@email.com"
         val MOCK_USER_GAME_SLUG = GameSlug("League of Legends", "cover")
-        val MOCK_USER_GAMES = mutableSetOf(GameSummary(MOCK_USER_GAME_SLUG, "cover"))
+        val MOCK_USER_GAMES = mutableSetOf(GameSummary(MOCK_USER_GAME_SLUG, "cover"), GameSummary(null, GameSlug("Portal"), "cover", Store.STEAM))
         val MOCK_USER = User(MOCK_USER_ID, MOCK_USER_EMAIL, MOCK_USER_GAMES)
     }
 

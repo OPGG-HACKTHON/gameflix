@@ -32,12 +32,6 @@ class StoreRestController {
         // thrown if GET /stores/{id} has invalid id
     }
 
-    private fun createStoreModel(store: Store): StoreModel
-        = when(store) {
-            Store.STEAM -> StoreModel(Store.STEAM.name.lowercase(), "Pass steam id of user in this field when POST \"/users/{user-id}/stores\"")
-            Store.GOG -> StoreModel(Store.GOG.name.lowercase(), "Pass API KEY of user in this field when POST \"/users/{user-id}/stores\"")
-            Store.BLIZZARD -> StoreModel(Store.BLIZZARD.name.lowercase(), "Pass API KEY of user in this field when POST \\\"/users/{user-id}/stores\\\"")
-    }
 }
 
 @Suppress("kotlin:S117")
@@ -49,3 +43,10 @@ data class StoreModel(
 data class MultipleStoreModel(
     val stores: List<StoreModel>
 )
+
+fun createStoreModel(store: Store): StoreModel
+    = when(store) {
+    Store.STEAM -> StoreModel(Store.STEAM.name.lowercase(), "Pass steam id of user in this field when POST \"/users/{user-id}/stores\"")
+    Store.GOG -> StoreModel(Store.GOG.name.lowercase(), "Pass API KEY of user in this field when POST \"/users/{user-id}/stores\"")
+    Store.BLIZZARD -> StoreModel(Store.BLIZZARD.name.lowercase(), "Pass API KEY of user in this field when POST \\\"/users/{user-id}/stores\\\"")
+}
