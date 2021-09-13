@@ -6,7 +6,9 @@ import gg.op.gameflix.domain.game.UserStoreService
 import gg.op.gameflix.domain.user.User
 import gg.op.gameflix.domain.user.UserGameService
 import gg.op.gameflix.domain.user.UserRepository
+import org.springframework.beans.support.PagedListHolder
 import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.HttpStatus.NO_CONTENT
 import org.springframework.security.access.prepost.PreAuthorize
@@ -44,6 +46,7 @@ class UserRestController(
         userRepository.delete(user)
 }
 
+@Suppress("kotlin:S1192")
 @RequestMapping("/users")
 @RestController
 class UserGameRestController(
@@ -59,12 +62,20 @@ class UserGameRestController(
 
     @PreAuthorize("#id == #user.id")
     @GetMapping("/{id}/games")
-    fun getUserGames(@PathVariable id: String, @AuthenticationPrincipal user: User): PagedGameSummaryModel =
+    fun getUserGames(pageable: Pageable, @PathVariable id: String, @AuthenticationPrincipal user: User): PagedGameSummaryModel =
         user.games
             .toMutableList()
-            .let { gameSummaries -> PageImpl(gameSummaries) }
+            .let { gameSummaries -> PageImpl(gameSummaries, pageable, gameSummaries.size.toLong()) }
             .let { PagedGameSummaryModel(it) }
 
+    @PreAuthorize("#id == #user.id")
+    @GetMapping("/{id}/games", params = ["search"])
+    fun getUserGamesBySearch(pageable: Pageable, @PathVariable id: String, search: String, @AuthenticationPrincipal user: User): PagedGameSummaryModel =
+        user.games
+            .filter { it.slug.name.contains(search, ignoreCase = true) }
+            .toMutableList()
+            .let { gameSummaries -> PagedListHolder(gameSummaries) }
+            .let { PagedGameSummaryModel(it) }
 
     @PreAuthorize("#id == #user.id")
     @GetMapping("/{id}/games/{slug}")
@@ -109,10 +120,19 @@ class UserStoreRestController(
 
     @PreAuthorize("#id == #user.id")
     @GetMapping("/{id}/stores/{storeSlug}/games")
-    fun getUserStoreGames(@PathVariable id: String, @PathVariable storeSlug: String, @AuthenticationPrincipal user: User): PagedGameSummaryModel =
+    fun getUserStoreGames(@PathVariable id: String, @PathVariable storeSlug: String, @AuthenticationPrincipal user: User, pageable: Pageable): PagedGameSummaryModel =
         user.games.filter { it.store != null && it.store == Store.fromSlug(storeSlug) }
             .toMutableList()
-            .let { PageImpl(it) }
+            .let { PageImpl(it, pageable, it.size.toLong()) }
+            .let { page -> PagedGameSummaryModel(page) }
+
+    @PreAuthorize("#id == #user.id")
+    @GetMapping("/{id}/stores/{storeSlug}/games", params = ["search"])
+    fun getUserStoreGamesBySearch(@PathVariable id: String, @PathVariable storeSlug: String, search: String, @AuthenticationPrincipal user: User, pageable: Pageable): PagedGameSummaryModel =
+        user.games.filter { it.store != null && it.store == Store.fromSlug(storeSlug) }
+            .filter { it.slug.name.contains(search, ignoreCase = true) }
+            .toMutableList()
+            .let { PageImpl(it, pageable, it.size.toLong()) }
             .let { page -> PagedGameSummaryModel(page) }
 }
 

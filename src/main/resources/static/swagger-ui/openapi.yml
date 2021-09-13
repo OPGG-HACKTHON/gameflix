@@ -5,7 +5,7 @@ info:
   contact:
     name: API Support
     email: raeperd117@gmail.com
-  version: 0.0.17
+  version: 0.0.18
 servers:
   - url: 'http://load-balancer-gameflix-backend-754529149.ap-northeast-2.elb.amazonaws.com'
     description: AWS Load balancer for backend fargate service
@@ -91,8 +91,15 @@ paths:
   /users/{user-id}/games:
     parameters:
       - $ref: "#/components/parameters/user-id"
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/size'
+      - $ref: '#/components/parameters/search'
     get:
       operationId: Get games of user
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/size'
+        - $ref: '#/components/parameters/search'
       tags:
         - user
       responses:
@@ -212,8 +219,15 @@ paths:
     parameters:
       - $ref: "#/components/schemas/user-id"
       - $ref: "#/components/parameters/store-slug"
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/size'
+      - $ref: '#/components/parameters/search'
     get:
       operationId: Get games by store and user
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/size'
+        - $ref: '#/components/parameters/search'
       tags:
         - user
       responses:

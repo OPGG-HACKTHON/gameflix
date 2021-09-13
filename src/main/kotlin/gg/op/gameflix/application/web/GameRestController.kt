@@ -5,6 +5,7 @@ import gg.op.gameflix.domain.game.GameRepository
 import gg.op.gameflix.domain.game.GameSlug
 import gg.op.gameflix.domain.game.GameSummary
 import gg.op.gameflix.domain.game.toSlug
+import org.springframework.beans.support.PagedListHolder
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
@@ -57,6 +58,18 @@ data class PagedGameSummaryModel(
         hasPrevious = gamesPage.hasPrevious(),
         totalPages = gamesPage.totalPages,
         totalElements = gamesPage.totalElements
+    )
+    constructor(gamesPage: PagedListHolder<GameSummary>): this(
+        games = gamesPage.source.map { GameSummaryModel(it) },
+        number = gamesPage.page,
+        size = gamesPage.pageSize,
+        numberOfElements = gamesPage.nrOfElements,
+        isFirst = gamesPage.isFirstPage,
+        isLast = gamesPage.isLastPage,
+        hasNext = !gamesPage.isLastPage,
+        hasPrevious = !gamesPage.isFirstPage,
+        totalPages = gamesPage.pageCount,
+        totalElements = gamesPage.nrOfElements.toLong()
     )
 }
 
