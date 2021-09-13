@@ -6,6 +6,7 @@ import gg.op.gameflix.domain.game.UserStoreService
 import gg.op.gameflix.domain.user.User
 import gg.op.gameflix.domain.user.UserGameService
 import gg.op.gameflix.domain.user.UserRepository
+import org.springframework.data.domain.PageImpl
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.HttpStatus.NO_CONTENT
 import org.springframework.security.access.prepost.PreAuthorize
@@ -58,9 +59,12 @@ class UserGameRestController(
 
     @PreAuthorize("#id == #user.id")
     @GetMapping("/{id}/games")
-    fun getUserGames(@PathVariable id: String, @AuthenticationPrincipal user: User): MultipleGameSummaryModel =
-        user.games.map { gameSummary -> GameSummaryModel(gameSummary) }
-            .let { MultipleGameSummaryModel(it) }
+    fun getUserGames(@PathVariable id: String, @AuthenticationPrincipal user: User): PagedGameSummaryModel =
+        user.games
+            .toMutableList()
+            .let { gameSummaries -> PageImpl(gameSummaries) }
+            .let { PagedGameSummaryModel(it) }
+
 
     @PreAuthorize("#id == #user.id")
     @GetMapping("/{id}/games/{slug}")
@@ -105,10 +109,11 @@ class UserStoreRestController(
 
     @PreAuthorize("#id == #user.id")
     @GetMapping("/{id}/stores/{storeSlug}/games")
-    fun getUserStoreGames(@PathVariable id: String, @PathVariable storeSlug: String, @AuthenticationPrincipal user: User): MultipleGameSummaryModel =
+    fun getUserStoreGames(@PathVariable id: String, @PathVariable storeSlug: String, @AuthenticationPrincipal user: User): PagedGameSummaryModel =
         user.games.filter { it.store != null && it.store == Store.fromSlug(storeSlug) }
-            .map { GameSummaryModel(it) }
-            .let { gameSummaryModels -> MultipleGameSummaryModel(gameSummaryModels) }
+            .toMutableList()
+            .let { PageImpl(it) }
+            .let { page -> PagedGameSummaryModel(page) }
 }
 
 data class UserModel(

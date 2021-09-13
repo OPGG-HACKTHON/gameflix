@@ -5,6 +5,7 @@ import gg.op.gameflix.domain.game.GameRepository
 import gg.op.gameflix.domain.game.GameSlug
 import gg.op.gameflix.domain.game.GameSummary
 import gg.op.gameflix.domain.game.toSlug
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -17,18 +18,14 @@ import org.springframework.web.bind.annotation.RestController
 class GameRestController(private val gameRepository: GameRepository) {
 
     @GetMapping
-    fun getGames(pageable: Pageable): MultipleGameSummaryModel =
+    fun getGames(pageable: Pageable): PagedGameSummaryModel =
         gameRepository.findAllGameSummaries(pageable)
-            .content
-            .map { GameSummaryModel(it) }
-            .let { MultipleGameSummaryModel(it) }
+            .let { PagedGameSummaryModel(it) }
 
     @GetMapping(params = ["search"])
-    fun getGamesByName(search: String, pageable: Pageable): MultipleGameSummaryModel =
+    fun getGamesByName(search: String, pageable: Pageable): PagedGameSummaryModel =
         gameRepository.findAllGameSummariesByName(search, pageable)
-            .content
-            .map { GameSummaryModel(it) }
-            .let { MultipleGameSummaryModel(it) }
+            .let { PagedGameSummaryModel(it) }
 
     @GetMapping("/{slug}")
     fun getGameBySlug(@PathVariable slug: String): ResponseEntity<GameModel> =
@@ -37,7 +34,31 @@ class GameRestController(private val gameRepository: GameRepository) {
             ?.let { gameModel -> ResponseEntity.ok(gameModel) } ?: ResponseEntity.notFound().build()
 }
 
-data class MultipleGameSummaryModel(val games: List<GameSummaryModel>)
+data class PagedGameSummaryModel(
+    val games: List<GameSummaryModel>,
+    val number: Int,
+    val size: Int,
+    val numberOfElements: Int,
+    val isFirst: Boolean,
+    val isLast: Boolean,
+    val hasNext: Boolean,
+    val hasPrevious: Boolean,
+    val totalPages: Int,
+    val totalElements: Long
+) {
+    constructor(gamesPage: Page<GameSummary>): this(
+        games = gamesPage.map { GameSummaryModel(it) }.content,
+        number = gamesPage.number,
+        size = gamesPage.size,
+        numberOfElements = gamesPage.numberOfElements,
+        isFirst = gamesPage.isFirst,
+        isLast = gamesPage.isLast,
+        hasNext = gamesPage.hasNext(),
+        hasPrevious = gamesPage.hasPrevious(),
+        totalPages = gamesPage.totalPages,
+        totalElements = gamesPage.totalElements
+    )
+}
 
 @Suppress("kotlin:S117")
 data class GameModel(

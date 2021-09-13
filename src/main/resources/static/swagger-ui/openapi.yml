@@ -5,7 +5,7 @@ info:
   contact:
     name: API Support
     email: raeperd117@gmail.com
-  version: 0.0.16
+  version: 0.0.17
 servers:
   - url: 'http://load-balancer-gameflix-backend-754529149.ap-northeast-2.elb.amazonaws.com'
     description: AWS Load balancer for backend fargate service
@@ -104,7 +104,7 @@ paths:
                 type: object
                 properties:
                   games:
-                    $ref: '#/components/schemas/MultipleGameSummaryModel'
+                    $ref: '#/components/schemas/PagedGameSummaryModel'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -222,7 +222,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/MultipleGameSummaryModel"
+                $ref: "#/components/schemas/PagedGameSummaryModel"
         '400':
           $ref: '#/components/responses/400'
         '403':
@@ -460,7 +460,7 @@ components:
           type: string
           description: Slug of store. empty if not added from store
           example: "steam"
-    MultipleGameSummaryModel:
+    PagedGameSummaryModel:
       type: object
       readOnly: true
       description: MultipleGameSummaryModel
@@ -470,6 +470,42 @@ components:
           description: Array of GameSummaryModel
           items:
             $ref: "#/components/schemas/GameSummaryModel"
+        number:
+          type: integer
+          description: Returns the number of the current Slice. Is always non-negative.
+          example: 0
+        size:
+          type: integer
+          description: Returns the size of the Slice.
+          example: 20
+        numberOfElements:
+          type: integer
+          description: Returns the number of elements currently on this Slice.
+          example: 200
+        isFirst:
+          type: boolean
+          description: Returns whether the current Slice is the first one.
+          example: true
+        isLast:
+          type: boolean
+          description: Returns whether the current Slice is the last one.
+          example: false
+        hasNext:
+          type: boolean
+          description: Returns if there is a next Slice.
+          example: true
+        hasPrevious:
+          type: boolean
+          description: Returns if there is a previous Slice.
+          example: false
+        totalPages:
+          type: integer
+          description: Returns the number of total pages.
+          example: 10
+        totalElements:
+          type: integer
+          description: Returns the total amount of elements.
+          example: 200
     GameModel:
       type: object
       readOnly: true
