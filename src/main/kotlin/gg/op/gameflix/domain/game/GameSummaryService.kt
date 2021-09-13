@@ -15,11 +15,9 @@ class GameSummaryService(
                 .associateWith { gameSummaryRepository.findFirstBySlugAndStore(it, store) }
         val summariesFound = slugsToNullableSummary.findAndSaveAllNullableSummariesWithStore(store)
         return slugsToNullableSummary
-            .mapValues { (slug, summary) -> summary ?: (summariesFound.find { slug == it.slug } ?: throw IllegalStateException()) }
-            .values
+            .mapNotNull { (slug, summary) -> summary ?: (summariesFound.find { slug == it.slug }) }
     }
 
-    // TODO: gameRepository.findFirstGameSummaryBySlug
     @Transactional
     fun findGameSummaryBySlug(slug: GameSlug): GameSummary? {
         val gameSummary = gameSummaryRepository.findFirstBySlugAndStore(slug, null)

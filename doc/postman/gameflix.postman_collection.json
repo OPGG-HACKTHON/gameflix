@@ -1,0 +1,1152 @@
+{
+	"info": {
+		"_postman_id": "31c9ea58-844c-49ea-ab7d-75933b4a00f8",
+		"name": "gameflix",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "google",
+			"item": [
+				{
+					"name": "tokeninfo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://oauth2.googleapis.com/tokeninfo?id_token={{ID_TOKEN}}",
+							"protocol": "https",
+							"host": [
+								"oauth2",
+								"googleapis",
+								"com"
+							],
+							"path": [
+								"tokeninfo"
+							],
+							"query": [
+								{
+									"key": "id_token",
+									"value": "{{ID_TOKEN}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "store",
+					"item": [
+						{
+							"name": "users/{id}/stores",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"slug\": \"blizzard\",\n    \"authentication\": \"KRKNGxEDzH2rfvcYyJh9iZf8qzfVMkl4GM\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{GAMEFLIX_BASE_URL}}/users/105640320050360116204/stores",
+									"host": [
+										"{{GAMEFLIX_BASE_URL}}"
+									],
+									"path": [
+										"users",
+										"105640320050360116204",
+										"stores"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "gog",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"slug\": \"gog\",\n    \"authentication\": \"eLr_2NHEUw7Vhabf6r3ru-kAQ_u4GEf0abWTkNupO1yzV81d9svD6Q_IviAsSMtx0Mj4J6iAHoX7rRLwEnq8fdkWEGG58YirXNaxAvKetgE-1o745TOnjf_cnPhRV5hGUPOTtwKhwEesq7OyZnoJ56ypE3iCcxGoVvMsLjH96FPIorQvx-w7d6ReYXZT9D47\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{GAMEFLIX_BASE_URL}}/users/105640320050360116204/stores",
+											"host": [
+												"{{GAMEFLIX_BASE_URL}}"
+											],
+											"path": [
+												"users",
+												"105640320050360116204",
+												"stores"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "1; mode=block"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 13 Sep 2021 10:39:13 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"id\": \"105640320050360116204\",\n    \"email\": \"raeperd117@gmail.com\",\n    \"games\": [\n        {\n            \"name\": \"Super Hexagon\",\n            \"slug\": \"super-hexagon\",\n            \"cover\": \"https://images.igdb.com/igdb/image/upload/t_cover_big/co1n35.jpg\",\n            \"store\": \"gog\"\n        },\n        {\n            \"name\": \"Pilot Brothers\",\n            \"slug\": \"pilot-brothers\",\n            \"cover\": \"https://images.igdb.com/igdb/image/upload/t_cover_big/cxjorpzuy7tv0juttzav.jpg\",\n            \"store\": \"gog\"\n        }\n    ]\n}"
+								},
+								{
+									"name": "steam",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"slug\": \"steam\",\n    \"authentication\": \"76561199114515095\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{GAMEFLIX_BASE_URL}}/users/105640320050360116204/stores",
+											"host": [
+												"{{GAMEFLIX_BASE_URL}}"
+											],
+											"path": [
+												"users",
+												"105640320050360116204",
+												"stores"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "1; mode=block"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 13 Sep 2021 10:40:01 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"id\": \"105640320050360116204\",\n    \"email\": \"raeperd117@gmail.com\",\n    \"games\": [\n        {\n            \"name\": \"Super Hexagon\",\n            \"slug\": \"super-hexagon\",\n            \"cover\": \"https://images.igdb.com/igdb/image/upload/t_cover_big/co1n35.jpg\",\n            \"store\": \"gog\"\n        },\n        {\n            \"name\": \"Portal\",\n            \"slug\": \"portal\",\n            \"cover\": \"https://images.igdb.com/igdb/image/upload/t_cover_big/co1x7d.jpg\",\n            \"store\": \"steam\"\n        },\n        {\n            \"name\": \"Portal 2\",\n            \"slug\": \"portal-2\",\n            \"cover\": \"https://images.igdb.com/igdb/image/upload/t_cover_big/co1rs4.jpg\",\n            \"store\": \"steam\"\n        },\n        {\n            \"name\": \"Pilot Brothers\",\n            \"slug\": \"pilot-brothers\",\n            \"cover\": \"https://images.igdb.com/igdb/image/upload/t_cover_big/cxjorpzuy7tv0juttzav.jpg\",\n            \"store\": \"gog\"\n        }\n    ]\n}"
+								},
+								{
+									"name": "blizzard",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"slug\": \"blizzard\",\n    \"authentication\": \"KRKNGxEDzH2rfvcYyJh9iZf8qzfVMkl4GM\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{GAMEFLIX_BASE_URL}}/users/105640320050360116204/stores",
+											"host": [
+												"{{GAMEFLIX_BASE_URL}}"
+											],
+											"path": [
+												"users",
+												"105640320050360116204",
+												"stores"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "1; mode=block"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 13 Sep 2021 10:40:49 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"id\": \"105640320050360116204\",\n    \"email\": \"raeperd117@gmail.com\",\n    \"games\": [\n        {\n            \"name\": \"StarCraft II: Wings of Liberty\",\n            \"slug\": \"starcraft-ii-wings-of-liberty\",\n            \"cover\": \"https://images.igdb.com/igdb/image/upload/t_cover_big/co1tnn.jpg\",\n            \"store\": \"blizzard\"\n        },\n        {\n            \"name\": \"Super Hexagon\",\n            \"slug\": \"super-hexagon\",\n            \"cover\": \"https://images.igdb.com/igdb/image/upload/t_cover_big/co1n35.jpg\",\n            \"store\": \"gog\"\n        },\n        {\n            \"name\": \"Portal\",\n            \"slug\": \"portal\",\n            \"cover\": \"https://images.igdb.com/igdb/image/upload/t_cover_big/co1x7d.jpg\",\n            \"store\": \"steam\"\n        },\n        {\n            \"name\": \"Diablo III\",\n            \"slug\": \"diablo-iii\",\n            \"cover\": \"https://images.igdb.com/igdb/image/upload/t_cover_big/co2l1u.jpg\",\n            \"store\": \"blizzard\"\n        },\n        {\n            \"name\": \"World of Warcraft\",\n            \"slug\": \"world-of-warcraft\",\n            \"cover\": \"https://images.igdb.com/igdb/image/upload/t_cover_big/co2l7z.jpg\",\n            \"store\": \"blizzard\"\n        },\n        {\n            \"name\": \"Portal 2\",\n            \"slug\": \"portal-2\",\n            \"cover\": \"https://images.igdb.com/igdb/image/upload/t_cover_big/co1rs4.jpg\",\n            \"store\": \"steam\"\n        },\n        {\n            \"name\": \"Pilot Brothers\",\n            \"slug\": \"pilot-brothers\",\n            \"cover\": \"https://images.igdb.com/igdb/image/upload/t_cover_big/cxjorpzuy7tv0juttzav.jpg\",\n            \"store\": \"gog\"\n        }\n    ]\n}"
+								}
+							]
+						},
+						{
+							"name": "users/{id}/stores/{id}/games",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"slug\": \"gog\",\n    \"authentication\": \"eLr_2NHEUw7Vhabf6r3ru-kAQ_u4GEf0abWTkNupO1yzV81d9svD6Q_IviAsSMtx0Mj4J6iAHoX7rRLwEnq8fdkWEGG58YirXNaxAvKetgE-1o745TOnjf_cnPhRV5hGUPOTtwKhwEesq7OyZnoJ56ypE3iCcxGoVvMsLjH96FPIorQvx-w7d6ReYXZT9D47\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{GAMEFLIX_BASE_URL}}/users/105640320050360116204/stores/gog/games",
+									"host": [
+										"{{GAMEFLIX_BASE_URL}}"
+									],
+									"path": [
+										"users",
+										"105640320050360116204",
+										"stores",
+										"gog",
+										"games"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "users/{id}/stores/{id}/games",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"slug\": \"gog\",\n    \"authentication\": \"eLr_2NHEUw7Vhabf6r3ru-kAQ_u4GEf0abWTkNupO1yzV81d9svD6Q_IviAsSMtx0Mj4J6iAHoX7rRLwEnq8fdkWEGG58YirXNaxAvKetgE-1o745TOnjf_cnPhRV5hGUPOTtwKhwEesq7OyZnoJ56ypE3iCcxGoVvMsLjH96FPIorQvx-w7d6ReYXZT9D47\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{GAMEFLIX_BASE_URL}}/users/105640320050360116204/stores/gog/games",
+											"host": [
+												"{{GAMEFLIX_BASE_URL}}"
+											],
+											"path": [
+												"users",
+												"105640320050360116204",
+												"stores",
+												"gog",
+												"games"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Method"
+										},
+										{
+											"key": "Vary",
+											"value": "Access-Control-Request-Headers"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-XSS-Protection",
+											"value": "1; mode=block"
+										},
+										{
+											"key": "Cache-Control",
+											"value": "no-cache, no-store, max-age=0, must-revalidate"
+										},
+										{
+											"key": "Pragma",
+											"value": "no-cache"
+										},
+										{
+											"key": "Expires",
+											"value": "0"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Transfer-Encoding",
+											"value": "chunked"
+										},
+										{
+											"key": "Date",
+											"value": "Mon, 13 Sep 2021 10:31:56 GMT"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=60"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"games\": [\n        {\n            \"name\": \"Super Hexagon\",\n            \"slug\": \"super-hexagon\",\n            \"cover\": \"https://images.igdb.com/igdb/image/upload/t_cover_big/co1n35.jpg\",\n            \"store\": \"gog\"\n        },\n        {\n            \"name\": \"Pilot Brothers\",\n            \"slug\": \"pilot-brothers\",\n            \"cover\": \"https://images.igdb.com/igdb/image/upload/t_cover_big/cxjorpzuy7tv0juttzav.jpg\",\n            \"store\": \"gog\"\n        }\n    ]\n}"
+								}
+							]
+						}
+					],
+					"description": "# User store authentication \n\n## GOG\n[Authentication — GOG-API 0.1 documentation](https://gogapidocs.readthedocs.io/en/latest/auth.html)\n- Pass access token when POST /users/{id}/stores with authentication field in json body\n\nQuery Parameters\n- client_id (str) – OAuth2 Client ID. Use 46899977096215655.  \n- redirect_uri (str) – URL where the browser will be redirected after the login has been completed. Use https://embed.gog.com/on_login_success?origin=client. \n- response_type (str) – Use code\n- layout (str) – Use client2\n\n## Blizzard\n[OAuth APIs | Documentation](https://develop.battle.net/documentation/battle-net/oauth-apis)\n- Pass access token when POST /users/{id}/stores with authentication field in json body\n- client id: 916b6064383441388fa56d2b3af3779a\n- client secert:  RrKJsOMXTn7AVxhFyscX8ABQiF9Ja9nw\n\n## Steam\n- Pass steam id when POST /users/{id}/stores with authentication field in json body \n- Can be found in [Steam's account](https://store.steampowered.com/account/)\n\n### reference\n- [steam-user - npm](https://www.npmjs.com/package/steam-user)\n- [skhamis/steam-game-picker: Allows you to use OpenID to sign in to your steam account and randomly choose games from your steam library using only React hooks](https://github.com/skhamis/steam-game-picker)"
+				},
+				{
+					"name": "users",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{GAMEFLIX_BASE_URL}}/users",
+							"host": [
+								"{{GAMEFLIX_BASE_URL}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "user created",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "{{GAMEFLIX_BASE_URL}}/users",
+									"host": [
+										"{{GAMEFLIX_BASE_URL}}"
+									],
+									"path": [
+										"users"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Method"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Headers"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "1; mode=block"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 04 Sep 2021 13:06:39 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": \"105640320050360116204\",\n    \"email\": \"raeperd117@gmail.com\",\n    \"games\": []\n}"
+						}
+					]
+				},
+				{
+					"name": "users/{id}",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJSUzI1NiIsImtpZCI6Ijc0MjE3YjhkYWRiYjM2NTc4MzU4MGY5ZTkyNDg3ZDcwMWNkMzhmZTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJhY2NvdW50cy5nb29nbGUuY29tIiwiYXpwIjoiNzkwNTU5NTgxMzU3LXVuZWR1NDRoc2NjbXI4YXRuMzVtM2hta3RpbzJ0cXFwLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwiYXVkIjoiNzkwNTU5NTgxMzU3LXVuZWR1NDRoc2NjbXI4YXRuMzVtM2hta3RpbzJ0cXFwLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTA1NjQwMzIwMDUwMzYwMTE2MjA0IiwiZW1haWwiOiJyYWVwZXJkMTE3QGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJhdF9oYXNoIjoiQzh5VlRhNi1NVzVONnA1akdCNUNfQSIsIm5hbWUiOiJyYWVwZXJkIiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hLS9BT2gxNEdpRUFjUnhaSE9ESTJoajVfQ3pLempXTWFMdHh6aE1lcjR2b2x3QnZnPXM5Ni1jIiwiZ2l2ZW5fbmFtZSI6InJhZXBlcmQiLCJsb2NhbGUiOiJrbyIsImlhdCI6MTYzMTQ0NDE2MiwiZXhwIjoxNjMxNDQ3NzYyLCJqdGkiOiIzOTQyYjZkMzQxY2Y3NjIwYmVlZDkxMDEyNDdiMDE0M2UyNzM0MzI4In0.H3jt7N1-zRVY6OyJjGVwHN_ndD0rLMLEgPlBldTgKymVyamzYlzwGg6bfxlemkaS2Rn4BZGpTf34Y9Eq8OOHDuLF8RqmCUT1odAu-i6yiZwD1ay8OYRRls3HqoXuSvqDpfpkmZ7DSGIlF8xPyOKsbWcxaydMpDSBAEiwscCrxfr_hl2jyTXXlsLJn8xyr1-A-wJkVctNADF4D4TCIMVv10qNKJuKhZpaYwgGSBhvV_vXO-6nbj2hES_8kQu_g4kGY9ms0lOgwYXAjFtRP4NFWDr1ifGFqLa9uY_-fL8LnSzxa_otYJ6pN4mGcaZE_YeH_1Xwge4v1gesadd5aCB63g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GAMEFLIX_BASE_URL}}/users/105640320050360116204",
+							"host": [
+								"{{GAMEFLIX_BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"105640320050360116204"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "users/{id}/games",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"slug\": \"League of Legends\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{GAMEFLIX_BASE_URL}}/users/105640320050360116204/games",
+							"host": [
+								"{{GAMEFLIX_BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"105640320050360116204",
+								"games"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "user saved new game",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"slug\": \"League of Legends\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{GAMEFLIX_BASE_URL}}/users/105640320050360116204/games",
+									"host": [
+										"{{GAMEFLIX_BASE_URL}}"
+									],
+									"path": [
+										"users",
+										"105640320050360116204",
+										"games"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Method"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Headers"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "1; mode=block"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 04 Sep 2021 13:07:46 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"name\": \"League of Legends\",\n    \"slug\": \"league-of-legends\",\n    \"cover\": \"https://images.igdb.com/igdb/image/upload/t_cover_big/co254s.jpg\"\n}"
+						}
+					]
+				},
+				{
+					"name": "users/{id}/games",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"slug\": \"League of Legends\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{GAMEFLIX_BASE_URL}}/users/105640320050360116204/games",
+							"host": [
+								"{{GAMEFLIX_BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"105640320050360116204",
+								"games"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "user saved new game",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"slug\": \"League of Legends\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{GAMEFLIX_BASE_URL}}/users/105640320050360116204/games",
+									"host": [
+										"{{GAMEFLIX_BASE_URL}}"
+									],
+									"path": [
+										"users",
+										"105640320050360116204",
+										"games"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Method"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Headers"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "1; mode=block"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 04 Sep 2021 13:07:46 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"name\": \"League of Legends\",\n    \"slug\": \"league-of-legends\",\n    \"cover\": \"https://images.igdb.com/igdb/image/upload/t_cover_big/co254s.jpg\"\n}"
+						}
+					]
+				},
+				{
+					"name": "users/{id}/games/{slug}",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"slug\": \"League of Legends\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{GAMEFLIX_BASE_URL}}/users/105640320050360116204/games/league-of-legends",
+							"host": [
+								"{{GAMEFLIX_BASE_URL}}"
+							],
+							"path": [
+								"users",
+								"105640320050360116204",
+								"games",
+								"league-of-legends"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "user saved new game",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"slug\": \"League of Legends\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{GAMEFLIX_BASE_URL}}/users/105640320050360116204/games",
+									"host": [
+										"{{GAMEFLIX_BASE_URL}}"
+									],
+									"path": [
+										"users",
+										"105640320050360116204",
+										"games"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Vary",
+									"value": "Origin"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Method"
+								},
+								{
+									"key": "Vary",
+									"value": "Access-Control-Request-Headers"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "X-XSS-Protection",
+									"value": "1; mode=block"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, no-store, max-age=0, must-revalidate"
+								},
+								{
+									"key": "Pragma",
+									"value": "no-cache"
+								},
+								{
+									"key": "Expires",
+									"value": "0"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 04 Sep 2021 13:07:46 GMT"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=60"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"name\": \"League of Legends\",\n    \"slug\": \"league-of-legends\",\n    \"cover\": \"https://images.igdb.com/igdb/image/upload/t_cover_big/co254s.jpg\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "games",
+			"item": [
+				{
+					"name": "games",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GAMEFLIX_BASE_URL}}/games",
+							"host": [
+								"{{GAMEFLIX_BASE_URL}}"
+							],
+							"path": [
+								"games"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "games/{slug}",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GAMEFLIX_BASE_URL}}/games/league-of-legends",
+							"host": [
+								"{{GAMEFLIX_BASE_URL}}"
+							],
+							"path": [
+								"games",
+								"league-of-legends"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "games",
+					"request": {
+						"method": "OPTIONS",
+						"header": [
+							{
+								"key": "Origin",
+								"value": "http://localhost:8080",
+								"type": "text"
+							},
+							{
+								"key": "Access-Control-Request-Headers",
+								"value": "content-type",
+								"type": "text"
+							},
+							{
+								"key": "Access-Control-Request-Method",
+								"value": "GET",
+								"type": "text"
+							},
+							{
+								"key": "Sec-Fetch-Mode",
+								"value": "cors",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{GAMEFLIX_BASE_URL}}/games",
+							"host": [
+								"{{GAMEFLIX_BASE_URL}}"
+							],
+							"path": [
+								"games"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "actuator",
+			"item": [
+				{
+					"name": "actuator/info",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GAMEFLIX_BASE_URL}}/actuator/info",
+							"host": [
+								"{{GAMEFLIX_BASE_URL}}"
+							],
+							"path": [
+								"actuator",
+								"info"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "actuator/health",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GAMEFLIX_BASE_URL}}/actuator/health",
+							"host": [
+								"{{GAMEFLIX_BASE_URL}}"
+							],
+							"path": [
+								"actuator",
+								"health"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{ID_TOKEN}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "ID_TOKEN",
+			"value": "eyJhbGciOiJSUzI1NiIsImtpZCI6Ijc0MjE3YjhkYWRiYjM2NTc4MzU4MGY5ZTkyNDg3ZDcwMWNkMzhmZTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJhY2NvdW50cy5nb29nbGUuY29tIiwiYXpwIjoiNzkwNTU5NTgxMzU3LXVuZWR1NDRoc2NjbXI4YXRuMzVtM2hta3RpbzJ0cXFwLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwiYXVkIjoiNzkwNTU5NTgxMzU3LXVuZWR1NDRoc2NjbXI4YXRuMzVtM2hta3RpbzJ0cXFwLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTA1NjQwMzIwMDUwMzYwMTE2MjA0IiwiZW1haWwiOiJyYWVwZXJkMTE3QGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJhdF9oYXNoIjoiMm9NUnBIdnlxMzhkSXFkalU2VXRhQSIsIm5hbWUiOiJyYWVwZXJkIiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hLS9BT2gxNEdpRUFjUnhaSE9ESTJoajVfQ3pLempXTWFMdHh6aE1lcjR2b2x3QnZnPXM5Ni1jIiwiZ2l2ZW5fbmFtZSI6InJhZXBlcmQiLCJsb2NhbGUiOiJrbyIsImlhdCI6MTYzMTUyODE2NiwiZXhwIjoxNjMxNTMxNzY2LCJqdGkiOiI3ZjFkYTY0YmQ4MTgwMjEyNzFjMmNlOTc1ZjYwYTYwMDg1Yjg1MzQxIn0.XxXSrLzs_NegjITBIGGK3KGQ23mSnOpEJtrul5V0gR16XS8RqrcMWowDSgquRZxv_PS1kwwZbSnWNeROOa8QG8nUqbpghejjPKbUrRpu1vEBUFmSD4-D_TdRc_A0TF78xygFoUooW7hB5rNM5Yz7f9kcKGBK70eFPeq7kappKaRZ7Yfli-jM1Vk1-ebBu_e4KbHxFSYqz8KnNVF4bLdM9t2qUpeLvmchiNllpaP-sLxlaKdkk6QRtiEX59yUiM9wQGcXYjndeW1Kn6RKu-JoEFx7SzVDrWg0N-axp2hOlXrJ-9_46wJXZ1czW58GZJ52CmUTTakcXyBRFlDrFAIj3g"
+		}
+	]
+}

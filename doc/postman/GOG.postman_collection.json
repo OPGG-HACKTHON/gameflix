@@ -1,0 +1,739 @@
+{
+	"info": {
+		"_postman_id": "96d99110-8457-40ac-9a3b-49717d649203",
+		"name": "GOG",
+		"description": "# 1. API 문서 URL: \nhttps://gogapidocs.readthedocs.io/en/latest/index.html\n\n# 2. API 특징 : \n아직 비공식 문서여서  client_id, client_secret, redirect_url이 고정되어 있다.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://auth.gog.com/auth?client_id=46899977096215655&redirect_uri=https%3A%2F%2Fembed.gog.com%2Fon_login_success%3Forigin%3Dclient&response_type=code&layout=client2",
+					"protocol": "https",
+					"host": [
+						"auth",
+						"gog",
+						"com"
+					],
+					"path": [
+						"auth"
+					],
+					"query": [
+						{
+							"key": "client_id",
+							"value": "46899977096215655"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "https%3A%2F%2Fembed.gog.com%2Fon_login_success%3Forigin%3Dclient"
+						},
+						{
+							"key": "response_type",
+							"value": "code"
+						},
+						{
+							"key": "layout",
+							"value": "client2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "token",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://auth.gog.com/token?client_id=46899977096215655&client_secret=9d85c43b1482497dbbce61f6e4aa173a433796eeae2ca8c5f6129f2dc4de46d9&grant_type=authorization_code&code=Aolcemc3-e3n198FpJT3942fbn97E-mRgrGw4Cjoo-Bbb1plwTdtm_hu0xg7oiGFLd4gwf1FiHvrFvg6LHQyMxlztIk3UNGWPNhUjdVsgULNeUBdzquLSfP_yGV22KYwWydF8ESgI1ajSGKy3gtRaNeI_oXWwVTl64gNx7P3uUNb5NKzhIX98RFrA5UJON1s&redirect_uri=https%3A%2F%2Fembed.gog.com%2Fon_login_success%3Forigin%3Dclient",
+					"protocol": "https",
+					"host": [
+						"auth",
+						"gog",
+						"com"
+					],
+					"path": [
+						"token"
+					],
+					"query": [
+						{
+							"key": "client_id",
+							"value": "46899977096215655"
+						},
+						{
+							"key": "client_secret",
+							"value": "9d85c43b1482497dbbce61f6e4aa173a433796eeae2ca8c5f6129f2dc4de46d9"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code"
+						},
+						{
+							"key": "code",
+							"value": "Aolcemc3-e3n198FpJT3942fbn97E-mRgrGw4Cjoo-Bbb1plwTdtm_hu0xg7oiGFLd4gwf1FiHvrFvg6LHQyMxlztIk3UNGWPNhUjdVsgULNeUBdzquLSfP_yGV22KYwWydF8ESgI1ajSGKy3gtRaNeI_oXWwVTl64gNx7P3uUNb5NKzhIX98RFrA5UJON1s"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "https%3A%2F%2Fembed.gog.com%2Fon_login_success%3Forigin%3Dclient"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "token",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://auth.gog.com/token?client_id=46899977096215655&client_secret=9d85c43b1482497dbbce61f6e4aa173a433796eeae2ca8c5f6129f2dc4de46d9&grant_type=authorization_code&code=0EvkgsS3mFVQsWYMOE2C2FBnLZW5w7yyOMCdTdI2I9Z1lqFfnxTFA2HnEeGZ8HeNnvgWH4W9Jvyj3xyRfGQrod07ZEEWv9H763Zg3-_kl5hoW0aVpYuoY82mF2tpP_cUl9LpoxpANvA4gaYgXomu_hD1qliS8hrdyqdBnXR90NiTzO4B73w-QmAgrp1AJxD2&redirect_uri=https%3A%2F%2Fembed.gog.com%2Fon_login_success%3Forigin%3Dclient",
+							"protocol": "https",
+							"host": [
+								"auth",
+								"gog",
+								"com"
+							],
+							"path": [
+								"token"
+							],
+							"query": [
+								{
+									"key": "client_id",
+									"value": "46899977096215655"
+								},
+								{
+									"key": "client_secret",
+									"value": "9d85c43b1482497dbbce61f6e4aa173a433796eeae2ca8c5f6129f2dc4de46d9"
+								},
+								{
+									"key": "grant_type",
+									"value": "authorization_code"
+								},
+								{
+									"key": "code",
+									"value": "0EvkgsS3mFVQsWYMOE2C2FBnLZW5w7yyOMCdTdI2I9Z1lqFfnxTFA2HnEeGZ8HeNnvgWH4W9Jvyj3xyRfGQrod07ZEEWv9H763Zg3-_kl5hoW0aVpYuoY82mF2tpP_cUl9LpoxpANvA4gaYgXomu_hD1qliS8hrdyqdBnXR90NiTzO4B73w-QmAgrp1AJxD2"
+								},
+								{
+									"key": "redirect_uri",
+									"value": "https%3A%2F%2Fembed.gog.com%2Fon_login_success%3Forigin%3Dclient"
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Content-Length",
+							"value": "353"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "no-store, private"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "gzip"
+						},
+						{
+							"key": "Accept-Ranges",
+							"value": "bytes"
+						},
+						{
+							"key": "Strict-Transport-Security",
+							"value": "max-age=63072000"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 09 Aug 2021 23:59:35 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Vary",
+							"value": "Accept-Encoding"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"access_token\": \"8E8Pz9BsTU-YttdsE1v9F4QAibc6can0vxGSglsyv69WmWgiAtTYrvoM_taFVwSLxiNM75IUMsCBTyG7VjsAdo4kSUMAjr-iaWxjIqrYfYqefkCqpUs5fubpp1P2cpIJA9a8Y5PxFsB2GVv8ArqstVR412QHw3dLZOk_r8svhOmywAAAponh4AD98S4UBdyh\",\n    \"expires_in\": 3600,\n    \"token_type\": \"bearer\",\n    \"scope\": \"\",\n    \"session_id\": \"6994584347814977661\",\n    \"refresh_token\": \"2TcPck8_DZeqj7_kP8V66kxorL0EOrt8K3QvDNlyEv5pBzVQtBMd1xO1xPWNNR5z\",\n    \"user_id\": \"54643786180104364\"\n}"
+				}
+			]
+		},
+		{
+			"name": "games",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eLr_2NHEUw7Vhabf6r3ru-kAQ_u4GEf0abWTkNupO1yzV81d9svD6Q_IviAsSMtx0Mj4J6iAHoX7rRLwEnq8fdkWEGG58YirXNaxAvKetgE-1o745TOnjf_cnPhRV5hGUPOTtwKhwEesq7OyZnoJ56ypE3iCcxGoVvMsLjH96FPIorQvx-w7d6ReYXZT9D47",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}/user/data/games",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"user",
+						"data",
+						"games"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "gamesSample",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/user/data/games",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"user",
+								"data",
+								"games"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Server",
+							"value": "nginx"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Content-Length",
+							"value": "43"
+						},
+						{
+							"key": "Access-Control-Allow-Methods",
+							"value": "GET,OPTIONS"
+						},
+						{
+							"key": "Access-Control-Allow-Headers",
+							"value": "Authorization,Content-Type"
+						},
+						{
+							"key": "Access-Control-Allow-Credentials",
+							"value": "true"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "gzip"
+						},
+						{
+							"key": "X-LB-H",
+							"value": "N"
+						},
+						{
+							"key": "Accept-Ranges",
+							"value": "bytes"
+						},
+						{
+							"key": "Expires",
+							"value": "Mon, 09 Aug 2021 23:59:58 GMT"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "max-age=0, no-cache, no-store"
+						},
+						{
+							"key": "Pragma",
+							"value": "no-cache"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 09 Aug 2021 23:59:58 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "gog_us=punurcol4ui02cio3b806rf923; expires=Tue, 10-Aug-2021 23:59:58 GMT; Max-Age=86400; path=/; domain=.gog.com; secure; HttpOnly"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "gog_lc=KR_USD_en-US; expires=Tue, 09-Aug-2022 23:59:58 GMT; Max-Age=31536000; path=/; domain=.gog.com; httponly"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "gog-al=PQSdb-EJLeUvn01fv18Cft05aL8QYV2NZKOgiC21hkAsjAHm17C-DI-GqEbEPmJ3_oeD7R-MdxLVlPNDfnYsSjIvApXiOj-ul-w2GsE0yOS42DUM7qbljDCRespIZReS; expires=Mon, 09-May-2022 23:59:58 GMT; Max-Age=23587200; path=/; domain=.gog.com; secure; httponly"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "gog_us=punurcol4ui02cio3b806rf923; expires=Tue, 10-Aug-2021 23:59:58 GMT; Max-Age=86400; path=/; domain=.gog.com; secure; httponly"
+						},
+						{
+							"key": "Vary",
+							"value": "Cookie, Accept-Encoding"
+						}
+					],
+					"cookie": [],
+					"body": "{\n  \"owned\": [\n    1207658691,\n    1207658713,\n    1207658805,\n    1207658924,\n    1207658930,\n    1207658945,\n    1207658957,\n    1929434313,\n    1949616134,\n    1432207890,\n    1444035366,\n    1444036272,\n    1443696086\n  ]\n}"
+				},
+				{
+					"name": "games",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/user/data/games",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"user",
+								"data",
+								"games"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Server",
+							"value": "nginx"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Content-Length",
+							"value": "52"
+						},
+						{
+							"key": "Access-Control-Allow-Methods",
+							"value": "GET,OPTIONS"
+						},
+						{
+							"key": "Access-Control-Allow-Headers",
+							"value": "Authorization,Content-Type"
+						},
+						{
+							"key": "Access-Control-Allow-Credentials",
+							"value": "true"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "gzip"
+						},
+						{
+							"key": "X-LB-H",
+							"value": "N"
+						},
+						{
+							"key": "Accept-Ranges",
+							"value": "bytes"
+						},
+						{
+							"key": "Expires",
+							"value": "Mon, 16 Aug 2021 11:48:40 GMT"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "max-age=0, no-cache, no-store"
+						},
+						{
+							"key": "Pragma",
+							"value": "no-cache"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 16 Aug 2021 11:48:40 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "gog_us=l0ec0nrp52l0b9rsf9ovvdf255; expires=Tue, 17-Aug-2021 11:48:40 GMT; Max-Age=86400; path=/; domain=.gog.com; secure; HttpOnly"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "gog_lc=KR_USD_en-US; expires=Tue, 16-Aug-2022 11:48:40 GMT; Max-Age=31536000; path=/; domain=.gog.com; httponly"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "gog-al=XvQSujKOrg3819PbIJo1Su3d3wHM5mGkTXJJP1F4CCORfe-b6FRP20JfvAqARTZxlS4GAlc4HpR-xafY2XL8csasHwo0WkHjygsdTPLB2oH5h6IUV5qaedwuCu-XVDUM; expires=Mon, 16-May-2022 11:48:40 GMT; Max-Age=23587200; path=/; domain=.gog.com; secure; httponly"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "gog_us=l0ec0nrp52l0b9rsf9ovvdf255; expires=Tue, 17-Aug-2021 11:48:40 GMT; Max-Age=86400; path=/; domain=.gog.com; secure; httponly"
+						},
+						{
+							"key": "Vary",
+							"value": "Cookie, Accept-Encoding"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"owned\": [\n        2078420771\n    ]\n}"
+				}
+			]
+		},
+		{
+			"name": "gameDetails",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}/account/gameDetails/1096877296.json",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"account",
+						"gameDetails",
+						"1096877296.json"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "gameDetails",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/account/gameDetails/1207658691.json",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"account",
+								"gameDetails",
+								"1207658691.json"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Server",
+							"value": "nginx"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Content-Length",
+							"value": "33"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "gzip"
+						},
+						{
+							"key": "X-LB-H",
+							"value": "N"
+						},
+						{
+							"key": "Accept-Ranges",
+							"value": "bytes"
+						},
+						{
+							"key": "Expires",
+							"value": "Tue, 10 Aug 2021 00:02:18 GMT"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "max-age=0, no-cache, no-store"
+						},
+						{
+							"key": "Pragma",
+							"value": "no-cache"
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 10 Aug 2021 00:02:18 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "gog_us=punurcol4ui02cio3b806rf923; expires=Wed, 11-Aug-2021 00:02:18 GMT; Max-Age=86400; path=/; domain=.gog.com; secure; HttpOnly"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "gog_lc=KR_USD_en-US; expires=Wed, 10-Aug-2022 00:02:18 GMT; Max-Age=31536000; path=/; domain=.gog.com; httponly"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "gog-al=vSZ9PIzpcjaaJeXGb54mGra0W9XMYNquibMzulgr6_zzR1qpx-McWh13-0PnbMD6ncni6FCLMjJ6lU1GcLP8NBnxIOdzprbSkhRAjwMBU5PQmY1_9qUz6zoI6h55Rn1X; expires=Tue, 10-May-2022 00:02:18 GMT; Max-Age=23587200; path=/; domain=.gog.com; secure; httponly"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "gog_us=punurcol4ui02cio3b806rf923; expires=Wed, 11-Aug-2021 00:02:18 GMT; Max-Age=86400; path=/; domain=.gog.com; secure; httponly"
+						},
+						{
+							"key": "Vary",
+							"value": "Cookie, Accept-Encoding"
+						}
+					],
+					"cookie": [],
+					"body": "{\r\n  \"title\": \"Unreal Tournament 2004 Editor's Choice Edition\",\r\n  \"backgroundImage\": \"//images-4.gog.com/ebed1d5546a4fa382d7d36db8aee7f298eac7db3a8dc2f4389120b5b7b3155a9\",\r\n  \"cdKey\": \"\",\r\n  \"textInformation\": \"\",\r\n  \"downloads\": [\r\n    [\r\n      \"English\",\r\n      {\r\n        \"windows\": [\r\n          {\r\n            \"manualUrl\": \"/downlink/unreal_tournament_2004_ece/en1installer3\",\r\n            \"downloaderUrl\": \"gogdownloader://unreal_tournament_2004_ece/installer_win_en\",\r\n            \"name\": \"Unreal Tournament 2004 Editor's Choice Edition (Part 1 of 3)\",\r\n            \"version\": null,\r\n            \"date\": \"\",\r\n            \"size\": \"1 MB\"\r\n          },\r\n          {\r\n            \"manualUrl\": \"/downlink/unreal_tournament_2004_ece/en1installer4\",\r\n            \"downloaderUrl\": \"gogdownloader://unreal_tournament_2004_ece/installer_win_en\",\r\n            \"name\": \"Unreal Tournament 2004 Editor's Choice Edition (Part 2 of 3)\",\r\n            \"version\": null,\r\n            \"date\": \"\",\r\n            \"size\": \"1.5 GB\"\r\n          },\r\n          {\r\n            \"manualUrl\": \"/downlink/unreal_tournament_2004_ece/en1installer5\",\r\n            \"downloaderUrl\": \"gogdownloader://unreal_tournament_2004_ece/installer_win_en\",\r\n            \"name\": \"Unreal Tournament 2004 Editor's Choice Edition (Part 3 of 3)\",\r\n            \"version\": null,\r\n            \"date\": \"\",\r\n            \"size\": \"507 MB\"\r\n          }\r\n        ]\r\n      }\r\n    ]\r\n  ],\r\n  \"extras\": [\r\n    {\r\n      \"manualUrl\": \"/downlink/file/unreal_tournament_2004_ece/6093\",\r\n      \"downloaderUrl\": \"gogdownloader://unreal_tournament_2004_ece/6093\",\r\n      \"name\": \"manual (33 pages)\",\r\n      \"type\": \"manuals\",\r\n      \"info\": 1,\r\n      \"size\": \"2 MB\"\r\n    },\r\n    {\r\n      \"manualUrl\": \"/downlink/file/unreal_tournament_2004_ece/6073\",\r\n      \"downloaderUrl\": \"gogdownloader://unreal_tournament_2004_ece/6073\",\r\n      \"name\": \"HD wallpapers\",\r\n      \"type\": \"wallpapers\",\r\n      \"info\": 12,\r\n      \"size\": \"115 MB\"\r\n    },\r\n    {\r\n      \"manualUrl\": \"/downlink/file/unreal_tournament_2004_ece/6083\",\r\n      \"downloaderUrl\": \"gogdownloader://unreal_tournament_2004_ece/6083\",\r\n      \"name\": \"avatars\",\r\n      \"type\": \"avatars\",\r\n      \"info\": 8,\r\n      \"size\": \"1 MB\"\r\n    }\r\n  ],\r\n  \"dlcs\": [],\r\n  \"tags\": [],\r\n  \"isPreOrder\": false,\r\n  \"releaseTimestamp\": 1227585600,\r\n  \"messages\": [],\r\n  \"changelog\": null,\r\n  \"forumLink\": \"https://embed.gog.com/forum/unreal_series\",\r\n  \"isBaseProductMissing\": false,\r\n  \"missingBaseProduct\": null\r\n}"
+				},
+				{
+					"name": "gameDetails",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/account/gameDetails/2078420771.json",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"account",
+								"gameDetails",
+								"2078420771.json"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Server",
+							"value": "nginx"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Content-Length",
+							"value": "655"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "gzip"
+						},
+						{
+							"key": "X-LB-H",
+							"value": "N"
+						},
+						{
+							"key": "Accept-Ranges",
+							"value": "bytes"
+						},
+						{
+							"key": "Expires",
+							"value": "Mon, 16 Aug 2021 11:49:10 GMT"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "max-age=0, no-cache, no-store"
+						},
+						{
+							"key": "Pragma",
+							"value": "no-cache"
+						},
+						{
+							"key": "Date",
+							"value": "Mon, 16 Aug 2021 11:49:10 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "gog_us=l0ec0nrp52l0b9rsf9ovvdf255; expires=Tue, 17-Aug-2021 11:49:08 GMT; Max-Age=86400; path=/; domain=.gog.com; secure; HttpOnly"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "gog_lc=KR_USD_en-US; expires=Tue, 16-Aug-2022 11:49:08 GMT; Max-Age=31535998; path=/; domain=.gog.com; httponly"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "gog-al=yu7-v52EzBKpLeHOrvMOSX2UVcf_cOVwmVepyjmECAiQUMxRjOvPqhpNIQYxRGAFMa2SQbtD01rSri8ZmekT3BMOlDDF8vvvLY66ECnvAaD111FpD03V2k1_rRLs1649; expires=Mon, 16-May-2022 11:49:10 GMT; Max-Age=23587200; path=/; domain=.gog.com; secure; httponly"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "gog_us=l0ec0nrp52l0b9rsf9ovvdf255; expires=Tue, 17-Aug-2021 11:49:10 GMT; Max-Age=86400; path=/; domain=.gog.com; secure; httponly"
+						},
+						{
+							"key": "Vary",
+							"value": "Cookie, Accept-Encoding"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"title\": \"DISTRAINT 2\",\n    \"backgroundImage\": \"//images-2.gog-statics.com/dbeeb272fec828488b8b99af06e4cd5c0bcdbd39180ea28072c0b436ce53f58d\",\n    \"cdKey\": \"\",\n    \"textInformation\": \"\",\n    \"downloads\": [\n        [\n            \"English\",\n            {\n                \"windows\": [\n                    {\n                        \"manualUrl\": \"/downloads/distraint_2/en1installer0\",\n                        \"name\": \"DISTRAINT 2\",\n                        \"version\": \"1.3\",\n                        \"date\": \"\",\n                        \"size\": \"231 MB\"\n                    }\n                ]\n            }\n        ]\n    ],\n    \"galaxyDownloads\": [],\n    \"extras\": [],\n    \"dlcs\": [],\n    \"tags\": [],\n    \"isPreOrder\": false,\n    \"releaseTimestamp\": 1548251100,\n    \"messages\": [],\n    \"changelog\": \"<h5>Update 1.3 (3rd March 2021)</h5>\\n<p>Added Japanese localization and fixed a running bug near end of the game.</p>\\n<h5>Update 1.2 (24 September 2019)</h5>\\n<p>DISTRAINT 2 Italian Localization Is Now Available!</p>\\n<p>Thank you FenixTM, you guys are awesome! :)</p>\",\n    \"forumLink\": \"https://www.gog.com/forum/distraint_series\",\n    \"isBaseProductMissing\": false,\n    \"missingBaseProduct\": null,\n    \"features\": [\n        \"Cloud saves\",\n        \"Overlay\"\n    ],\n    \"simpleGalaxyInstallers\": [\n        {\n            \"path\": \"/downloads/distraint_2/14e17067e574c302400221d7d22107e7\",\n            \"os\": \"windows\"\n        }\n    ]\n}"
+				}
+			]
+		},
+		{
+			"name": "user",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL}}/userData.json",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"userData.json"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "user",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/userData.json",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"userData.json"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Server",
+							"value": "nginx"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Content-Length",
+							"value": "477"
+						},
+						{
+							"key": "Content-Encoding",
+							"value": "gzip"
+						},
+						{
+							"key": "X-LB-H",
+							"value": "N"
+						},
+						{
+							"key": "Accept-Ranges",
+							"value": "bytes"
+						},
+						{
+							"key": "Expires",
+							"value": "Tue, 10 Aug 2021 00:22:51 GMT"
+						},
+						{
+							"key": "Cache-Control",
+							"value": "max-age=0, no-cache, no-store"
+						},
+						{
+							"key": "Pragma",
+							"value": "no-cache"
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 10 Aug 2021 00:22:51 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "gog_us=punurcol4ui02cio3b806rf923; expires=Wed, 11-Aug-2021 00:22:51 GMT; Max-Age=86400; path=/; domain=.gog.com; secure; HttpOnly"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "gog_lc=KR_USD_en-US; expires=Wed, 10-Aug-2022 00:22:51 GMT; Max-Age=31536000; path=/; domain=.gog.com; httponly"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "gog-al=N63vaIW_13og35-L6OW_2PQsWk0xLWNMg5f6DHsQbHjYxFCyAb-KIIeR7GOVl_fnzqQ8p8Pox_Mga3CiUCDV0SLrd9e5VumC6MJa9tb4AmUbgDkLljnxHZHKBkQId75h; expires=Tue, 10-May-2022 00:22:51 GMT; Max-Age=23587200; path=/; domain=.gog.com; secure; httponly"
+						},
+						{
+							"key": "Set-Cookie",
+							"value": "gog_us=punurcol4ui02cio3b806rf923; expires=Wed, 11-Aug-2021 00:22:51 GMT; Max-Age=86400; path=/; domain=.gog.com; secure; httponly"
+						},
+						{
+							"key": "Vary",
+							"value": "Cookie, Accept-Encoding"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"country\": \"KR\",\n    \"currencies\": [\n        {\n            \"code\": \"USD\",\n            \"symbol\": \"$\"\n        }\n    ],\n    \"selectedCurrency\": {\n        \"code\": \"USD\",\n        \"symbol\": \"$\"\n    },\n    \"preferredLanguage\": {\n        \"code\": \"en\",\n        \"name\": \"English\"\n    },\n    \"ratingBrand\": \"\",\n    \"isLoggedIn\": true,\n    \"checksum\": {\n        \"cart\": null,\n        \"games\": null,\n        \"wishlist\": null,\n        \"reviews_votes\": null,\n        \"games_rating\": null\n    },\n    \"updates\": {\n        \"messages\": 0,\n        \"pendingFriendRequests\": 0,\n        \"unreadChatMessages\": 0,\n        \"products\": 0,\n        \"total\": 0\n    },\n    \"userId\": \"54643806722912\",\n    \"username\": \"nasang91\",\n    \"galaxyUserId\": \"54643786180104364\",\n    \"email\": \"sm9171@nate.com\",\n    \"avatar\": \"https://images.gog.com/f3d51f63f3a3ac710d93263dc37481294e26e4b66e830e5a445708ae99f3af9e\",\n    \"walletBalance\": {\n        \"currency\": \"USD\",\n        \"amount\": 0\n    },\n    \"purchasedItems\": {\n        \"games\": 0,\n        \"movies\": 0\n    },\n    \"wishlistedItems\": 0,\n    \"friends\": [],\n    \"personalizedProductPrices\": [],\n    \"personalizedSeriesPrices\": []\n}"
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "URL",
+			"value": "https://www.gog.com"
+		}
+	]
+}
