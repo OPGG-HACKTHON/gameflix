@@ -27,7 +27,7 @@ class GogWebClient(properties: GogConfigurationProperties): GogClient {
      override fun queryGetGamesCode(gogAuthentication: GogAuthentication): GogGamesCodeResponseDTO =
         webClient.get()
             .uri("/user/data/games")
-            .header(HttpHeaders.AUTHORIZATION, gogAuthentication.token)
+            .header(HttpHeaders.AUTHORIZATION, "Bearer " + gogAuthentication.token)
             .accept(APPLICATION_JSON)
             .retrieve()
             .bodyToMono(GogGamesCodeResponseDTO::class.java)
@@ -39,7 +39,7 @@ class GogWebClient(properties: GogConfigurationProperties): GogClient {
             val gameName:GogGamesResponseDTO =
                 webClient.get()
                     .uri("/account/gameDetails/${gameKey}.json")
-                    .header(HttpHeaders.AUTHORIZATION, gogAuthentication.token)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + gogAuthentication.token)
                     .accept(APPLICATION_JSON)
                     .retrieve()
                     .bodyToMono(GogGamesResponseDTO::class.java)
