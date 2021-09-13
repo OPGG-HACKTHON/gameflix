@@ -1,9 +1,10 @@
 package gg.op.gameflix.infrastructure.blizzard
 
 import gg.op.gameflix.domain.game.GameSlug
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.WebClient
-import java.lang.RuntimeException
+import reactor.core.publisher.Mono
 
 sealed interface BlizzardClient {
     fun queryGetGames(authentication: BlizzardAuthentication): Collection<GameSlug>
@@ -36,6 +37,7 @@ class BlizzardWebClient(properties: BlizzardConfigurationProperties): BlizzardCl
             .uri("/d3/data/act?access_token=${accessToken}")
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
+            .onStatus(HttpStatus::is4xxClientError) { Mono.empty() }
             .bodyToMono(D3InfoResponseDTO::class.java)
             .block()
 
@@ -47,15 +49,11 @@ class BlizzardWebClient(properties: BlizzardConfigurationProperties): BlizzardCl
             .uri("/sc2/ladder/grandmaster/3?access_token=${accessToken}")
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
-            .onStatus({
-                status -> status.is4xxClientError || status.is5xxServerError }, {
-                    clientResponse ->
-                        clientResponse.bodyToMono(String::class.java)
-                            .map { body -> RuntimeException(body) }
-                })
+            .onStatus(HttpStatus::is4xxClientError) { Mono.empty() }
             .bodyToMono(Sc2InfoResponseDTO::class.java)
             .block()
 
+    @Suppress("kotlin:S117")
     data class WowInfoResponseDTO(
         val wow_accounts: List<Any>?
     )
@@ -64,12 +62,7 @@ class BlizzardWebClient(properties: BlizzardConfigurationProperties): BlizzardCl
             .uri("/profile/user/wow?namespace=profile-kr&access_token=${accessToken}")
             .accept(MediaType.APPLICATION_JSON)
             .retrieve()
-            .onStatus({
-                status -> status.is4xxClientError || status.is5xxServerError }, {
-                    clientResponse ->
-                        clientResponse.bodyToMono(String::class.java)
-                        .map { body -> RuntimeException(body) }
-            })
+            .onStatus(HttpStatus::is4xxClientError) { Mono.empty() }
             .bodyToMono(WowInfoResponseDTO::class.java)
             .block()
 }
