@@ -5,7 +5,7 @@ info:
   contact:
     name: API Support
     email: raeperd117@gmail.com
-  version: 0.0.19
+  version: 0.0.20
 servers:
   - url: 'http://load-balancer-gameflix-backend-754529149.ap-northeast-2.elb.amazonaws.com'
     description: AWS Load balancer for backend fargate service
@@ -163,7 +163,7 @@ paths:
         content:
           "application/json":
             schema:
-              $ref: "#/components/schemas/UserModel"
+              $ref: "#/components/schemas/UserStorePostRequestModel"
       responses:
         '201':
           description: Created
@@ -194,7 +194,7 @@ paths:
                 $ref: "#/components/schemas/MultipleStoreModel"
   /users/{user-id}/stores/{store-slug}:
     parameters:
-      - $ref: "#/components/schemas/user-id"
+      - $ref: "#/components/parameters/user-id"
       - $ref: "#/components/parameters/store-slug"
     get:
       operationId: Get store by id from user
@@ -217,7 +217,7 @@ paths:
           $ref: '#/components/responses/500'
   /users/{user-id}/stores/{store-slug}/games:
     parameters:
-      - $ref: "#/components/schemas/user-id"
+      - $ref: "#/components/parameters/user-id"
       - $ref: "#/components/parameters/store-slug"
       - $ref: '#/components/parameters/page'
       - $ref: '#/components/parameters/size'
@@ -406,6 +406,7 @@ components:
       name: user-id
       required: true
       in: path
+      description: ID of user. Field `sub` of [google ID token payload](https://developers.google.com/identity/protocols/oauth2/openid-connect#an-id-tokens-payload)
       schema:
         $ref: "#/components/schemas/user-id"
     store-slug:
@@ -610,6 +611,17 @@ components:
           type: string
           description: Error message
           example: Request Failed with Error
+    UserStorePostRequestModel:
+      type: object
+      writeOnly: true
+      description: User post request body
+      properties:
+        slug:
+          $ref: "#/components/schemas/store-slug"
+        authentication:
+          type: string
+          example: 76561199114515095
+          description: Authentication for store connection. Determined by slug field.  - slug-steam authentication-steamId  - slug-gog authentication-accessToken  - slug-blizzard authentction-accessToken
     store-slug:
       type: string
       description: A url-safe unique, lower-case version of the name
