@@ -8,6 +8,9 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.support.PageableExecutionUtils.getPage
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.awaitBody
+import org.springframework.web.reactive.function.client.awaitEntityList
+import org.springframework.web.reactive.function.client.awaitExchange
 import kotlin.reflect.full.declaredMemberProperties
 
 sealed interface IGDBClient {
@@ -16,11 +19,11 @@ sealed interface IGDBClient {
     fun queryGetGamesBySlug(gameSlugs: Collection<GameSlug>): Collection<IGDBGame>
     fun queryGetGamesByName(name: String, pageable: Pageable): Page<IGDBGame>
 
-    fun queryGetCoverImages(ids: Collection<Int>): Set<IGDBImage>
-    fun queryGetGenres(ids: Collection<Int>): Set<IGDBGenre>
-    fun queryGetPlatforms(ids: Collection<Int>): Set<IGDBPlatform>
-    fun queryGetDeveloperByInvolvedCompanies(ids: Collection<Int>): IGDBCompany?
-    fun queryGetScreenShots(ids: Collection<Int>): Set<IGDBImage>
+    suspend fun queryGetCoverImages(ids: Collection<Int>): List<IGDBImage>
+    suspend fun queryGetGenres(ids: Collection<Int>): List<IGDBGenre>
+    suspend fun queryGetPlatforms(ids: Collection<Int>): List<IGDBPlatform>
+    suspend fun queryGetDeveloperByInvolvedCompanies(ids: Collection<Int>): IGDBCompany?
+    suspend fun queryGetScreenShots(ids: Collection<Int>): List<IGDBImage>
 }
 
 @Suppress("kotlin:S117")
@@ -117,59 +120,50 @@ class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
            .block().orEmpty()
            .let { igdbGameSummaries -> getPage(igdbGameSummaries, pageable) { queryGetGamesByNameCount(name) } }
 
-    override fun queryGetCoverImages(ids: Collection<Int>) =
+    override suspend fun queryGetCoverImages(ids: Collection<Int>): List<IGDBImage> =
         webClient.post().uri("/covers")
             .bodyValue("fields id, image_id; where id = (${ids.joinToString { it.toString() }});")
             .retrieve()
-            .bodyToMono(object: ParameterizedTypeReference<MutableList<IGDBImage>>() {})
-            .block()
-            ?.toCollection(HashSet()) ?: emptySet()
+            .awaitBody<MutableList<IGDBImage>>()
 
-    override fun queryGetGenres(ids: Collection<Int>) =
+    override suspend fun queryGetGenres(ids: Collection<Int>) =
         queryGetResources("/genres", ids)
             .map { IGDBGenre(it.id, it.slug) }
-            .toHashSet()
 
-    override fun queryGetPlatforms(ids: Collection<Int>) =
+    override suspend fun queryGetPlatforms(ids: Collection<Int>) =
         queryGetResources("/platforms", ids)
             .map { IGDBPlatform(it.id, it.slug) }
-            .toHashSet()
 
-    override fun queryGetDeveloperByInvolvedCompanies(ids: Collection<Int>): IGDBCompany? {
+    override suspend fun queryGetDeveloperByInvolvedCompanies(ids: Collection<Int>): IGDBCompany? {
         data class IGDBInvolvedCompany(val id: Int, val company: Int, val developer: Boolean)
-        val involvedCompanies = webClient.post().uri("/involved_companies")
+        return webClient.post().uri("/involved_companies")
             .bodyValue("fields ${IGDBInvolvedCompany::class.declaredMemberProperties.joinToString { it.name }};" +
                 "where id = (${ids.joinToString { it.toString() }});"
             )
             .retrieve()
-            .bodyToMono(object : ParameterizedTypeReference<MutableList<IGDBInvolvedCompany>>() {})
-            .block() ?: emptyList()
-
-        return involvedCompanies.find { it.developer }
+            .awaitBody<MutableList<IGDBInvolvedCompany>>()
+            .find { it.developer }
             ?.let { queryGetResources("/companies", listOf(it.company))
                 .map { resource -> IGDBCompany(resource.id, resource.slug) } }
             ?.firstOrNull()
     }
 
-    override fun queryGetScreenShots(ids: Collection<Int>): Set<IGDBImage> =
+    override suspend fun queryGetScreenShots(ids: Collection<Int>): List<IGDBImage> =
         webClient.post().uri("/screenshots")
             .bodyValue("fields id, image_id; where id = (${ids.joinToString { it.toString() }});")
             .retrieve()
-            .bodyToMono(object: ParameterizedTypeReference<MutableList<IGDBImage>>() {})
-            .block()
-            ?.toCollection(HashSet()) ?: emptySet()
+            .awaitBody<MutableList<IGDBImage>>()
 
     private fun Pageable.toIGDBQueryStatement() = "offset ${pageNumber * pageSize}; limit $pageSize;"
 
-    private fun queryGetResources(uri: String, ids: Collection<Int>): List<IGDBResource> {
+    private suspend fun queryGetResources(uri: String, ids: Collection<Int>): List<IGDBResource> {
         data class IGDBResourceImpl(override val id: Int, override val slug: String) : IGDBResource
 
         return webClient.post().uri(uri)
             .bodyValue("fields ${IGDBResource::class.declaredMemberProperties.joinToString { it.name }};" +
                 "where id = (${ids.joinToString { it.toString() }});")
             .retrieve()
-            .bodyToMono(object : ParameterizedTypeReference<MutableList<IGDBResourceImpl>>() {})
-            .block() ?: emptyList()
+            .awaitBody<MutableList<IGDBResourceImpl>>()
     }
 
     private fun queryGetGamesCount() =
