@@ -8,7 +8,6 @@ import gg.op.gameflix.domain.game.GameSummary
 import gg.op.gameflix.domain.user.User
 import gg.op.gameflix.domain.user.UserGameService
 import gg.op.gameflix.domain.user.UserRepository
-import org.hamcrest.Matchers
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.greaterThan
 import org.hamcrest.Matchers.hasSize
@@ -100,7 +99,7 @@ internal class GameflixIntegrationTest {
     @Test
     fun `when POST users-{user-id}-games expect status created with GameSummaryModel ad add 1 game`() {
         val summaryExpected =
-            GameSummary(GameSlug("Portal 2"), "https://images.igdb.com/igdb/image/upload/t_cover_big/co1rs4.jpg")
+            GameSummary(GameSlug("Portal 2"), "https://images.igdb.com/igdb/image/upload/t_cover_big/co1rs4.jpg", 1303171200)
         expectUserGamesHasSize(userSaved.games.size)
 
         postUsersGames(userSaved.id, summaryExpected.slug.slug)
@@ -170,6 +169,6 @@ internal class GameflixIntegrationTest {
         mockMvc.get("/users/${userSaved.id}/games")
             .andExpect {
                 status { isOk() }
-                match(MockMvcResultMatchers.jsonPath("$.games", hasSize<String>(Matchers.greaterThan(sizeExpected))))
+                match(MockMvcResultMatchers.jsonPath("$.games", hasSize<String>(greaterThan(sizeExpected))))
             }
 }

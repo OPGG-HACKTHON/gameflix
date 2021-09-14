@@ -61,7 +61,7 @@ internal class UserGameRestControllerTest {
     @Test
     fun `when POST users-{id}-games with same user id expect status userGameService addGameToUser`() {
         val gameSlugExpected = GameSlug("League Of Legends")
-        every { userGameService.addGameToUser(SecurityTestConfiguration.MOCK_USER, gameSlugExpected) } returns GameSummary(gameSlugExpected, "cover-image")
+        every { userGameService.addGameToUser(SecurityTestConfiguration.MOCK_USER, gameSlugExpected) } returns GameSummary(gameSlugExpected, "cover-image", 0)
 
         mockMvc.post("/users/${SecurityTestConfiguration.MOCK_USER_ID}/games") {
             contentType = MediaType.APPLICATION_JSON
@@ -74,7 +74,7 @@ internal class UserGameRestControllerTest {
     @Test
     fun `when POST users-{id}-games with same user id expect status created`() {
         val gameSlugExpected = GameSlug("League Of Legends")
-        every { userGameService.addGameToUser(SecurityTestConfiguration.MOCK_USER, gameSlugExpected) } returns GameSummary(gameSlugExpected, "cover-image")
+        every { userGameService.addGameToUser(SecurityTestConfiguration.MOCK_USER, gameSlugExpected) } returns GameSummary(gameSlugExpected, "cover-image", 0)
 
         mockMvc.post("/users/${SecurityTestConfiguration.MOCK_USER_ID}/games") {
             contentType = MediaType.APPLICATION_JSON
@@ -152,11 +152,12 @@ internal class UserGameRestControllerTest {
     private fun mockUserGame(): Game =
         Game(
             SecurityTestConfiguration.MOCK_USER_GAMES.first(),
-            GameDetail(0, 0,
-                "url", "description",
-                emptySet(), emptySet(),
-                GameRating(90.11f, 10),
-                "developer", "background"
+            GameDetail(
+                0, "url",
+                "description", emptySet(),
+                emptySet(), GameRating(90.11f, 10),
+                "developer",
+                "background"
             )
         )
 }

@@ -93,8 +93,8 @@ data class GameModel(
         name = game.summary.slug.name,
         slug = game.summary.slug.slug,
         cover = game.summary.cover,
+        release_at = game.summary.releaseAt,
         description = game.detail.description,
-        release_at = game.detail.releaseAt,
         updated_at = game.detail.updatedAt,
         url = game.detail.url,
         genres = game.detail.genres.map { it.name },
@@ -106,16 +106,19 @@ data class GameModel(
     )
 }
 
+@Suppress("kotlin:S117")
 data class GameSummaryModel(
     val name: String,
     val slug: String,
     val cover: String,
+    val release_at: Int,
     val store: String
 ) {
     constructor(gameSummary: GameSummary): this(
         gameSummary.slug.name,
         gameSummary.slug.slug,
         gameSummary.cover,
+        gameSummary.releaseAt,
         gameSummary.store?.name?.toSlug() ?: ""
     )
 }

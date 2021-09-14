@@ -31,7 +31,7 @@ internal class GameSummaryRepositoryTest {
     @Test
     fun `when findFirstBySlug with exists slug expect return saved summary`() {
         val slugToSearch = GameSlug("Slug")
-        val summarySaved = GameSummary(slugToSearch, "https://google.com")
+        val summarySaved = GameSummary(slugToSearch, "https://google.com", 0)
         gameSummaryRepository.save(summarySaved)
 
         assertThat(gameSummaryRepository.findFirstBySlugAndStore(slugToSearch, null)).isEqualTo(summarySaved)

@@ -21,9 +21,10 @@ class GameSummary(
     @Embedded
     var slug: GameSlug,
     var cover: String,
+    var releaseAt: Int,
     var store: Store?
 ) {
-    constructor(slug: GameSlug, cover: String): this(null, slug, cover, null)
+    constructor(slug: GameSlug, cover: String, releaseAt: Int): this(null, slug, cover, releaseAt, null)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -32,7 +33,7 @@ class GameSummary(
         other as GameSummary
 
         if (slug != other.slug) return false
-        if (cover != other.cover) return false
+        if (releaseAt != other.releaseAt) return false
         if (store != other.store) return false
 
         return true
@@ -40,14 +41,13 @@ class GameSummary(
 
     override fun hashCode(): Int {
         var result = slug.hashCode()
-        result = 31 * result + cover.hashCode()
+        result = 31 * result + releaseAt
         result = 31 * result + (store?.hashCode() ?: 0)
         return result
     }
 }
 
 data class GameDetail(
-    val releaseAt: Int,
     val updatedAt: Int,
     val url: String,
     val description: String,
