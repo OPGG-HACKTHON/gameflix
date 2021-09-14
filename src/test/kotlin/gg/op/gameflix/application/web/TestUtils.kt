@@ -24,6 +24,7 @@ fun multipleGameSummaryModelWith(gameSummaries: Collection<GameSummary>, path: S
 
 fun gameSummaryModelWith(summary: GameSummary, path: String = "$"): ResultMatcher =
     matchAll(
+        jsonPath("$path.release_at", equalTo(summary.releaseAt)),
         jsonPath("$path.name", equalTo(summary.slug.name)),
         jsonPath("$path.slug", equalTo(summary.slug.slug)),
         jsonPath("$path.cover", equalTo(summary.cover))
@@ -32,7 +33,6 @@ fun gameSummaryModelWith(summary: GameSummary, path: String = "$"): ResultMatche
 fun gameModelWith(game: Game): ResultMatcher =
     matchAll(
         gameSummaryModelWith(game.summary),
-        jsonPath("release_at", equalTo(game.detail.releaseAt)),
         jsonPath("updated_at", equalTo(game.detail.updatedAt)),
         jsonPath("description", equalTo(game.detail.description)),
         jsonPath("url", equalTo(game.detail.url)),

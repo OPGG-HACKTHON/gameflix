@@ -113,7 +113,7 @@ internal class UserGameServiceTest {
     @Test
     fun `when findGameInUser with exists game expect gameRepository findGameBySlug`(
         @MockK user: User, @MockK slugToFind: GameSlug) {
-        val summaryToFind = GameSummary(slugToFind, "cover-found")
+        val summaryToFind = GameSummary(slugToFind, "cover-found", 0)
         every { user.games } answers { mutableSetOf(summaryToFind) }
 
         userGameService.findGameInUser(user, slugToFind)
@@ -124,7 +124,7 @@ internal class UserGameServiceTest {
     @Test
     fun `when findGameInUser with exists game expect return found game`(
         @MockK user: User, @MockK slugToFind: GameSlug, @MockK gameFound: Game) {
-        val summaryToFind = GameSummary(slugToFind, "cover-found")
+        val summaryToFind = GameSummary(slugToFind, "cover-found", 0)
         every { user.games } answers { mutableSetOf(summaryToFind) }
         every { gameRepository.findFirstGameBySlug(slugToFind) } returns gameFound
 
@@ -154,7 +154,7 @@ internal class UserGameServiceTest {
     @Test
     fun `when deleteGameInUser with exists slug expect userRepository save user`(
         @MockK user: User, @RelaxedMockK slugToFind: GameSlug) {
-        every { user.games } answers { mutableSetOf(GameSummary(slugToFind, "cover")) }
+        every { user.games } answers { mutableSetOf(GameSummary(slugToFind, "cover", 0)) }
         every { userRepository.save(user) } returns user
 
         runCatching { userGameService.deleteGameInUser(user, slugToFind) }

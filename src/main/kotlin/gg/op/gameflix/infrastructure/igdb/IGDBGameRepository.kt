@@ -51,22 +51,25 @@ class IGDBGameRepository(private val igdbClient: IGDBClient) : GameRepository {
     }
 
     private fun IGDBGame.toGameSummary(coverIdToURI: Map<Int, String>) =
-        GameSummary(GameSlug(name), coverIdToURI.getOrDefault(cover, IGDBImage.NO_COVER_IMAGE.toCoverURI()))
+        GameSummary(GameSlug(name),
+            coverIdToURI.getOrDefault(cover, IGDBImage.NO_COVER_IMAGE.toCoverURI()),
+            first_release_date)
 
     private fun IGDBGame.toGame() = Game(toGameSummary(), toGameDetail())
 
     private fun IGDBGame.toGameSummary() =
         GameSummary(GameSlug(name),
-            igdbClient.queryGetCoverImages(listOf(cover)).first().toCoverURI())
+            igdbClient.queryGetCoverImages(listOf(cover)).first().toCoverURI(),
+            first_release_date)
 
     private fun IGDBGame.toGameDetail() =
-        GameDetail(releaseAt = first_release_date, updatedAt = updated_at,
-            url = url,
+        GameDetail(
+            updatedAt = updated_at, url = url,
             description = summary,
             genres = igdbClient.queryGetGenres(genres).map { it.toGenre() }.toHashSet(),
             platforms = igdbClient.queryGetPlatforms(platforms).map { it.toPlatform() }.toHashSet(),
             rating = GameRating(total_rating, total_rating_count),
             developer = igdbClient.queryGetDeveloperByInvolvedCompanies(involved_companies)?.slug ?: "NOT FOUND",
             background = igdbClient.queryGetScreenShots(screenshots).firstOrNull()?.toBackgroundURI() ?: IGDBImage.NO_COVER_IMAGE.toBackgroundURI()
-            )
+        )
 }

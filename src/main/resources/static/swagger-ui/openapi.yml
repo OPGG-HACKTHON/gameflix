@@ -5,7 +5,7 @@ info:
   contact:
     name: API Support
     email: raeperd117@gmail.com
-  version: 0.0.20
+  version: 0.0.21
 servers:
   - url: 'http://load-balancer-gameflix-backend-754529149.ap-northeast-2.elb.amazonaws.com'
     description: AWS Load balancer for backend fargate service
@@ -471,6 +471,8 @@ components:
           example: League of Legend
         cover:
           $ref : "#/components/schemas/cover"
+        release_at:
+          $ref: "#/components/schemas/release_at"
         store:
           type: string
           description: Slug of store. empty if not added from store
@@ -546,10 +548,7 @@ components:
           description: Background Image URL for game
           example: https://images.igdb.com/igdb/image/upload/t_screenshot_huge/gedd5lz7856ynljzsgbi.jpg
         release_at:
-          type: number
-          format: unix time stamp
-          description: Release date of game. Epoch timestamp
-          example: 1256605200
+          $ref: "#/components/schemas/release_at"
         updated_at:
           type: number
           format: unix time stamp
@@ -635,6 +634,11 @@ components:
       format: url
       description: Image URL for game
       example: https://images.igdb.com/igdb/image/upload/t_cover_big/co254s.jpg
+    release_at:
+      type: number
+      format: unix time stamp
+      description: Release date of game. Epoch timestamp
+      example: 1256605200
     user-id:
       type: string
       description: ID of user. Field `sub` of [google ID token payload](https://developers.google.com/identity/protocols/oauth2/openid-connect#an-id-tokens-payload)
