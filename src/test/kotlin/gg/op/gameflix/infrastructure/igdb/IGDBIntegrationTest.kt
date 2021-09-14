@@ -2,6 +2,7 @@ package gg.op.gameflix.infrastructure.igdb
 
 import gg.op.gameflix.domain.game.GameRepository
 import gg.op.gameflix.domain.game.GameSlug
+import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -36,7 +37,7 @@ internal class IGDBIntegrationTest {
     }
 
     @Test
-    fun `when igdbClient queryGetCoverImages expect return valid IGDBCoverImage`() {
+    fun `when igdbClient queryGetCoverImages expect return valid IGDBCoverImage`(): Unit = runBlocking {
         val keyExpected = 99964
         val coverImageExpected = IGDBImage(keyExpected, "co254s")
         val idToCoverImage = igdbClient.queryGetCoverImages(setOf(keyExpected))
@@ -55,7 +56,7 @@ internal class IGDBIntegrationTest {
     }
 
     @Test
-    fun `when igdbClient queryGetGenres expect return valid IGDBGenre`() {
+    fun `when igdbClient queryGetGenres expect return valid IGDBGenre`(): Unit = runBlocking {
         val idExpected = 36
         val genreExpected = IGDBGenre(idExpected, "moba")
 
@@ -63,7 +64,7 @@ internal class IGDBIntegrationTest {
     }
 
     @Test
-    fun `when igdbClient queryGetPlatforms expect return valid IGDBPlatform`() {
+    fun `when igdbClient queryGetPlatforms expect return valid IGDBPlatform`(): Unit = runBlocking {
         val platformsExpected = listOf(IGDBPlatform(6, "win"), IGDBPlatform(14, "mac"))
 
         assertThat(igdbClient.queryGetPlatforms(platformsExpected.map { it.id })).containsAll(platformsExpected)
@@ -75,14 +76,14 @@ internal class IGDBIntegrationTest {
     }
 
     @Test
-    fun `when igdbClient queryGetDeveloperByInvolvedCompanies expect valid IGDBCompany`() {
+    fun `when igdbClient queryGetDeveloperByInvolvedCompanies expect valid IGDBCompany`(): Unit = runBlocking {
         val companyExpected = IGDBCompany(41, "riot-games")
 
         assertThat(igdbClient.queryGetDeveloperByInvolvedCompanies(listOf(8068, 8087, 8088))).isEqualTo(companyExpected)
     }
 
     @Test
-    fun `when igdbClient queryGetScreenShots expect valid IGDBImage`() {
+    fun `when igdbClient queryGetScreenShots expect valid IGDBImage`(): Unit = runBlocking  {
         val imageExpected = IGDBImage(34387, "aujhj4buodogepfhpovb")
 
         assertThat(igdbClient.queryGetScreenShots(listOf(34387, 34388, 34389, 34390))).contains(imageExpected)
