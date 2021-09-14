@@ -159,7 +159,7 @@ class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
             .block()
             ?.toCollection(HashSet()) ?: emptySet()
 
-    private fun Pageable.toIGDBQueryStatement() = "offset $pageNumber; limit $pageSize;"
+    private fun Pageable.toIGDBQueryStatement() = "offset ${pageNumber * pageSize}; limit $pageSize;"
 
     private fun queryGetResources(uri: String, ids: Collection<Int>): List<IGDBResource> {
         data class IGDBResourceImpl(override val id: Int, override val slug: String) : IGDBResource
