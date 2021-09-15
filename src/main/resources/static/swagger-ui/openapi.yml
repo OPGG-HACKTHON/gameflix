@@ -5,7 +5,7 @@ info:
   contact:
     name: API Support
     email: raeperd117@gmail.com
-  version: 0.0.24
+  version: 0.0.25
 servers:
   - url: 'http://load-balancer-gameflix-backend-754529149.ap-northeast-2.elb.amazonaws.com'
     description: AWS Load balancer for backend fargate service
@@ -565,7 +565,7 @@ components:
           items:
             type: string
             description: genre of game as slug
-            example: moba
+            example: "MOBA"
         rating_external:
           type: number
           description: Rating based on igdb scores
@@ -579,8 +579,8 @@ components:
           items:
             type: string
             description: platform of game
-            example: win
-          example: ["win", "mac"]
+            example: "PC (Microsoft Windows)"
+          example: ["PC (Microsoft Windows)", "Mac"]
     StoreModel:
       type: object
       readOnly: true

@@ -47,28 +47,27 @@ data class IGDBGame(
 
 @Suppress("kotlin:S117")
 data class IGDBImage(
-    val id: Int,
     val image_id: String,
     val game: Int
 ) {
     companion object {
         private const val ID_INVALID = -1
-        val NO_COVER_IMAGE = IGDBImage(ID_INVALID, "nocover_qhhlj6", ID_INVALID)
+        val NO_COVER_IMAGE = IGDBImage("nocover_qhhlj6", ID_INVALID)
     }
 
     fun toCoverURI() ="https://images.igdb.com/igdb/image/upload/t_cover_big/$image_id.jpg"
     fun toBackgroundURI() = "https://images.igdb.com/igdb/image/upload/t_screenshot_huge/$image_id.jpg"
 }
 
-data class IGDBGenre(val id: Int, val slug: String) {
-    fun toGenre() = Genre(slug)
+data class IGDBGenre(val id: Int, val name: String) {
+    fun toGenre() = Genre(name)
 }
 
-data class IGDBPlatform(val id: Int, val slug: String) {
-    fun toPlatform() = Platform(slug)
+data class IGDBPlatform(val id: Int, val name: String) {
+    fun toPlatform() = Platform(name)
 }
 
-data class IGDBCompany(val slug: String, val developed: MutableList<Int>)
+data class IGDBCompany(val name: String, val developed: MutableList<Int>)
 
 class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
 

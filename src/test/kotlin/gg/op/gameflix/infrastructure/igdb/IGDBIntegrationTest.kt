@@ -40,7 +40,7 @@ internal class IGDBIntegrationTest {
     @Test
     fun `when igdbClient queryGetCoverImages expect return valid IGDBCoverImage`(): Unit = runBlocking {
         val keyExpected = 99964
-        val coverImageExpected = IGDBImage(keyExpected, "co254s", 115)
+        val coverImageExpected = IGDBImage("co254s", 115)
         val idToCoverImage = igdbClient.queryGetCoverImages(setOf(keyExpected))
 
         assertThat(idToCoverImage).contains(coverImageExpected)
@@ -59,14 +59,14 @@ internal class IGDBIntegrationTest {
     @Test
     fun `when igdbClient queryGetGenres expect return valid IGDBGenre`(): Unit = runBlocking {
         val idExpected = 36
-        val genreExpected = IGDBGenre(idExpected, "moba")
+        val genreExpected = IGDBGenre(idExpected, "MOBA")
 
         assertThat(igdbClient.queryGetGenres(setOf(idExpected))).containsOnly(genreExpected)
     }
 
     @Test
     fun `when igdbClient queryGetPlatforms expect return valid IGDBPlatform`(): Unit = runBlocking {
-        val platformsExpected = listOf(IGDBPlatform(6, "win"), IGDBPlatform(14, "mac"))
+        val platformsExpected = listOf(IGDBPlatform(6, "PC (Microsoft Windows)"), IGDBPlatform(14, "Mac"))
 
         assertThat(igdbClient.queryGetPlatforms(platformsExpected.map { it.id })).containsAll(platformsExpected)
     }
@@ -78,14 +78,14 @@ internal class IGDBIntegrationTest {
 
     @Test
     fun `when igdbClient queryGetDeveloperByInvolvedCompanies expect valid IGDBCompany`(): Unit = runBlocking {
-        val companyExpected = IGDBCompany("riot-games", mutableListOf(115, 120176, 124700, 124701, 126459, 126460))
+        val companyExpected = IGDBCompany("Riot Games", mutableListOf(115, 120176, 124700, 124701, 126459, 126460))
 
         assertThat(igdbClient.queryGetDeveloperByInvolvedCompanies(listOf(8068, 8087, 8088))).containsOnly(companyExpected)
     }
 
     @Test
     fun `when igdbClient queryGetScreenShots expect valid IGDBImage`(): Unit = runBlocking  {
-        val imageExpected = IGDBImage(34387, "aujhj4buodogepfhpovb", 115)
+        val imageExpected = IGDBImage("aujhj4buodogepfhpovb", 115)
 
         assertThat(igdbClient.queryGetScreenShots(listOf(34387, 34388, 34389, 34390))).contains(imageExpected)
     }

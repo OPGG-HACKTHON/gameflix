@@ -46,7 +46,7 @@ class IGDBGameRepository(private val igdbClient: IGDBClient) : GameRepository {
             slug = GameSlug(igdbGame.name),
             releaseAt = igdbGame.first_release_date,
             cover = gameToImage[igdbGame.id]?.toCoverURI() ?: NO_COVER_IMAGE.toCoverURI(),
-            developer = developers.find { it.developed.contains(igdbGame.id) }?.slug ?: "not-found"
+            developer = developers.find { it.developed.contains(igdbGame.id) }?.name ?: "Not Found"
         ) }
     }
 
@@ -61,7 +61,7 @@ class IGDBGameRepository(private val igdbClient: IGDBClient) : GameRepository {
         val image = async { igdbClient.queryGetCoverImages(listOf(cover)).firstOrNull()?.toCoverURI() ?: NO_COVER_IMAGE.toCoverURI()}
         val genres = async { igdbClient.queryGetGenres(genres).map { it.toGenre() }.toHashSet() }
         val platforms = async { igdbClient.queryGetPlatforms(platforms).map { it.toPlatform() }.toHashSet() }
-        val developer = async { igdbClient.queryGetDeveloperByInvolvedCompanies(involved_companies).firstOrNull()?.slug ?: "NOT FOUND" }
+        val developer = async { igdbClient.queryGetDeveloperByInvolvedCompanies(involved_companies).firstOrNull()?.name ?: "NOT FOUND" }
         val background = async { igdbClient.queryGetScreenShots(screenshots).firstOrNull()?.toBackgroundURI() ?: NO_COVER_IMAGE.toBackgroundURI() }
 
         runBlocking {

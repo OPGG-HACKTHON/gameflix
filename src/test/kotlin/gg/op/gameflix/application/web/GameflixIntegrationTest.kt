@@ -103,7 +103,7 @@ internal class GameflixIntegrationTest {
                 GameSlug("Portal 2"),
                 "https://images.igdb.com/igdb/image/upload/t_cover_big/co1rs4.jpg",
                 1303171200,
-                "valve-corporation"
+                "Valve Corporation"
             )
         expectUserGamesHasSize(userSaved.games.size)
 
@@ -134,7 +134,7 @@ internal class GameflixIntegrationTest {
             .andExpect {
                 status{ isOk() }
                 content {
-                    jsonPath("developer", `is`("riot-games"))
+                    jsonPath("developer", `is`("Riot Games"))
                     jsonPath("background", startsWith("https"))
                 }
             }
