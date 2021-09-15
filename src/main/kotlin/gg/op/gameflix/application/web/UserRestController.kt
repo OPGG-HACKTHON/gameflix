@@ -106,7 +106,7 @@ class UserStoreRestController(
     @PreAuthorize("#id == #user.id")
     @GetMapping("/{id}/stores")
     fun getUserStores(@PathVariable id: String, @AuthenticationPrincipal user: User): MultipleStoreModel =
-        user.games.mapNotNull { it.store }
+        user.games.map { it.store }
             .toCollection(HashSet())
             .map { createStoreModel(it) }
             .let { storeModels -> MultipleStoreModel(storeModels) }
@@ -114,14 +114,14 @@ class UserStoreRestController(
     @PreAuthorize("#id == #user.id")
     @GetMapping("/{id}/stores/{storeSlug}")
     fun getUserStoresBySlug(@PathVariable id: String, @PathVariable storeSlug: String, @AuthenticationPrincipal user: User): StoreModel =
-        user.games.mapNotNull { it.store }
+        user.games.map { it.store }
             .find { store -> store == Store.fromSlug(storeSlug) }
             ?.let { store -> createStoreModel(store) } ?: throw NoSuchElementException("No such store in user")
 
     @PreAuthorize("#id == #user.id")
     @GetMapping("/{id}/stores/{storeSlug}/games")
     fun getUserStoreGames(@PathVariable id: String, @PathVariable storeSlug: String, @AuthenticationPrincipal user: User, pageable: Pageable): PagedGameSummaryModel =
-        user.games.filter { it.store != null && it.store == Store.fromSlug(storeSlug) }
+        user.games.filter { it.store == Store.fromSlug(storeSlug) }
             .toMutableList()
             .let { PageImpl(it, pageable, it.size.toLong()) }
             .let { page -> PagedGameSummaryModel(page) }
@@ -129,7 +129,7 @@ class UserStoreRestController(
     @PreAuthorize("#id == #user.id")
     @GetMapping("/{id}/stores/{storeSlug}/games", params = ["search"])
     fun getUserStoreGamesBySearch(@PathVariable id: String, @PathVariable storeSlug: String, search: String, @AuthenticationPrincipal user: User, pageable: Pageable): PagedGameSummaryModel =
-        user.games.filter { it.store != null && it.store == Store.fromSlug(storeSlug) }
+        user.games.filter { it.store == Store.fromSlug(storeSlug) }
             .filter { it.slug.name.contains(search, ignoreCase = true) }
             .toMutableList()
             .let { PageImpl(it, pageable, it.size.toLong()) }

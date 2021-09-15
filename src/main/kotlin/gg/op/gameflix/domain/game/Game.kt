@@ -16,17 +16,15 @@ data class Game(
 class GameSummary(
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    var id: Long?,
+    var id: Long? = null,
 
     @Embedded
     var slug: GameSlug,
     var cover: String,
     var releaseAt: Int,
-    var store: Store?,
-    var developer: String
+    var developer: String,
+    var store: Store = Store.ETC,
 ) {
-    constructor(slug: GameSlug, cover: String, releaseAt: Int, developer: String): this(null, slug, cover, releaseAt, null, developer)
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -43,7 +41,7 @@ class GameSummary(
     override fun hashCode(): Int {
         var result = slug.hashCode()
         result = 31 * result + releaseAt
-        result = 31 * result + (store?.hashCode() ?: 0)
+        result = 31 * result + store.hashCode()
         return result
     }
 }
@@ -83,6 +81,7 @@ class GameSlug(
 }
 
 enum class Store {
+    ETC,
     STEAM,
     GOG,
     BLIZZARD;

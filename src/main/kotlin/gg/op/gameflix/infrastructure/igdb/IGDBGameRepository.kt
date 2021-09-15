@@ -66,7 +66,11 @@ class IGDBGameRepository(private val igdbClient: IGDBClient) : GameRepository {
 
         runBlocking {
             Game(
-                GameSummary(GameSlug(name), image.await(), first_release_date, developer = developer.await()),
+                GameSummary(
+                    slug = GameSlug(name),
+                    cover = image.await(),
+                    releaseAt = first_release_date,
+                    developer = developer.await()),
                 GameDetail(
                     genres = genres.await(),
                     platforms = platforms.await(),

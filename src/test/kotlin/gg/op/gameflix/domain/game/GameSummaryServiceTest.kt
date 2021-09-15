@@ -56,7 +56,7 @@ internal class GameSummaryServiceTest {
     @Test
     fun `when summary found in repository expect return found value`(
         @MockK gameSlug: GameSlug, @MockK gameSummary: GameSummary) {
-        every { summaryRepository.findFirstBySlugAndStore(gameSlug, null) } returns gameSummary
+        every { summaryRepository.findFirstBySlugAndStore(gameSlug) } returns gameSummary
 
         assertThat(service.findGameSummaryBySlug(gameSlug)).isEqualTo(gameSummary)
     }
@@ -100,12 +100,12 @@ internal class GameSummaryServiceTest {
     }
 
     private fun whenGameSlugNotFoundInNowhere(gameSlug: GameSlug) {
-        every { summaryRepository.findFirstBySlugAndStore(gameSlug, null) } returns null
+        every { summaryRepository.findFirstBySlugAndStore(gameSlug) } returns null
         every { gameRepository.findFirstGameBySlug(gameSlug) } returns null
     }
 
     private fun whenGameSlugFoundInGameRepository(gameSlug: GameSlug, gameFound: Game): Game {
-        every { summaryRepository.findFirstBySlugAndStore(gameSlug, null) } returns null
+        every { summaryRepository.findFirstBySlugAndStore(gameSlug ) } returns null
         every { gameRepository.findFirstGameBySlug(gameSlug) } returns gameFound
         return gameFound
     }

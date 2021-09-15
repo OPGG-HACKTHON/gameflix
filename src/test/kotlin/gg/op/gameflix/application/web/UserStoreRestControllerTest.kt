@@ -31,7 +31,7 @@ internal class UserStoreRestControllerTest {
     private lateinit var userStoreService: UserStoreService
 
     private val MOCK_USER_STORE_SLUG =
-        MOCK_USER_GAMES.mapNotNull { it.store }
+        MOCK_USER_GAMES.map { it.store }
             .first().toString().toSlug()
 
     @WithMockGoogleUser
@@ -40,7 +40,7 @@ internal class UserStoreRestControllerTest {
         mockMvc.get("/users/$MOCK_USER_ID/stores")
             .andExpect {
                 status { isOk() }
-                content { jsonPath("stores", hasSize<String>(1)) }
+                content { jsonPath("stores", hasSize<String>(2)) }
             }
     }
 

@@ -15,5 +15,6 @@ class GameStoreAuthenticationFactoryImpl : GameStoreAuthenticationFactory {
             Store.STEAM -> SteamAuthentication(authentication)
             Store.GOG -> GogAuthentication(authentication)
             Store.BLIZZARD -> BlizzardAuthentication(authentication)
+            Store.ETC -> throw IllegalArgumentException("This value is not used for store authentication")
         }
 }

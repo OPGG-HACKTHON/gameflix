@@ -12,5 +12,5 @@ interface GameRepository {
 }
 
 interface GameSummaryRepository: JpaRepository<GameSummary, Long> {
-    fun findFirstBySlugAndStore(slug: GameSlug, store: Store?): GameSummary?
+    fun findFirstBySlugAndStore(slug: GameSlug, store: Store = Store.ETC): GameSummary?
 }

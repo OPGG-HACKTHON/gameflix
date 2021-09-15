@@ -20,7 +20,7 @@ class GameSummaryService(
 
     @Transactional
     fun findGameSummaryBySlug(slug: GameSlug): GameSummary? {
-        val gameSummary = gameSummaryRepository.findFirstBySlugAndStore(slug, null)
+        val gameSummary = gameSummaryRepository.findFirstBySlugAndStore(slug )
         if (gameSummary != null) {
             return gameSummary
         }

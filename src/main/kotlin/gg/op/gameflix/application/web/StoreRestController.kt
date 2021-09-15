@@ -49,4 +49,5 @@ fun createStoreModel(store: Store): StoreModel
     Store.STEAM -> StoreModel(Store.STEAM.name.lowercase(), "Pass steam id of user in this field when POST \"/users/{user-id}/stores\"")
     Store.GOG -> StoreModel(Store.GOG.name.lowercase(), "Pass API KEY of user in this field when POST \"/users/{user-id}/stores\"")
     Store.BLIZZARD -> StoreModel(Store.BLIZZARD.name.lowercase(), "Pass API KEY of user in this field when POST \\\"/users/{user-id}/stores\\\"")
+    Store.ETC -> StoreModel(Store.ETC.name.lowercase(), "No authentication exists. Empty for default store value")
 }

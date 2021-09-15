@@ -100,10 +100,10 @@ internal class GameflixIntegrationTest {
     fun `when POST users-{user-id}-games expect status created with GameSummaryModel ad add 1 game`() {
         val summaryExpected =
             GameSummary(
-                GameSlug("Portal 2"),
-                "https://images.igdb.com/igdb/image/upload/t_cover_big/co1rs4.jpg",
-                1303171200,
-                "Valve Corporation"
+                slug = GameSlug("Portal 2"),
+                cover = "https://images.igdb.com/igdb/image/upload/t_cover_big/co1rs4.jpg",
+                releaseAt = 1303171200,
+                developer = "Valve Corporation"
             )
         expectUserGamesHasSize(userSaved.games.size)
 
