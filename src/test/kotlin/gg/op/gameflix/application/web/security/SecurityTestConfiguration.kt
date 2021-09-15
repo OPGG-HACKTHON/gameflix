@@ -21,7 +21,14 @@ class SecurityTestConfiguration {
         const val MOCK_USER_ID = "mock-user-id"
         const val MOCK_USER_EMAIL = "mock-user@email.com"
         val MOCK_USER_GAME_SLUG = GameSlug("League of Legends", "cover")
-        val MOCK_USER_GAMES = mutableSetOf(GameSummary(MOCK_USER_GAME_SLUG, "cover", 0), GameSummary(null, GameSlug("Portal"), "cover", 0, Store.STEAM))
+        val MOCK_USER_GAMES = mutableSetOf(GameSummary(MOCK_USER_GAME_SLUG, "cover", 0, "Riot Games"), GameSummary(
+            null,
+            GameSlug("Portal"),
+            "cover",
+            0,
+            Store.STEAM,
+            ""
+        ))
         val MOCK_USER = User(MOCK_USER_ID, MOCK_USER_EMAIL, MOCK_USER_GAMES)
     }
 

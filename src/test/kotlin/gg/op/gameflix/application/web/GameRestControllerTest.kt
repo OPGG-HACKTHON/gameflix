@@ -46,7 +46,12 @@ internal class GameRestControllerTest {
 
     @Test
     fun `when GET games expect valid GameSummaryModel`() {
-        every { gameRepository.findAllGameSummaries(any()) } returns PageImpl(listOf(GameSummary(GameSlug("Wow"), "https://google.com", 0)))
+        every { gameRepository.findAllGameSummaries(any()) } returns PageImpl(listOf(GameSummary(
+            GameSlug("Wow"),
+            "https://google.com",
+            0,
+            ""
+        )))
 
         mockMvc.get("/games")
             .andExpect {
@@ -88,7 +93,7 @@ internal class GameRestControllerTest {
     private val gameSlugValid = GameSlug("game-slug-valid")
 
     private val gameValid = Game(
-        GameSummary(gameSlugValid, "https://google.com", 0),
+        GameSummary(gameSlugValid, "https://google.com", 0, ""),
         GameDetail(
             updatedAt = 1020,
             url = "https://google.com",

@@ -27,7 +27,8 @@ fun gameSummaryModelWith(summary: GameSummary, path: String = "$"): ResultMatche
         jsonPath("$path.release_at", equalTo(summary.releaseAt)),
         jsonPath("$path.name", equalTo(summary.slug.name)),
         jsonPath("$path.slug", equalTo(summary.slug.slug)),
-        jsonPath("$path.cover", equalTo(summary.cover))
+        jsonPath("$path.cover", equalTo(summary.cover)),
+        jsonPath("$path.developer", equalTo(summary.developer))
     )
 
 fun gameModelWith(game: Game): ResultMatcher =

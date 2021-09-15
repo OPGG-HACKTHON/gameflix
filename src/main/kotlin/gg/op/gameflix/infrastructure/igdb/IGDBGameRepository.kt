@@ -6,10 +6,14 @@ import gg.op.gameflix.domain.game.GameRating
 import gg.op.gameflix.domain.game.GameRepository
 import gg.op.gameflix.domain.game.GameSlug
 import gg.op.gameflix.domain.game.GameSummary
+import gg.op.gameflix.infrastructure.igdb.IGDBImage.Companion.NO_COVER_IMAGE
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.support.PageableExecutionUtils.getPage
 
 class IGDBGameRepository(private val igdbClient: IGDBClient) : GameRepository {
 
@@ -29,43 +33,40 @@ class IGDBGameRepository(private val igdbClient: IGDBClient) : GameRepository {
         igdbClient.queryGetGamesBySlug(slugs)
             .toGameSummaries()
 
-    private fun Collection<IGDBGame>.toGameSummaries(): List<GameSummary> {
-        if (isEmpty())
-            return emptyList()
-        return let { igdbGames ->
-            igdbGames.map { it.cover }
-                .let { coverIds -> runBlocking { igdbClient.queryGetCoverImages(coverIds) } }
-                .associate { igdbCoverImage -> igdbCoverImage.id to igdbCoverImage.toCoverURI() }
-                .let { coverIdToURI -> igdbGames.map { it.toGameSummary(coverIdToURI) } }
+    private fun Collection<IGDBGame>.toGameSummaries(): List<GameSummary> =
+        runBlocking {
+            val gameSummaries = map { async { it.toGameSummary() } }
+            gameSummaries.awaitAll()
         }
-    }
+
+    suspend fun IGDBGame.toGameSummary(): GameSummary =
+        coroutineScope {
+            val coverImage = async { igdbClient.queryGetCoverImages(listOf(cover)).firstOrNull() }
+            val developer = async { igdbClient.queryGetDeveloperByInvolvedCompanies(involved_companies) }
+
+            GameSummary(slug = GameSlug(name),
+                releaseAt = first_release_date,
+                cover = coverImage.await()?.toCoverURI() ?: NO_COVER_IMAGE.toCoverURI(),
+                developer = developer.await()?.slug ?: "NOT Found")
+        }
 
     private fun Page<IGDBGame>.toGameSummaries(): Page<GameSummary> {
         if (isEmpty) {
             return Page.empty()
         }
-        return let { igdbGames -> igdbGames.content.map { it.cover }
-            .let { coverIds -> runBlocking { igdbClient.queryGetCoverImages(coverIds) } }
-            .associate { igdbCoverImage -> igdbCoverImage.id to igdbCoverImage.toCoverURI() }
-            .let { coverIdToURI -> igdbGames.map { it.toGameSummary(coverIdToURI) } }
-        }
+        return getPage(content.toGameSummaries(), pageable ) { totalElements }
     }
 
-    private fun IGDBGame.toGameSummary(coverIdToURI: Map<Int, String>) =
-        GameSummary(GameSlug(name),
-            coverIdToURI.getOrDefault(cover, IGDBImage.NO_COVER_IMAGE.toCoverURI()),
-            first_release_date)
-
     private fun IGDBGame.toGame(): Game = runBlocking {
-        val image = async { igdbClient.queryGetCoverImages(listOf(cover)).firstOrNull()?.toCoverURI() ?: IGDBImage.NO_COVER_IMAGE.toCoverURI()}
+        val image = async { igdbClient.queryGetCoverImages(listOf(cover)).firstOrNull()?.toCoverURI() ?: NO_COVER_IMAGE.toCoverURI()}
         val genres = async { igdbClient.queryGetGenres(genres).map { it.toGenre() }.toHashSet() }
         val platforms = async { igdbClient.queryGetPlatforms(platforms).map { it.toPlatform() }.toHashSet() }
         val developer = async { igdbClient.queryGetDeveloperByInvolvedCompanies(involved_companies)?.slug ?: "NOT FOUND" }
-        val background = async { igdbClient.queryGetScreenShots(screenshots).firstOrNull()?.toBackgroundURI() ?: IGDBImage.NO_COVER_IMAGE.toBackgroundURI() }
+        val background = async { igdbClient.queryGetScreenShots(screenshots).firstOrNull()?.toBackgroundURI() ?: NO_COVER_IMAGE.toBackgroundURI() }
 
         runBlocking {
             Game(
-                GameSummary(GameSlug(name), image.await(), first_release_date),
+                GameSummary(GameSlug(name), image.await(), first_release_date, developer = developer.await()),
                 GameDetail(
                     genres = genres.await(),
                     platforms = platforms.await(),

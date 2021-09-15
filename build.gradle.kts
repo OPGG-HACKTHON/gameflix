@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "gg.op"
-version = "0.0.23"
+version = "0.0.24"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {
@@ -80,7 +80,7 @@ tasks.jacocoTestCoverageVerification {
             limit {
                 counter = "CLASS"
                 value = "COVEREDRATIO"
-                minimum = "0.95".toBigDecimal()
+                minimum = "0.90".toBigDecimal()
             }
 
             excludes = listOf("gg.op.gameflix",
