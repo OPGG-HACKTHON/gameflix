@@ -25,6 +25,7 @@ internal class IGDBIntegrationTest {
     @Test
     fun `when igdbClient queryGetGames expect same size`() {
         val sizeExpected = 10
+
         assertThat(igdbClient.queryGetGames(PageRequest.of(0, sizeExpected))).hasSize(sizeExpected)
     }
 

@@ -8,9 +8,9 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.support.PageableExecutionUtils.getPage
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.awaitBody
 import org.springframework.web.reactive.function.client.awaitEntityList
 import org.springframework.web.reactive.function.client.awaitExchange
+import kotlin.reflect.KClass
 import kotlin.reflect.full.declaredMemberProperties
 
 sealed interface IGDBClient {
@@ -71,15 +71,12 @@ data class IGDBPlatform(override val id: Int, override val slug: String) : IGDBR
     fun toPlatform() = Platform(slug)
 }
 
-
 data class IGDBCompany(override val id: Int, override val slug: String): IGDBResource
 
 class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
 
     companion object RequestBody {
-        private val FIELDS_TO_RECEIVE = IGDBGame::class.declaredMemberProperties.joinToString { it.name }
-        private val CONDITION_DEFAULT = IGDBGame::class.declaredMemberProperties.joinToString(separator = "&") { "${it.name} != null" } + "& total_rating_count > 0"
-        private const val FIELD_TO_SORT = "total_rating_count desc"
+        private val GAME_REQUEST_BODY_BUILDER = IGDBRequestBodyBuilder(IGDBGame::class)
     }
 
     private val webClient = WebClient.builder()
@@ -90,91 +87,70 @@ class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
         .build()
 
     override fun queryGetGames(pageable: Pageable): Page<IGDBGame> =
-        webClient.post().uri("/games")
-            .bodyValue("fields $FIELDS_TO_RECEIVE; where $CONDITION_DEFAULT; sort $FIELD_TO_SORT; ${pageable.toIGDBQueryStatement()}")
-            .retrieve()
-            .bodyToMono(object : ParameterizedTypeReference<MutableList<IGDBGame>>() {})
-            .block()
-            ?.let { igdbGameSummaries -> getPage(igdbGameSummaries, pageable, this::queryGetGamesCount) } ?: Page.empty()
+        GAME_REQUEST_BODY_BUILDER.build(condition = "total_rating_count > 0", fieldToSort = "total_rating_count", pageable)
+            .let { requestBody -> webClient.post().uri("/games")
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToMono(object : ParameterizedTypeReference<MutableList<IGDBGame>>() {})
+                .block()
+                ?.let { igdbGameSummaries -> getPage(igdbGameSummaries, pageable) { queryGetGamesCount(requestBody) } }
+                ?: Page.empty()
+            }
 
-    override fun queryGetGameBySlug(gameSlug: GameSlug) =
-        webClient.post().uri("/games")
-            .bodyValue("fields $FIELDS_TO_RECEIVE; where $CONDITION_DEFAULT & slug = \"${gameSlug.slug}\";")
-            .retrieve()
-            .bodyToMono(object : ParameterizedTypeReference<MutableList<IGDBGame>>() {})
-            .block()
-            ?.getOrNull(0)
+    override fun queryGetGameBySlug(gameSlug: GameSlug): IGDBGame? =
+        queryGetGamesBySlug(listOf(gameSlug))
+            .firstOrNull()
 
     override fun queryGetGamesBySlug(gameSlugs: Collection<GameSlug>): Collection<IGDBGame> =
-        webClient.post().uri("/games")
-            .bodyValue("fields $FIELDS_TO_RECEIVE; where $CONDITION_DEFAULT & slug = (${gameSlugs.joinToString { "\"${it.slug}\"" }});")
-            .retrieve()
-            .bodyToMono(object : ParameterizedTypeReference<MutableList<IGDBGame>>() {})
-            .block() ?: emptyList()
+        GAME_REQUEST_BODY_BUILDER.build(condition = "slug = (${gameSlugs.joinToString(separator = ",") { "\"${it.slug}\"" }})")
+            .let { requestBody -> webClient.post().uri("/games")
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToMono(object : ParameterizedTypeReference<MutableList<IGDBGame>>() {})
+                .block() ?: emptyList()
+            }
 
-    override fun queryGetGamesByName(name: String, pageable: Pageable) =
-       webClient.post().uri("/games")
-           .bodyValue("fields $FIELDS_TO_RECEIVE; where $CONDITION_DEFAULT; search \"$name\"; ${pageable.toIGDBQueryStatement()}")
-           .retrieve()
-           .bodyToMono(object : ParameterizedTypeReference<MutableList<IGDBGame>>() {})
-           .block().orEmpty()
-           .let { igdbGameSummaries -> getPage(igdbGameSummaries, pageable) { queryGetGamesByNameCount(name) } }
+    override fun queryGetGamesByName(name: String, pageable: Pageable): Page<IGDBGame> =
+        GAME_REQUEST_BODY_BUILDER.build(valueToSearch = name, pageable = pageable)
+            .let { requestBody -> webClient.post().uri("/games")
+                    .bodyValue(requestBody)
+                    .retrieve()
+                    .bodyToMono(object : ParameterizedTypeReference<MutableList<IGDBGame>>() {})
+                    .block().orEmpty()
+                    .let { igdbGameSummaries -> getPage(igdbGameSummaries, pageable) { queryGetGamesCount(requestBody) } }
+            }
 
     override suspend fun queryGetCoverImages(ids: Collection<Int>): List<IGDBImage> =
-        webClient.post().uri("/covers")
-            .bodyValue("fields id, image_id; where id = (${ids.joinToString { it.toString() }});")
-            .retrieve()
-            .awaitBody<MutableList<IGDBImage>>()
+        queryGetFindByIds("/covers", ids)
 
-    override suspend fun queryGetGenres(ids: Collection<Int>) =
-        queryGetResources("/genres", ids)
-            .map { IGDBGenre(it.id, it.slug) }
+    override suspend fun queryGetGenres(ids: Collection<Int>): List<IGDBGenre> =
+        queryGetFindByIds("/genres", ids)
 
-    override suspend fun queryGetPlatforms(ids: Collection<Int>) =
-        queryGetResources("/platforms", ids)
-            .map { IGDBPlatform(it.id, it.slug) }
+    override suspend fun queryGetPlatforms(ids: Collection<Int>): List<IGDBPlatform> =
+        queryGetFindByIds("/platforms", ids)
 
     override suspend fun queryGetDeveloperByInvolvedCompanies(ids: Collection<Int>): IGDBCompany? {
         data class IGDBInvolvedCompany(val id: Int, val company: Int, val developer: Boolean)
-        return webClient.post().uri("/involved_companies")
-            .bodyValue("fields ${IGDBInvolvedCompany::class.declaredMemberProperties.joinToString { it.name }};" +
-                "where id = (${ids.joinToString { it.toString() }});"
-            )
-            .retrieve()
-            .awaitBody<MutableList<IGDBInvolvedCompany>>()
+
+        return queryGetFindByIds<IGDBInvolvedCompany>("/involved_companies", ids)
             .find { it.developer }
-            ?.let { queryGetResources("/companies", listOf(it.company))
-                .map { resource -> IGDBCompany(resource.id, resource.slug) } }
+            ?.let { queryGetFindByIds<IGDBCompany>("/companies", listOf(it.company)) }
             ?.firstOrNull()
     }
 
     override suspend fun queryGetScreenShots(ids: Collection<Int>): List<IGDBImage> =
-        webClient.post().uri("/screenshots")
-            .bodyValue("fields id, image_id; where id = (${ids.joinToString { it.toString() }});")
-            .retrieve()
-            .awaitBody<MutableList<IGDBImage>>()
+        queryGetFindByIds("/screenshots", ids)
 
-    private fun Pageable.toIGDBQueryStatement() = "offset ${pageNumber * pageSize}; limit $pageSize;"
+    private suspend inline fun <reified T: Any> queryGetFindByIds(uri: String, ids: Collection<Int>): List<T> =
+        IGDBRequestBodyBuilder(T::class).buildFindByIds(ids)
+            .let { requestBody -> webClient.post().uri(uri)
+                .bodyValue(requestBody)
+                .awaitExchange { clientResponse -> clientResponse.awaitEntityList(T::class) }
+                .body ?: emptyList()
+            }
 
-    private suspend fun queryGetResources(uri: String, ids: Collection<Int>): List<IGDBResource> {
-        data class IGDBResourceImpl(override val id: Int, override val slug: String) : IGDBResource
-
-        return webClient.post().uri(uri)
-            .bodyValue("fields ${IGDBResource::class.declaredMemberProperties.joinToString { it.name }};" +
-                "where id = (${ids.joinToString { it.toString() }});")
-            .retrieve()
-            .awaitBody<MutableList<IGDBResourceImpl>>()
-    }
-
-    private fun queryGetGamesCount() =
-        queryGetResultCounts("where $CONDITION_DEFAULT;")
-
-    private fun queryGetGamesByNameCount(name: String) =
-        queryGetResultCounts("where $CONDITION_DEFAULT; search \"$name\";")
-
-    private fun queryGetResultCounts(requestBody: String): Long {
+    private fun queryGetGamesCount(requestBody: String): Long {
         data class CountDTO(val count: Long)
-
         return webClient.post().uri("/games/count")
             .bodyValue(requestBody)
             .retrieve()
@@ -182,5 +158,37 @@ class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
             .block()
             ?.run { count } ?: 0
     }
+}
 
+data class IGDBRequestBodyBuilder<in T : Any>(
+    private val responseClass: KClass<T>,
+) {
+    private val fieldsCommaSeparated = responseClass.declaredMemberProperties.joinToString(separator = ",") { it.name }
+    private val conditionsDefault = responseClass.declaredMemberProperties.joinToString(separator = "&") { "${it.name} != null" }
+
+    fun buildFindByIds(ids: Collection<Int>, fieldToSort: String? = null, pageable: Pageable? = null, valueToSearch: String? = null): String =
+        build(condition = "id = (${ids.joinToString(separator = ",") { it.toString() }})",
+            fieldToSort = fieldToSort,
+            pageable = pageable,
+            valueToSearch = valueToSearch)
+
+    fun build(condition: String? = null, fieldToSort: String? = null, pageable: Pageable? = null, valueToSearch: String? = null): String =
+        buildString {
+            append("fields $fieldsCommaSeparated;")
+            append("where $conditionsDefault ${condition?.let { "& $it" } ?: ""};")
+
+            if (fieldToSort != null) {
+                append("sort $fieldToSort desc;")
+            }
+            if (pageable != null) {
+                append(pageable.toIGDBPageableStatement())
+            }
+            if (valueToSearch != null) {
+                append("search \"$valueToSearch\";")
+            }
+    }
+
+    private fun Pageable.toIGDBPageableStatement(): String =
+        "offset ${pageNumber * pageSize};" +
+            "limit ${pageSize};"
 }
