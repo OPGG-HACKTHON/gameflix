@@ -47,7 +47,7 @@ class IGDBGameRepository(private val igdbClient: IGDBClient) : GameRepository {
             GameSummary(slug = GameSlug(name),
                 releaseAt = first_release_date,
                 cover = coverImage.await()?.toCoverURI() ?: NO_COVER_IMAGE.toCoverURI(),
-                developer = developer.await()?.slug ?: "NOT Found")
+                developer = developer.await().firstOrNull()?.slug ?: "NOT Found")
         }
 
     private fun Page<IGDBGame>.toGameSummaries(): Page<GameSummary> {
@@ -61,7 +61,7 @@ class IGDBGameRepository(private val igdbClient: IGDBClient) : GameRepository {
         val image = async { igdbClient.queryGetCoverImages(listOf(cover)).firstOrNull()?.toCoverURI() ?: NO_COVER_IMAGE.toCoverURI()}
         val genres = async { igdbClient.queryGetGenres(genres).map { it.toGenre() }.toHashSet() }
         val platforms = async { igdbClient.queryGetPlatforms(platforms).map { it.toPlatform() }.toHashSet() }
-        val developer = async { igdbClient.queryGetDeveloperByInvolvedCompanies(involved_companies)?.slug ?: "NOT FOUND" }
+        val developer = async { igdbClient.queryGetDeveloperByInvolvedCompanies(involved_companies).firstOrNull()?.slug ?: "NOT FOUND" }
         val background = async { igdbClient.queryGetScreenShots(screenshots).firstOrNull()?.toBackgroundURI() ?: NO_COVER_IMAGE.toBackgroundURI() }
 
         runBlocking {

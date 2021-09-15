@@ -80,7 +80,7 @@ internal class IGDBIntegrationTest {
     fun `when igdbClient queryGetDeveloperByInvolvedCompanies expect valid IGDBCompany`(): Unit = runBlocking {
         val companyExpected = IGDBCompany(41, "riot-games")
 
-        assertThat(igdbClient.queryGetDeveloperByInvolvedCompanies(listOf(8068, 8087, 8088))).isEqualTo(companyExpected)
+        assertThat(igdbClient.queryGetDeveloperByInvolvedCompanies(listOf(8068, 8087, 8088))).containsOnly(companyExpected)
     }
 
     @Test

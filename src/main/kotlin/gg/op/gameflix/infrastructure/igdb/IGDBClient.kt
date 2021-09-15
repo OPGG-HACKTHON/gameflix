@@ -16,13 +16,13 @@ import kotlin.reflect.full.declaredMemberProperties
 sealed interface IGDBClient {
     fun queryGetGames(pageable: Pageable): Page<IGDBGame>
     fun queryGetGameBySlug(gameSlug: GameSlug): IGDBGame?
-    fun queryGetGamesBySlug(gameSlugs: Collection<GameSlug>): Collection<IGDBGame>
+    fun queryGetGamesBySlug(gameSlugs: Collection<GameSlug>): List<IGDBGame>
     fun queryGetGamesByName(name: String, pageable: Pageable): Page<IGDBGame>
 
     suspend fun queryGetCoverImages(ids: Collection<Int>): List<IGDBImage>
     suspend fun queryGetGenres(ids: Collection<Int>): List<IGDBGenre>
     suspend fun queryGetPlatforms(ids: Collection<Int>): List<IGDBPlatform>
-    suspend fun queryGetDeveloperByInvolvedCompanies(ids: Collection<Int>): IGDBCompany?
+    suspend fun queryGetDeveloperByInvolvedCompanies(ids: Collection<Int>): List<IGDBCompany>
     suspend fun queryGetScreenShots(ids: Collection<Int>): List<IGDBImage>
 }
 
@@ -101,7 +101,7 @@ class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
         queryGetGamesBySlug(listOf(gameSlug))
             .firstOrNull()
 
-    override fun queryGetGamesBySlug(gameSlugs: Collection<GameSlug>): Collection<IGDBGame> =
+    override fun queryGetGamesBySlug(gameSlugs: Collection<GameSlug>): List<IGDBGame> =
         GAME_REQUEST_BODY_BUILDER.build(condition = "slug = (${gameSlugs.joinToString(separator = ",") { "\"${it.slug}\"" }})")
             .let { requestBody -> webClient.post().uri("/games")
                 .bodyValue(requestBody)
@@ -129,13 +129,12 @@ class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
     override suspend fun queryGetPlatforms(ids: Collection<Int>): List<IGDBPlatform> =
         queryGetFindByIds("/platforms", ids)
 
-    override suspend fun queryGetDeveloperByInvolvedCompanies(ids: Collection<Int>): IGDBCompany? {
+    override suspend fun queryGetDeveloperByInvolvedCompanies(ids: Collection<Int>): List<IGDBCompany> {
         data class IGDBInvolvedCompany(val id: Int, val company: Int, val developer: Boolean)
 
         return queryGetFindByIds<IGDBInvolvedCompany>("/involved_companies", ids)
-            .find { it.developer }
-            ?.let { queryGetFindByIds<IGDBCompany>("/companies", listOf(it.company)) }
-            ?.firstOrNull()
+            .filter { it.developer }
+            .let { developers -> queryGetFindByIds("/companies", developers.map { it.company }) }
     }
 
     override suspend fun queryGetScreenShots(ids: Collection<Int>): List<IGDBImage> =
