@@ -15,8 +15,8 @@ class SteamService(
     override fun getAllGameSlugsByAuthentication(authentication: GameStoreAuthentication)
         = client.queryGetGames(authentication as SteamAuthentication)
             .response.games
-            .map { it.name }
-            .map { name -> GameSlug(name) }
+            ?.map { it.name }
+            ?.map { name -> GameSlug(name) } ?: emptyList()
 
     override fun supports(authentication: GameStoreAuthentication)
         = authentication is SteamAuthentication

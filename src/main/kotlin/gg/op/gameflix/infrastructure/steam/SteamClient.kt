@@ -11,9 +11,10 @@ data class SteamResponseDTO(
     val response: SteamMultipleGamesResponseDTO
 )
 
+@Suppress("kotlin:S117")
 data class SteamMultipleGamesResponseDTO(
-    val game_count: Int,
-    val games: List<SteamGameResponseDTO>
+    val game_count: Int?,
+    val games: List<SteamGameResponseDTO>?
 ) {
     data class SteamGameResponseDTO(
         val appid: Int,

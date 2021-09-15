@@ -2,6 +2,8 @@ package gg.op.gameflix.infrastructure.steam
 
 import gg.op.gameflix.domain.game.GameSlug
 import gg.op.gameflix.domain.game.Store.STEAM
+import okhttp3.mockwebserver.MockResponse
+import okhttp3.mockwebserver.MockWebServer
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -22,17 +24,23 @@ internal class SteamIntegrationTest {
     private lateinit var configurationProperties: SteamConfigurationProperties
 
     private lateinit var steamClient: SteamClient
-    private lateinit var steamService: SteamService
+
+    private lateinit var mockSteamClient: SteamClient
+    private lateinit var mockBackend: MockWebServer
 
     @BeforeAll
     fun initializeInstance() {
         steamClient = SteamWebClient(configurationProperties)
-        steamService = SteamService(steamClient)
+
+        mockBackend = MockWebServer()
+        mockBackend.start()
+        mockSteamClient = SteamConfigurationProperties("http://localhost:${mockBackend.port}", configurationProperties.apiKey)
+            .let { SteamWebClient(it) }
     }
 
     @Test
     fun `when get store expect return steam`() {
-        assertThat(steamService.store).isEqualTo(STEAM)
+        assertThat(SteamService(mockSteamClient).store).isEqualTo(STEAM)
     }
 
     @Test
@@ -48,7 +56,19 @@ internal class SteamIntegrationTest {
 
     @Test
     fun `when steamService getAllGameSlugsByAuthentication expect not empty`() {
+        val steamService = SteamService(steamClient)
         assertThat(steamService.getAllGameSlugsByAuthentication(SteamAuthentication("76561199114515095")))
             .containsOnlyOnce(GameSlug("Portal"))
+    }
+
+    @Test
+    fun `when steamBackend returns empty expect return empty`() {
+        mockBackend.enqueue(
+            MockResponse().setBody("{\"response\": {}}")
+                .addHeader("Content-Type", "application/json")
+        )
+        val mockSteamService =  SteamService(mockSteamClient)
+
+        assertThat(mockSteamService.getAllGameSlugsByAuthentication(SteamAuthentication(""))).isEmpty()
     }
 }
