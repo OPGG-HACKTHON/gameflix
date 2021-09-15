@@ -77,16 +77,16 @@ data class PagedGameSummaryModel(
 data class GameModel(
     val name: String,
     val slug: String,
-    val release_at: Int,
-    val updated_at: Int,
     val cover: String,
+    val release_at: Int,
+    val developer: String,
+    val updated_at: Int,
     val description: String,
     val url: String,
     val genres: List<String>,
     val platforms: List<String>,
     val rating_external: Float,
     val rating_external_count: Int,
-    val developer: String,
     val background: String
     ) {
     constructor(game: Game): this(
@@ -94,6 +94,7 @@ data class GameModel(
         slug = game.summary.slug.slug,
         cover = game.summary.cover,
         release_at = game.summary.releaseAt,
+        developer = game.summary.developer,
         description = game.detail.description,
         updated_at = game.detail.updatedAt,
         url = game.detail.url,
@@ -101,7 +102,6 @@ data class GameModel(
         platforms = game.detail.platforms.map { it.name },
         rating_external = game.detail.rating.rating,
         rating_external_count = game.detail.rating.count,
-        developer = game.detail.developer,
         background = game.detail.background
     )
 }
@@ -112,13 +112,15 @@ data class GameSummaryModel(
     val slug: String,
     val cover: String,
     val release_at: Int,
-    val store: String
+    val store: String,
+    val developer: String
 ) {
     constructor(gameSummary: GameSummary): this(
-        gameSummary.slug.name,
-        gameSummary.slug.slug,
-        gameSummary.cover,
-        gameSummary.releaseAt,
-        gameSummary.store?.name?.toSlug() ?: ""
+        name = gameSummary.slug.name,
+        slug = gameSummary.slug.slug,
+        cover = gameSummary.cover,
+        release_at = gameSummary.releaseAt,
+        store = gameSummary.store?.name?.toSlug() ?: "",
+        developer = gameSummary.developer,
     )
 }

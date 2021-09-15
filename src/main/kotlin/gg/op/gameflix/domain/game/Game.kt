@@ -22,9 +22,10 @@ class GameSummary(
     var slug: GameSlug,
     var cover: String,
     var releaseAt: Int,
-    var store: Store?
+    var store: Store?,
+    var developer: String
 ) {
-    constructor(slug: GameSlug, cover: String, releaseAt: Int): this(null, slug, cover, releaseAt, null)
+    constructor(slug: GameSlug, cover: String, releaseAt: Int, developer: String): this(null, slug, cover, releaseAt, null, developer)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

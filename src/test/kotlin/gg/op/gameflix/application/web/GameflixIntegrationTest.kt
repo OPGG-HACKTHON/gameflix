@@ -99,7 +99,12 @@ internal class GameflixIntegrationTest {
     @Test
     fun `when POST users-{user-id}-games expect status created with GameSummaryModel ad add 1 game`() {
         val summaryExpected =
-            GameSummary(GameSlug("Portal 2"), "https://images.igdb.com/igdb/image/upload/t_cover_big/co1rs4.jpg", 1303171200)
+            GameSummary(
+                GameSlug("Portal 2"),
+                "https://images.igdb.com/igdb/image/upload/t_cover_big/co1rs4.jpg",
+                1303171200,
+                "valve-corporation"
+            )
         expectUserGamesHasSize(userSaved.games.size)
 
         postUsersGames(userSaved.id, summaryExpected.slug.slug)
@@ -150,6 +155,8 @@ internal class GameflixIntegrationTest {
                 content { jsonPath("games", hasSize<String>(greaterThan(userSaved.games.size))) }
             }
             .andDo { print() }
+
+        expectUserGamesHasSize(userSaved.games.size + 1)
     }
 
     private fun postUsersGames(userId: String, slug: String) =
