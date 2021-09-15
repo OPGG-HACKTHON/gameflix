@@ -5,6 +5,7 @@ import gg.op.gameflix.domain.game.Genre
 import gg.op.gameflix.domain.game.Platform
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import org.springframework.data.support.PageableExecutionUtils.getPage
 import org.springframework.web.reactive.function.client.WebClient
@@ -47,31 +48,27 @@ data class IGDBGame(
 @Suppress("kotlin:S117")
 data class IGDBImage(
     val id: Int,
-    val image_id: String
+    val image_id: String,
+    val game: Int
 ) {
     companion object {
         private const val ID_INVALID = -1
-        val NO_COVER_IMAGE = IGDBImage(ID_INVALID, "nocover_qhhlj6")
+        val NO_COVER_IMAGE = IGDBImage(ID_INVALID, "nocover_qhhlj6", ID_INVALID)
     }
 
     fun toCoverURI() ="https://images.igdb.com/igdb/image/upload/t_cover_big/$image_id.jpg"
     fun toBackgroundURI() = "https://images.igdb.com/igdb/image/upload/t_screenshot_huge/$image_id.jpg"
 }
 
-interface IGDBResource {
-   val id: Int
-   val slug: String
-}
-
-data class IGDBGenre(override val id: Int, override val slug: String) : IGDBResource {
+data class IGDBGenre(val id: Int, val slug: String) {
     fun toGenre() = Genre(slug)
 }
 
-data class IGDBPlatform(override val id: Int, override val slug: String) : IGDBResource {
+data class IGDBPlatform(val id: Int, val slug: String) {
     fun toPlatform() = Platform(slug)
 }
 
-data class IGDBCompany(override val id: Int, override val slug: String): IGDBResource
+data class IGDBCompany(val slug: String, val developed: MutableList<Int>)
 
 class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
 
@@ -84,7 +81,12 @@ class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
         .defaultHeader("Authorization", "Bearer ${properties.token}")
         .defaultHeader("Client-ID", properties.clientId)
         .defaultHeader("Accept", "application/json")
+        .codecs { it.defaultCodecs().maxInMemorySize(16 * 1024 * 1024) }
         .build()
+
+    override fun queryGetGameBySlug(gameSlug: GameSlug): IGDBGame? =
+        queryGetGamesBySlug(listOf(gameSlug))
+            .firstOrNull()
 
     override fun queryGetGames(pageable: Pageable): Page<IGDBGame> =
         GAME_REQUEST_BODY_BUILDER.build(condition = "total_rating_count > 0", fieldToSort = "total_rating_count", pageable)
@@ -96,10 +98,6 @@ class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
                 ?.let { igdbGameSummaries -> getPage(igdbGameSummaries, pageable) { queryGetGamesCount(requestBody) } }
                 ?: Page.empty()
             }
-
-    override fun queryGetGameBySlug(gameSlug: GameSlug): IGDBGame? =
-        queryGetGamesBySlug(listOf(gameSlug))
-            .firstOrNull()
 
     override fun queryGetGamesBySlug(gameSlugs: Collection<GameSlug>): List<IGDBGame> =
         GAME_REQUEST_BODY_BUILDER.build(condition = "slug = (${gameSlugs.joinToString(separator = ",") { "\"${it.slug}\"" }})")
@@ -130,7 +128,7 @@ class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
         queryGetFindByIds("/platforms", ids)
 
     override suspend fun queryGetDeveloperByInvolvedCompanies(ids: Collection<Int>): List<IGDBCompany> {
-        data class IGDBInvolvedCompany(val id: Int, val company: Int, val developer: Boolean)
+        data class IGDBInvolvedCompany(val company: Int, val developer: Boolean)
 
         return queryGetFindByIds<IGDBInvolvedCompany>("/involved_companies", ids)
             .filter { it.developer }
@@ -141,7 +139,7 @@ class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
         queryGetFindByIds("/screenshots", ids)
 
     private suspend inline fun <reified T: Any> queryGetFindByIds(uri: String, ids: Collection<Int>): List<T> =
-        IGDBRequestBodyBuilder(T::class).buildFindByIds(ids)
+        IGDBRequestBodyBuilder(T::class).buildFindByIds(ids.toHashSet())
             .let { requestBody -> webClient.post().uri(uri)
                 .bodyValue(requestBody)
                 .awaitExchange { clientResponse -> clientResponse.awaitEntityList(T::class) }
@@ -168,7 +166,7 @@ data class IGDBRequestBodyBuilder<in T : Any>(
     fun buildFindByIds(ids: Collection<Int>, fieldToSort: String? = null, pageable: Pageable? = null, valueToSearch: String? = null): String =
         build(condition = "id = (${ids.joinToString(separator = ",") { it.toString() }})",
             fieldToSort = fieldToSort,
-            pageable = pageable,
+            pageable = pageable ?: PageRequest.of(0, ids.size),
             valueToSearch = valueToSearch)
 
     fun build(condition: String? = null, fieldToSort: String? = null, pageable: Pageable? = null, valueToSearch: String? = null): String =

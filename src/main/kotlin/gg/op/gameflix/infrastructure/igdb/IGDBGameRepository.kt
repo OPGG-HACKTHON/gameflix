@@ -8,8 +8,6 @@ import gg.op.gameflix.domain.game.GameSlug
 import gg.op.gameflix.domain.game.GameSummary
 import gg.op.gameflix.infrastructure.igdb.IGDBImage.Companion.NO_COVER_IMAGE
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -33,22 +31,24 @@ class IGDBGameRepository(private val igdbClient: IGDBClient) : GameRepository {
         igdbClient.queryGetGamesBySlug(slugs)
             .toGameSummaries()
 
-    private fun Collection<IGDBGame>.toGameSummaries(): List<GameSummary> =
+    private fun List<IGDBGame>.toGameSummaries(): List<GameSummary> = runBlocking {
+        val coverImages = async { map { it.cover }
+            .let { coverIds -> igdbClient.queryGetCoverImages(coverIds) } }
+        val developers = async { flatMap {it.involved_companies}
+            .let { involvedCompanyIds -> igdbClient.queryGetDeveloperByInvolvedCompanies(involvedCompanyIds) } }
         runBlocking {
-            val gameSummaries = map { async { it.toGameSummary() } }
-            gameSummaries.awaitAll()
+            toGameSummaries(coverImages.await(), developers.await())
         }
-
-    suspend fun IGDBGame.toGameSummary(): GameSummary =
-        coroutineScope {
-            val coverImage = async { igdbClient.queryGetCoverImages(listOf(cover)).firstOrNull() }
-            val developer = async { igdbClient.queryGetDeveloperByInvolvedCompanies(involved_companies) }
-
-            GameSummary(slug = GameSlug(name),
-                releaseAt = first_release_date,
-                cover = coverImage.await()?.toCoverURI() ?: NO_COVER_IMAGE.toCoverURI(),
-                developer = developer.await().firstOrNull()?.slug ?: "NOT Found")
-        }
+    }
+    private fun List<IGDBGame>.toGameSummaries(images: List<IGDBImage>, developers: List<IGDBCompany>): List<GameSummary> {
+        val gameToImage = images.associateBy { it.game }
+        return map { igdbGame -> GameSummary(
+            slug = GameSlug(igdbGame.name),
+            releaseAt = igdbGame.first_release_date,
+            cover = gameToImage[igdbGame.id]?.toCoverURI() ?: NO_COVER_IMAGE.toCoverURI(),
+            developer = developers.find { it.developed.contains(igdbGame.id) }?.slug ?: "not-found"
+        ) }
+    }
 
     private fun Page<IGDBGame>.toGameSummaries(): Page<GameSummary> {
         if (isEmpty) {

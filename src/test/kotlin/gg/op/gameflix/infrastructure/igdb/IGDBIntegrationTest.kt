@@ -40,7 +40,7 @@ internal class IGDBIntegrationTest {
     @Test
     fun `when igdbClient queryGetCoverImages expect return valid IGDBCoverImage`(): Unit = runBlocking {
         val keyExpected = 99964
-        val coverImageExpected = IGDBImage(keyExpected, "co254s")
+        val coverImageExpected = IGDBImage(keyExpected, "co254s", 115)
         val idToCoverImage = igdbClient.queryGetCoverImages(setOf(keyExpected))
 
         assertThat(idToCoverImage).contains(coverImageExpected)
@@ -78,14 +78,14 @@ internal class IGDBIntegrationTest {
 
     @Test
     fun `when igdbClient queryGetDeveloperByInvolvedCompanies expect valid IGDBCompany`(): Unit = runBlocking {
-        val companyExpected = IGDBCompany(41, "riot-games")
+        val companyExpected = IGDBCompany("riot-games", mutableListOf(115, 120176, 124700, 124701, 126459, 126460))
 
         assertThat(igdbClient.queryGetDeveloperByInvolvedCompanies(listOf(8068, 8087, 8088))).containsOnly(companyExpected)
     }
 
     @Test
     fun `when igdbClient queryGetScreenShots expect valid IGDBImage`(): Unit = runBlocking  {
-        val imageExpected = IGDBImage(34387, "aujhj4buodogepfhpovb")
+        val imageExpected = IGDBImage(34387, "aujhj4buodogepfhpovb", 115)
 
         assertThat(igdbClient.queryGetScreenShots(listOf(34387, 34388, 34389, 34390))).contains(imageExpected)
     }
@@ -99,7 +99,7 @@ internal class IGDBIntegrationTest {
 
     @Test
     fun `when GameRepository getAllGames return expected count games`() {
-        val numExpected = 3
+        val numExpected = 10
 
         assertThat(gameRepository.findAllGameSummaries(PageRequest.of(0, numExpected))).hasSize(numExpected)
     }
