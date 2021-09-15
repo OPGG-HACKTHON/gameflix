@@ -60,7 +60,7 @@ data class PagedGameSummaryModel(
         totalElements = gamesPage.totalElements
     )
     constructor(gamesPage: PagedListHolder<GameSummary>): this(
-        games = gamesPage.source.map { GameSummaryModel(it) },
+        games = gamesPage.pageList.map { GameSummaryModel(it) },
         number = gamesPage.page,
         size = gamesPage.pageSize,
         numberOfElements = gamesPage.nrOfElements,
@@ -120,7 +120,7 @@ data class GameSummaryModel(
         slug = gameSummary.slug.slug,
         cover = gameSummary.cover,
         release_at = gameSummary.releaseAt,
-        store = gameSummary.store?.name?.toSlug() ?: "",
+        store = gameSummary.store.name.toSlug(),
         developer = gameSummary.developer,
     )
 }

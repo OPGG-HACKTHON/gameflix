@@ -2,6 +2,7 @@ package gg.op.gameflix.application.web
 
 import com.ninjasquad.springmockk.MockkBean
 import gg.op.gameflix.application.web.security.SecurityTestConfiguration
+import gg.op.gameflix.application.web.security.SecurityTestConfiguration.Companion.MOCK_USER_GAMES
 import gg.op.gameflix.application.web.security.WithMockGoogleUser
 import gg.op.gameflix.domain.game.Game
 import gg.op.gameflix.domain.game.GameDetail
@@ -14,6 +15,7 @@ import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
 import io.mockk.verify
+import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -111,7 +113,17 @@ internal class UserGameRestControllerTest {
         mockMvc.get("/users/${SecurityTestConfiguration.MOCK_USER_ID}/games")
             .andExpect {
                 status { isOk() }
-                match { multipleGameSummaryModelWith(SecurityTestConfiguration.MOCK_USER_GAMES) } }
+                match { multipleGameSummaryModelWith(MOCK_USER_GAMES) } }
+    }
+
+    @WithMockGoogleUser
+    @Test
+    fun `when GET users-{id}-games with pagination expect return paginated result`() {
+        mockMvc.get("/users/${SecurityTestConfiguration.MOCK_USER_ID}/games?size=1")
+            .andExpect {
+                status { isOk() }
+                content { jsonPath("$.games", hasSize<String>(1)) }
+            }
     }
 
     @WithMockGoogleUser
@@ -144,7 +156,7 @@ internal class UserGameRestControllerTest {
     @WithMockGoogleUser
     @Test
     fun `when DELETE users-{id}-games-{slug} with not exists slug expect status notFound`() {
-        every { userGameService.deleteGameInUser(SecurityTestConfiguration.MOCK_USER, SecurityTestConfiguration.MOCK_USER_GAMES.first().slug) } throws NoSuchElementException()
+        every { userGameService.deleteGameInUser(SecurityTestConfiguration.MOCK_USER, MOCK_USER_GAMES.first().slug) } throws NoSuchElementException()
 
         mockMvc.delete("/users/${SecurityTestConfiguration.MOCK_USER_ID}/games/${SecurityTestConfiguration.MOCK_USER_GAME_SLUG.slug}")
             .andExpect { status { isNotFound() } }
@@ -153,7 +165,7 @@ internal class UserGameRestControllerTest {
     @WithMockGoogleUser
     @Test
     fun `when DELETE users-{id}-games-{slug} with exists slug expect status noContent`() {
-        every { userGameService.deleteGameInUser(SecurityTestConfiguration.MOCK_USER, SecurityTestConfiguration.MOCK_USER_GAMES.first().slug) } just Runs
+        every { userGameService.deleteGameInUser(SecurityTestConfiguration.MOCK_USER, MOCK_USER_GAMES.first().slug) } just Runs
 
         mockMvc.delete("/users/${SecurityTestConfiguration.MOCK_USER_ID}/games/${SecurityTestConfiguration.MOCK_USER_GAME_SLUG.slug}")
             .andExpect { status { isNoContent() } }
@@ -161,7 +173,7 @@ internal class UserGameRestControllerTest {
 
     private fun mockUserGame(): Game =
         Game(
-            SecurityTestConfiguration.MOCK_USER_GAMES.first(),
+            MOCK_USER_GAMES.first(),
             GameDetail(
                 0, "url",
                 "description", emptySet(),

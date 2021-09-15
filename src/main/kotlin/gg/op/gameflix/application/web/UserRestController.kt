@@ -7,7 +7,6 @@ import gg.op.gameflix.domain.user.User
 import gg.op.gameflix.domain.user.UserGameService
 import gg.op.gameflix.domain.user.UserRepository
 import org.springframework.beans.support.PagedListHolder
-import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.HttpStatus.NO_CONTENT
@@ -65,7 +64,7 @@ class UserGameRestController(
     fun getUserGames(pageable: Pageable, @PathVariable id: String, @AuthenticationPrincipal user: User): PagedGameSummaryModel =
         user.games
             .toMutableList()
-            .let { gameSummaries -> PageImpl(gameSummaries, pageable, gameSummaries.size.toLong()) }
+            .let { gameSummaries -> pagedListHolder(gameSummaries, pageable)}
             .let { PagedGameSummaryModel(it) }
 
     @PreAuthorize("#id == #user.id")
@@ -74,7 +73,7 @@ class UserGameRestController(
         user.games
             .filter { it.slug.name.contains(search, ignoreCase = true) }
             .toMutableList()
-            .let { gameSummaries -> PagedListHolder(gameSummaries) }
+            .let { gameSummaries -> pagedListHolder(gameSummaries, pageable) }
             .let { PagedGameSummaryModel(it) }
 
     @PreAuthorize("#id == #user.id")
@@ -123,7 +122,7 @@ class UserStoreRestController(
     fun getUserStoreGames(@PathVariable id: String, @PathVariable storeSlug: String, @AuthenticationPrincipal user: User, pageable: Pageable): PagedGameSummaryModel =
         user.games.filter { it.store == Store.fromSlug(storeSlug) }
             .toMutableList()
-            .let { PageImpl(it, pageable, it.size.toLong()) }
+            .let { pagedListHolder(it, pageable) }
             .let { page -> PagedGameSummaryModel(page) }
 
     @PreAuthorize("#id == #user.id")
@@ -132,8 +131,16 @@ class UserStoreRestController(
         user.games.filter { it.store == Store.fromSlug(storeSlug) }
             .filter { it.slug.name.contains(search, ignoreCase = true) }
             .toMutableList()
-            .let { PageImpl(it, pageable, it.size.toLong()) }
+            .let { pagedListHolder(it, pageable)}
             .let { page -> PagedGameSummaryModel(page) }
+}
+
+private fun <T> pagedListHolder(source: List<T>, pageable: Pageable): PagedListHolder<T> {
+    return PagedListHolder(source)
+        .apply {
+            page = pageable.pageNumber
+            pageSize = pageable.pageSize
+        }
 }
 
 data class UserModel(
