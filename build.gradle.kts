@@ -80,7 +80,7 @@ tasks.jacocoTestCoverageVerification {
             limit {
                 counter = "CLASS"
                 value = "COVEREDRATIO"
-                minimum = "1.00".toBigDecimal()
+                minimum = "0.95".toBigDecimal()
             }
 
             excludes = listOf("gg.op.gameflix",

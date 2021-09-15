@@ -61,9 +61,7 @@ internal class IGDBIntegrationTest {
         val idExpected = 36
         val genreExpected = IGDBGenre(idExpected, "moba")
 
-        igdbClient.queryGetGenres(setOf(idExpected))
-            .first()
-            .let { assertThat(it).isEqualTo(genreExpected) }
+        assertThat(igdbClient.queryGetGenres(setOf(idExpected))).containsOnly(genreExpected)
     }
 
     @Test

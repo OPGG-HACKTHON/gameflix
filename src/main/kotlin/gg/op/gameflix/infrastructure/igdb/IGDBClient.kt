@@ -8,7 +8,8 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.support.PageableExecutionUtils.getPage
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.awaitBody
+import org.springframework.web.reactive.function.client.awaitEntityList
+import org.springframework.web.reactive.function.client.awaitExchange
 import kotlin.reflect.KClass
 import kotlin.reflect.full.declaredMemberProperties
 
@@ -140,12 +141,12 @@ class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
     override suspend fun queryGetScreenShots(ids: Collection<Int>): List<IGDBImage> =
         queryGetFindByIds("/screenshots", ids)
 
-    private suspend inline fun <reified T : Any> queryGetFindByIds(uri: String, ids: Collection<Int>): List<T> =
+    private suspend inline fun <reified T: Any> queryGetFindByIds(uri: String, ids: Collection<Int>): List<T> =
         IGDBRequestBodyBuilder(T::class).buildFindByIds(ids)
             .let { requestBody -> webClient.post().uri(uri)
                 .bodyValue(requestBody)
-                .retrieve()
-                .awaitBody<MutableList<T>>()
+                .awaitExchange { clientResponse -> clientResponse.awaitEntityList(T::class) }
+                .body ?: emptyList()
             }
 
     private fun queryGetGamesCount(requestBody: String): Long {
@@ -159,7 +160,7 @@ class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
     }
 }
 
-data class IGDBRequestBodyBuilder<T: Any>(
+data class IGDBRequestBodyBuilder<in T : Any>(
     private val responseClass: KClass<T>,
 ) {
     private val fieldsCommaSeparated = responseClass.declaredMemberProperties.joinToString(separator = ",") { it.name }
