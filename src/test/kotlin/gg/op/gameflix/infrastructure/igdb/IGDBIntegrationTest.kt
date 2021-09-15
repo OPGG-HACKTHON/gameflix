@@ -25,6 +25,7 @@ internal class IGDBIntegrationTest {
     @Test
     fun `when igdbClient queryGetGames expect same size`() {
         val sizeExpected = 10
+
         assertThat(igdbClient.queryGetGames(PageRequest.of(0, sizeExpected))).hasSize(sizeExpected)
     }
 
@@ -60,7 +61,9 @@ internal class IGDBIntegrationTest {
         val idExpected = 36
         val genreExpected = IGDBGenre(idExpected, "moba")
 
-        assertThat(igdbClient.queryGetGenres(setOf(idExpected))).containsOnly(genreExpected)
+        igdbClient.queryGetGenres(setOf(idExpected))
+            .first()
+            .let { assertThat(it).isEqualTo(genreExpected) }
     }
 
     @Test
