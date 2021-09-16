@@ -12,7 +12,7 @@ plugins {
 }
 
 group = "gg.op"
-version = "0.0.30"
+version = "0.0.32"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 repositories {

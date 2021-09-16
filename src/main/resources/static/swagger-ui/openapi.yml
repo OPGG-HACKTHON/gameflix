@@ -5,10 +5,12 @@ info:
   contact:
     name: API Support
     email: raeperd117@gmail.com
-  version: 0.0.30
+  version: 0.0.32
 servers:
+  - url: "https://www.gameflix-backend.com"
+    description: Backend API domain
   - url: 'http://load-balancer-gameflix-backend-754529149.ap-northeast-2.elb.amazonaws.com'
-    description: AWS Load balancer for backend fargate service
+    description: AWS Load balancer behind backend API domain
   - url: 'http://localhost:8080'
     description: localhost server
 security:

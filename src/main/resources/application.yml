@@ -15,6 +15,9 @@ security:
   allowed-origins:
     - "http://localhost:3000"
     - "http://load-balancer-gameflix-backend-754529149.ap-northeast-2.elb.amazonaws.com"
+    - "http://www.gameflix.link"
+    - "https://www.gameflix.link"
+    - "https://opgg-hackthon.github.io"
 
 infrastructure:
   gog:
