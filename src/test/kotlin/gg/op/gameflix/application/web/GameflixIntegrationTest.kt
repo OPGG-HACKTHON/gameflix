@@ -90,7 +90,7 @@ internal class GameflixIntegrationTest {
         mockMvc.get("/users/${userSaved.id}/games")
             .andExpect {
                 status { isOk() }
-                match(multipleGameSummaryModelWith(userSaved.games))
+                match(multipleGameSummaryModelWith(userSaved.games, collected = true))
             }
     }
 
@@ -110,7 +110,7 @@ internal class GameflixIntegrationTest {
         postUsersGames(userSaved.id, summaryExpected.slug.slug)
             .andExpect {
                 status { isCreated() }
-                match(gameSummaryModelWith(summaryExpected))
+                match(gameSummaryModelWith(summaryExpected, true))
             }
 
         expectUserGamesHasSize(userSaved.games.size + 1)
@@ -170,12 +170,5 @@ internal class GameflixIntegrationTest {
             .andExpect {
                 status { isOk() }
                 match(MockMvcResultMatchers.jsonPath("$.games", hasSize<String>(sizeExpected)))
-            }
-
-    private fun expectUserGamesHasGreaterSizeThan(sizeExpected: Int) =
-        mockMvc.get("/users/${userSaved.id}/games")
-            .andExpect {
-                status { isOk() }
-                match(MockMvcResultMatchers.jsonPath("$.games", hasSize<String>(greaterThan(sizeExpected))))
             }
 }

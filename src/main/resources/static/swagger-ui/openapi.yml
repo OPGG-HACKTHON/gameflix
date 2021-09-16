@@ -5,7 +5,7 @@ info:
   contact:
     name: API Support
     email: raeperd117@gmail.com
-  version: 0.0.29
+  version: 0.0.30
 servers:
   - url: 'http://load-balancer-gameflix-backend-754529149.ap-northeast-2.elb.amazonaws.com'
     description: AWS Load balancer for backend fargate service
@@ -481,6 +481,8 @@ components:
           type: string
           description: Developer of game
           example: "Riot Games"
+        collected:
+          "$ref": "#/components/schemas/collected"
     PagedGameSummaryModel:
       type: object
       readOnly: true
@@ -581,6 +583,8 @@ components:
             description: platform of game
             example: "PC (Microsoft Windows)"
           example: ["PC (Microsoft Windows)", "Mac"]
+        collected:
+          "$ref": "#/components/schemas/collected"
     StoreModel:
       type: object
       readOnly: true
@@ -643,6 +647,10 @@ components:
       type: string
       description: ID of user. Field `sub` of [google ID token payload](https://developers.google.com/identity/protocols/oauth2/openid-connect#an-id-tokens-payload)
       example: "10769150350006150715113082367"
+    collected:
+      type: boolean
+      description: True / False for Is user collected this game
+      example: true
   responses:
     '400':
       description: Bad Request
