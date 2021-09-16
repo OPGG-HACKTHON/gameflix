@@ -98,14 +98,18 @@ class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
                 ?: Page.empty()
             }
 
-    override fun queryGetGamesBySlug(gameSlugs: Collection<GameSlug>): List<IGDBGame> =
-        GAME_REQUEST_BODY_BUILDER.build(condition = "slug = (${gameSlugs.joinToString(separator = ",") { "\"${it.slug}\"" }})")
+    override fun queryGetGamesBySlug(gameSlugs: Collection<GameSlug>): List<IGDBGame> {
+        if (gameSlugs.isEmpty()) {
+            return emptyList()
+        }
+        return GAME_REQUEST_BODY_BUILDER.build(condition = "slug = (${gameSlugs.joinToString(separator = ",") { "\"${it.slug}\"" }})")
             .let { requestBody -> webClient.post().uri("/games")
                 .bodyValue(requestBody)
                 .retrieve()
                 .bodyToMono(object : ParameterizedTypeReference<MutableList<IGDBGame>>() {})
                 .block() ?: emptyList()
             }
+    }
 
     override fun queryGetGamesByName(name: String, pageable: Pageable): Page<IGDBGame> =
         GAME_REQUEST_BODY_BUILDER.build(valueToSearch = name, pageable = pageable)
@@ -137,13 +141,17 @@ class IGDBWebClient(properties: IGDBConfigurationProperties) : IGDBClient {
     override suspend fun queryGetScreenShots(ids: Collection<Int>): List<IGDBImage> =
         queryGetFindByIds("/screenshots", ids)
 
-    private suspend inline fun <reified T: Any> queryGetFindByIds(uri: String, ids: Collection<Int>): List<T> =
-        IGDBRequestBodyBuilder(T::class).buildFindByIds(ids.toHashSet())
+    private suspend inline fun <reified T: Any> queryGetFindByIds(uri: String, ids: Collection<Int>): List<T> {
+        if (ids.isEmpty()) {
+            return emptyList()
+        }
+        return IGDBRequestBodyBuilder(T::class).buildFindByIds(ids.toHashSet())
             .let { requestBody -> webClient.post().uri(uri)
                 .bodyValue(requestBody)
                 .awaitExchange { clientResponse -> clientResponse.awaitEntityList(T::class) }
                 .body ?: emptyList()
             }
+    }
 
     private fun queryGetGamesCount(requestBody: String): Long {
         data class CountDTO(val count: Long)
