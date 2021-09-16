@@ -10,6 +10,10 @@ import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod.DELETE
+import org.springframework.http.HttpMethod.GET
+import org.springframework.http.HttpMethod.HEAD
+import org.springframework.http.HttpMethod.POST
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -50,6 +54,7 @@ class SecurityConfiguration(
     fun corsConfigurer() = object : WebMvcConfigurer {
         override fun addCorsMappings(registry: CorsRegistry) {
             registry.addMapping("/**")
+                .allowedMethods(*listOf(GET, POST, HEAD, DELETE).map { it.name }.toTypedArray())
                 .allowedOrigins(*securityConfigurationProperties.allowedOrigins)
                 .allowCredentials(true)
         }
