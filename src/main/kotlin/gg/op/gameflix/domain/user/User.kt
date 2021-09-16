@@ -26,6 +26,9 @@ class User(
 
     fun findGameBySlug(gameSlug: GameSlug) = games.find { it.slug == gameSlug }
 
+    fun isCollectedSummary(gameSummary: GameSummary): Boolean =
+        games.find { it.slug == gameSummary.slug } != null
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

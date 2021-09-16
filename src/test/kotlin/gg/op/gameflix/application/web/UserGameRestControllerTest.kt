@@ -150,7 +150,7 @@ internal class UserGameRestControllerTest {
         mockMvc.get("/users/${SecurityTestConfiguration.MOCK_USER_ID}/games/${SecurityTestConfiguration.MOCK_USER_GAME_SLUG.slug}")
             .andExpect {
                 status { isOk() }
-                match(gameModelWith(mockUserGame())) }
+                match(gameModelWith(mockUserGame(), true)) }
     }
 
     @WithMockGoogleUser

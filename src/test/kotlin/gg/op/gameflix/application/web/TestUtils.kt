@@ -18,27 +18,28 @@ fun userModelContentsWith(user: User): ResultMatcher =
             multipleGameSummaryModelWith(path = "games", gameSummaries = user.games)
         )
 
-fun multipleGameSummaryModelWith(gameSummaries: Collection<GameSummary>, path: String = "$.games"): ResultMatcher =
-    gameSummaries.mapIndexed {index, summary -> gameSummaryModelWith(path = "$path.[${index}]", summary = summary)}
+fun multipleGameSummaryModelWith(gameSummaries: Collection<GameSummary>, collected: Boolean = false, path: String = "$.games"): ResultMatcher =
+    gameSummaries.mapIndexed {index, summary -> gameSummaryModelWith(path = "$path.[${index}]", summary = summary, collected = collected)}
         .let { matchAll(*it.toTypedArray()) }
 
-fun gameSummaryModelWith(summary: GameSummary, path: String = "$"): ResultMatcher =
+fun gameSummaryModelWith(summary: GameSummary, collected: Boolean = false, path: String = "$"): ResultMatcher =
     matchAll(
         jsonPath("$path.release_at", equalTo(summary.releaseAt)),
         jsonPath("$path.name", equalTo(summary.slug.name)),
         jsonPath("$path.slug", equalTo(summary.slug.slug)),
         jsonPath("$path.cover", equalTo(summary.cover)),
-        jsonPath("$path.developer", equalTo(summary.developer))
+        jsonPath("$path.developer", equalTo(summary.developer)),
+        jsonPath("$path.collected", equalTo(collected)),
     )
 
-fun gameModelWith(game: Game): ResultMatcher =
+fun gameModelWith(game: Game, collected: Boolean = false): ResultMatcher =
     matchAll(
-        gameSummaryModelWith(game.summary),
+        gameSummaryModelWith(game.summary, collected),
         jsonPath("updated_at", equalTo(game.detail.updatedAt)),
         jsonPath("description", equalTo(game.detail.description)),
         jsonPath("url", equalTo(game.detail.url)),
         jsonPath("genres", hasSize<String>(game.detail.genres.size)),
         jsonPath("platforms", hasSize<String>(game.detail.platforms.size)),
         jsonPath("rating_external", closeTo(game.detail.rating.rating.toDouble(), 0.01)),
-        jsonPath("rating_external_count", equalTo(game.detail.rating.count))
+        jsonPath("rating_external_count", equalTo(game.detail.rating.count)),
     )

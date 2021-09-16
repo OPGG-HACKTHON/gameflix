@@ -5,10 +5,11 @@ import gg.op.gameflix.domain.game.GameRepository
 import gg.op.gameflix.domain.game.GameSlug
 import gg.op.gameflix.domain.game.GameSummary
 import gg.op.gameflix.domain.game.toSlug
-import org.springframework.beans.support.PagedListHolder
+import gg.op.gameflix.domain.user.User
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -19,19 +20,21 @@ import org.springframework.web.bind.annotation.RestController
 class GameRestController(private val gameRepository: GameRepository) {
 
     @GetMapping
-    fun getGames(pageable: Pageable): PagedGameSummaryModel =
+    fun getGames(pageable: Pageable, @AuthenticationPrincipal user: User?): PagedGameSummaryModel =
         gameRepository.findAllGameSummaries(pageable)
+            .map { gameSummary -> GameSummaryModel(gameSummary, user?.isCollectedSummary(gameSummary) ?: false) }
             .let { PagedGameSummaryModel(it) }
 
     @GetMapping(params = ["search"])
-    fun getGamesByName(search: String, pageable: Pageable): PagedGameSummaryModel =
+    fun getGamesByName(search: String, pageable: Pageable, @AuthenticationPrincipal user: User?): PagedGameSummaryModel =
         gameRepository.findAllGameSummariesByName(search, pageable)
-            .let { PagedGameSummaryModel(it) }
+            .map { gameSummary -> GameSummaryModel(gameSummary, user?.isCollectedSummary(gameSummary) ?: false) }
+            .let { PagedGameSummaryModel(it)}
 
     @GetMapping("/{slug}")
-    fun getGameBySlug(@PathVariable slug: String): ResponseEntity<GameModel> =
+    fun getGameBySlug(@PathVariable slug: String, @AuthenticationPrincipal user: User?): ResponseEntity<GameModel> =
         gameRepository.findFirstGameBySlug(GameSlug(slug))
-            ?.let { GameModel(it) }
+            ?.let { GameModel(it, user?.isCollectedSummary(it.summary) ?: false) }
             ?.let { gameModel -> ResponseEntity.ok(gameModel) } ?: ResponseEntity.notFound().build()
 }
 
@@ -47,8 +50,8 @@ data class PagedGameSummaryModel(
     val totalPages: Int,
     val totalElements: Long
 ) {
-    constructor(gamesPage: Page<GameSummary>): this(
-        games = gamesPage.map { GameSummaryModel(it) }.content,
+    constructor(gamesPage: Page<GameSummaryModel>): this(
+        games = gamesPage.content,
         number = gamesPage.number,
         size = gamesPage.size,
         numberOfElements = gamesPage.numberOfElements,
@@ -58,18 +61,6 @@ data class PagedGameSummaryModel(
         hasPrevious = gamesPage.hasPrevious(),
         totalPages = gamesPage.totalPages,
         totalElements = gamesPage.totalElements
-    )
-    constructor(gamesPage: PagedListHolder<GameSummary>): this(
-        games = gamesPage.pageList.map { GameSummaryModel(it) },
-        number = gamesPage.page,
-        size = gamesPage.pageSize,
-        numberOfElements = gamesPage.nrOfElements,
-        isFirst = gamesPage.isFirstPage,
-        isLast = gamesPage.isLastPage,
-        hasNext = !gamesPage.isLastPage,
-        hasPrevious = !gamesPage.isFirstPage,
-        totalPages = gamesPage.pageCount,
-        totalElements = gamesPage.nrOfElements.toLong()
     )
 }
 
@@ -87,9 +78,10 @@ data class GameModel(
     val platforms: List<String>,
     val rating_external: Float,
     val rating_external_count: Int,
-    val background: String
+    val background: String,
+    val collected: Boolean = false
     ) {
-    constructor(game: Game): this(
+    constructor(game: Game, collected: Boolean = false): this(
         name = game.summary.slug.name,
         slug = game.summary.slug.slug,
         cover = game.summary.cover,
@@ -102,7 +94,8 @@ data class GameModel(
         platforms = game.detail.platforms.map { it.name },
         rating_external = game.detail.rating.rating,
         rating_external_count = game.detail.rating.count,
-        background = game.detail.background
+        background = game.detail.background,
+        collected = collected
     )
 }
 
@@ -113,14 +106,16 @@ data class GameSummaryModel(
     val cover: String,
     val release_at: Int,
     val store: String,
-    val developer: String
+    val developer: String,
+    val collected: Boolean = false,
 ) {
-    constructor(gameSummary: GameSummary): this(
+    constructor(gameSummary: GameSummary, collected: Boolean = false): this(
         name = gameSummary.slug.name,
         slug = gameSummary.slug.slug,
         cover = gameSummary.cover,
         release_at = gameSummary.releaseAt,
         store = gameSummary.store.name.toSlug(),
         developer = gameSummary.developer,
+        collected = collected
     )
 }

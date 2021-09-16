@@ -57,15 +57,15 @@ class UserGameRestController(
     fun postUserGames(@PathVariable id: String, @AuthenticationPrincipal user: User,
         @RequestBody requestDTO: GamePostRequestDTO): GameSummaryModel =
         userGameService.addGameToUser(user, GameSlug(requestDTO.slug))
-            .let { GameSummaryModel(it) }
+            .let { GameSummaryModel(it, true) }
 
     @PreAuthorize("#id == #user.id")
     @GetMapping("/{id}/games")
     fun getUserGames(pageable: Pageable, @PathVariable id: String, @AuthenticationPrincipal user: User): PagedGameSummaryModel =
         user.games
             .toMutableList()
-            .let { gameSummaries -> pagedListHolder(gameSummaries, pageable)}
-            .let { PagedGameSummaryModel(it) }
+            .map { gameSummary -> GameSummaryModel(gameSummary, true) }
+            .let { gameSummaries -> pagedListHolder(gameSummaries, pageable).toPagedGameSummaryModel() }
 
     @PreAuthorize("#id == #user.id")
     @GetMapping("/{id}/games", params = ["search"])
@@ -73,14 +73,14 @@ class UserGameRestController(
         user.games
             .filter { it.slug.name.contains(search, ignoreCase = true) }
             .toMutableList()
-            .let { gameSummaries -> pagedListHolder(gameSummaries, pageable) }
-            .let { PagedGameSummaryModel(it) }
+            .map { gameSummary -> GameSummaryModel(gameSummary, true) }
+            .let { gameSummaries -> pagedListHolder(gameSummaries, pageable).toPagedGameSummaryModel() }
 
     @PreAuthorize("#id == #user.id")
     @GetMapping("/{id}/games/{slug}")
     fun getUserGamesBySlug(@PathVariable id: String, @AuthenticationPrincipal user: User, @PathVariable slug: String): GameModel =
         userGameService.findGameInUser(user, GameSlug(slug))
-            ?.let { GameModel(it) }
+            ?.let { GameModel(it, true) }
             ?: throw NoSuchElementException("No such game($slug) exists in User")
 
     @PreAuthorize("#id == #user.id")
@@ -122,8 +122,8 @@ class UserStoreRestController(
     fun getUserStoreGames(@PathVariable id: String, @PathVariable storeSlug: String, @AuthenticationPrincipal user: User, pageable: Pageable): PagedGameSummaryModel =
         user.games.filter { it.store == Store.fromSlug(storeSlug) }
             .toMutableList()
-            .let { pagedListHolder(it, pageable) }
-            .let { page -> PagedGameSummaryModel(page) }
+            .map { gameSummary -> GameSummaryModel(gameSummary, true) }
+            .let { pagedListHolder(it, pageable).toPagedGameSummaryModel()}
 
     @PreAuthorize("#id == #user.id")
     @GetMapping("/{id}/stores/{storeSlug}/games", params = ["search"])
@@ -131,17 +131,31 @@ class UserStoreRestController(
         user.games.filter { it.store == Store.fromSlug(storeSlug) }
             .filter { it.slug.name.contains(search, ignoreCase = true) }
             .toMutableList()
-            .let { pagedListHolder(it, pageable)}
-            .let { page -> PagedGameSummaryModel(page) }
+            .map { gameSummary -> GameSummaryModel(gameSummary, true) }
+            .let { pagedListHolder(it, pageable).toPagedGameSummaryModel()}
 }
 
-private fun <T> pagedListHolder(source: List<T>, pageable: Pageable): PagedListHolder<T> {
+private fun pagedListHolder(source: List<GameSummaryModel>, pageable: Pageable): PagedListHolder<GameSummaryModel> {
     return PagedListHolder(source)
         .apply {
             page = pageable.pageNumber
             pageSize = pageable.pageSize
         }
 }
+
+private fun PagedListHolder<GameSummaryModel>.toPagedGameSummaryModel(): PagedGameSummaryModel =
+    PagedGameSummaryModel(
+        games = pageList,
+        number = page,
+        size = pageSize,
+        numberOfElements = nrOfElements,
+        isFirst = isFirstPage,
+        isLast = isLastPage,
+        hasNext = isLastPage,
+        hasPrevious = isFirstPage,
+        totalPages = pageCount,
+        totalElements = nrOfElements.toLong()
+    )
 
 data class UserModel(
     val id: String,
