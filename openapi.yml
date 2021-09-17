@@ -1,0 +1,670 @@
+openapi: 3.0.3
+info:
+  title: Game Library Service
+  description: Game Library Service Backend API Specification
+  contact:
+    name: API Support
+    email: raeperd117@gmail.com
+  version: 0.0.32
+servers:
+  - url: "https://www.gameflix-backend.com"
+    description: Backend API domain
+  - url: 'http://load-balancer-gameflix-backend-754529149.ap-northeast-2.elb.amazonaws.com'
+    description: AWS Load balancer behind backend API domain
+  - url: 'http://localhost:8080'
+    description: localhost server
+security:
+  - BearerToken: [ ]
+  - OpenID:
+      - openid
+      - email
+      - profile
+tags:
+  - name: user
+    description: User resource
+  - name: game
+    description: Game resource
+  - name: store
+    description: Store resource
+paths:
+  /users:
+    post:
+      operationId: Post new user
+      tags:
+        - user
+      responses:
+        '201':
+          description: CREATED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserModel"
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  '/users/{user-id}':
+    parameters:
+      - $ref: "#/components/parameters/user-id"
+    get:
+      operationId: Get user by id
+      tags:
+        - user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserModel'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    delete:
+      operationId: Delete user by id
+      tags:
+        - user
+      responses:
+        '204':
+          description: NO CONTENT
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /users/{user-id}/games:
+    parameters:
+      - $ref: "#/components/parameters/user-id"
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/size'
+      - $ref: '#/components/parameters/search'
+    get:
+      operationId: Get games of user
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/size'
+        - $ref: '#/components/parameters/search'
+      tags:
+        - user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  games:
+                    $ref: '#/components/schemas/PagedGameSummaryModel'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    post:
+      operationId: Add game to user
+      tags:
+        - user
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+              writeOnly: true
+              properties:
+                slug:
+                  $ref: "#/components/schemas/game-slug"
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GameSummaryModel"
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /users/{user-id}/stores:
+    parameters:
+      - $ref: "#/components/parameters/user-id"
+    post:
+      operationId: Add store to user
+      tags:
+        - user
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/UserStorePostRequestModel"
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserModel"
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    get:
+      operationId: Get stores from user
+      tags:
+        - user
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MultipleStoreModel"
+  /users/{user-id}/stores/{store-slug}:
+    parameters:
+      - $ref: "#/components/parameters/user-id"
+      - $ref: "#/components/parameters/store-slug"
+    get:
+      operationId: Get store by id from user
+      tags:
+        - user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StoreModel"
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /users/{user-id}/stores/{store-slug}/games:
+    parameters:
+      - $ref: "#/components/parameters/user-id"
+      - $ref: "#/components/parameters/store-slug"
+      - $ref: '#/components/parameters/page'
+      - $ref: '#/components/parameters/size'
+      - $ref: '#/components/parameters/search'
+    get:
+      operationId: Get games by store and user
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/size'
+        - $ref: '#/components/parameters/search'
+      tags:
+        - user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PagedGameSummaryModel"
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /users/{user-id}/games/{slug}:
+    parameters:
+      - $ref: "#/components/parameters/user-id"
+      - $ref: "#/components/parameters/slug"
+    get:
+      operationId: Get game of user
+      tags:
+        - user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameModel'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    delete:
+      operationId: Delete game of user
+      tags:
+        - user
+      responses:
+        '204':
+          description: No Content
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /games:
+    get:
+      operationId: Get games
+      tags:
+        - game
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/size'
+        - $ref: '#/components/parameters/search'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  games:
+                    type: array
+                    description: list of games
+                    items:
+                      $ref: '#/components/schemas/GameSummaryModel'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /games/{slug}:
+    parameters:
+      - $ref: "#/components/parameters/slug"
+    get:
+      operationId: Get single game model
+      tags:
+        - game
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GameModel"
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /stores:
+    get:
+      operationId: Get stores
+      tags:
+        - store
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  stores:
+                    type: array
+                    description: list of stores
+                    items:
+                      $ref: '#/components/schemas/StoreModel'
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  /stores/{store-slug}:
+    parameters:
+      - $ref: "#/components/parameters/store-slug"
+    get:
+      operationId: Get store by id
+      tags:
+        - store
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MultipleStoreModel"
+        '400':
+          $ref: '#/components/responses/400'
+        '403':
+          $ref: '#/components/responses/403'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+components:
+  securitySchemes:
+    BearerToken:
+      type: "http"
+      description: ID token from google openId Connect
+      scheme: bearer
+      bearerFormat: JWT
+    OpenID:
+      type: "openIdConnect"
+      openIdConnectUrl: "https://accounts.google.com/.well-known/openid-configuration"
+  parameters:
+    user-id:
+      name: user-id
+      required: true
+      in: path
+      description: ID of user. Field `sub` of [google ID token payload](https://developers.google.com/identity/protocols/oauth2/openid-connect#an-id-tokens-payload)
+      schema:
+        $ref: "#/components/schemas/user-id"
+    store-slug:
+      name: store-slug
+      required: true
+      in: path
+      schema:
+        $ref: "#/components/schemas/store-slug"
+    slug:
+      name: slug
+      required: true
+      in: path
+      description: slug of game
+      schema:
+        "$ref": "#/components/schemas/game-slug"
+    page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 0
+        format: int32
+        description: Page number of pagination request
+    size:
+      name: size
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        format: int32
+        description: Size of one page of pagination request
+    search:
+      name: search
+      in: query
+      schema:
+        type: string
+        description: Name of game to search
+  schemas:
+    UserModel:
+      type: object
+      readOnly: true
+      properties:
+        id:
+          $ref: "#/components/schemas/user-id"
+        email:
+          type: string
+          format: email
+          description: Email address
+          example: raeperd117@gmail.com
+        games:
+          $ref: "#/components/schemas/MultipleStoreModel"
+    GameSummaryModel:
+      type: object
+      readOnly: true
+      description: GameSummary model
+      properties:
+        slug:
+          $ref: "#/components/schemas/game-slug"
+        name:
+          type: string
+          description: Name of this game
+          example: League of Legend
+        cover:
+          $ref : "#/components/schemas/cover"
+        release_at:
+          $ref: "#/components/schemas/release_at"
+        store:
+          type: string
+          description: Slug of store. empty if not added from store
+          example: "steam"
+        developer:
+          type: string
+          description: Developer of game
+          example: "Riot Games"
+        collected:
+          "$ref": "#/components/schemas/collected"
+    PagedGameSummaryModel:
+      type: object
+      readOnly: true
+      description: MultipleGameSummaryModel
+      properties:
+        games:
+          type: array
+          description: Array of GameSummaryModel
+          items:
+            $ref: "#/components/schemas/GameSummaryModel"
+        number:
+          type: integer
+          description: Returns the number of the current Slice. Is always non-negative.
+          example: 0
+        size:
+          type: integer
+          description: Returns the size of the Slice.
+          example: 20
+        numberOfElements:
+          type: integer
+          description: Returns the number of elements currently on this Slice.
+          example: 200
+        isFirst:
+          type: boolean
+          description: Returns whether the current Slice is the first one.
+          example: true
+        isLast:
+          type: boolean
+          description: Returns whether the current Slice is the last one.
+          example: false
+        hasNext:
+          type: boolean
+          description: Returns if there is a next Slice.
+          example: true
+        hasPrevious:
+          type: boolean
+          description: Returns if there is a previous Slice.
+          example: false
+        totalPages:
+          type: integer
+          description: Returns the number of total pages.
+          example: 10
+        totalElements:
+          type: integer
+          description: Returns the total amount of elements.
+          example: 200
+    GameModel:
+      type: object
+      readOnly: true
+      description: Game model following [Game – IGDB API docs](https://api-docs.igdb.com/#game)
+      properties:
+        slug:
+          $ref: "#/components/schemas/game-slug"
+        name:
+          type: string
+          description: Name of this game
+          example: League of Legend
+        description:
+          type: string
+          description: Description of game
+          example: League of Legends is a fast-paced, competitive online game that blends the speed and intensity of an RTS with RPG elements. Two teams of powerful champions, each with a unique design and playstyle, battle head-to-head across multiple battlefields and game modes. With an ever-expanding roster of champions, frequent updates and a thriving tournament scene, League of Legends offers endless replayability for players of every skill level.
+        background:
+          type: string
+          format: url
+          description: Background Image URL for game
+          example: https://images.igdb.com/igdb/image/upload/t_screenshot_huge/gedd5lz7856ynljzsgbi.jpg
+        release_at:
+          $ref: "#/components/schemas/release_at"
+        updated_at:
+          type: number
+          format: unix time stamp
+          description: The last date this entry was updated
+          example: 1626713554
+        cover:
+          $ref : "#/components/schemas/cover"
+        url:
+          type: string
+          format: url
+          description: The website address (URL) of the item
+        genres:
+          type: array
+          items:
+            type: string
+            description: genre of game as slug
+            example: "MOBA"
+        rating_external:
+          type: number
+          description: Rating based on igdb scores
+          example: 80.35918701514501
+        rating_external_count:
+          type: integer
+          description: Number of igdb ratings
+          example: 501
+        platforms:
+          type: array
+          items:
+            type: string
+            description: platform of game
+            example: "PC (Microsoft Windows)"
+          example: ["PC (Microsoft Windows)", "Mac"]
+        collected:
+          "$ref": "#/components/schemas/collected"
+    StoreModel:
+      type: object
+      readOnly: true
+      description: Store model for description
+      properties:
+        slug:
+          $ref: "#/components/schemas/store-slug"
+        authentication:
+          type: string
+          description: Description for authentication
+          example: Pass steam id of user in this field when POST "/users/{user-id}/stores"
+    MultipleStoreModel:
+      type: object
+      readOnly: true
+      description: Multiple store model
+      properties:
+        stores:
+          type: array
+          description: store models
+          items:
+            $ref: "#/components/schemas/StoreModel"
+    ErrorModel:
+      type: object
+      readOnly: true
+      properties:
+        message:
+          type: string
+          description: Error message
+          example: Request Failed with Error
+    UserStorePostRequestModel:
+      type: object
+      writeOnly: true
+      description: User post request body
+      properties:
+        slug:
+          $ref: "#/components/schemas/store-slug"
+        authentication:
+          type: string
+          example: 76561199114515095
+          description: Authentication for store connection. Determined by slug field.  - slug-steam authentication-steamId  - slug-gog authentication-accessToken  - slug-blizzard authentction-accessToken
+    store-slug:
+      type: string
+      description: A url-safe unique, lower-case version of the name
+      example: steam
+    game-slug:
+      type: string
+      description: A url-safe, unique, lower-case version of the name
+      example: league-of-legends
+    cover:
+      type: string
+      format: url
+      description: Image URL for game
+      example: https://images.igdb.com/igdb/image/upload/t_cover_big/co254s.jpg
+    release_at:
+      type: number
+      format: unix time stamp
+      description: Release date of game. Epoch timestamp
+      example: 1256605200
+    user-id:
+      type: string
+      description: ID of user. Field `sub` of [google ID token payload](https://developers.google.com/identity/protocols/oauth2/openid-connect#an-id-tokens-payload)
+      example: "10769150350006150715113082367"
+    collected:
+      type: boolean
+      description: True / False for Is user collected this game
+      example: true
+  responses:
+    '400':
+      description: Bad Request
+    '401':
+      description: Unauthorized
+    '403':
+      description: Forbidden
+    '404':
+      description: Not Found
+    '500':
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorModel'
