@@ -1,6 +1,6 @@
 # [Gameflix](https://www.gameflix.link/)
 
-[![.github/workflows/build.yml](https://github.com/OPGG-HACKTHON/gameflix/actions/workflows/build.yml/badge.svg)](https://github.com/OPGG-HACKTHON/gameflix/actions/workflows/build.yml) [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=gameflix&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=gameflix) [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=gameflix&metric=coverage)](https://sonarcloud.io/dashboard?id=gameflix) [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=gameflix&metric=ncloc)](https://sonarcloud.io/dashboard?id=gameflix)
+[![.github/workflows/build.yml](https://github.com/OPGG-HACKTHON/gameflix/actions/workflows/build.yml/badge.svg)]
 
 Gameflix backend Service using Spring Boot with Kotlin
 
